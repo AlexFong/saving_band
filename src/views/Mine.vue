@@ -1,0 +1,165 @@
+<template>
+  <div class="mine">
+    <h1>This is a mine page</h1>
+    <div>【bill侧滑删除】【样式优化】【页面布局优化】【日期优化】</div> 
+    <div>
+      设置每日预算:
+      <input type="number" v-model="budjet" placeholder="设置每日预算" />
+      <button @click="changeBudjet()">调整</button>
+    </div>
+    <br>
+    <div>总余额:{{ balance }}</div>
+    
+  </div>
+</template>
+
+
+<script>
+import { Component, Vue } from "vue-property-decorator";
+
+export default {
+  name: "mine",
+  // 数据父传子
+  props: {
+    msg: {
+      type: String,
+      default: "test msg",
+    },
+  },
+  data() {
+    return {
+      // 未删 
+      balance: 0,
+      todayBalance: 0,
+      cost: "",
+      typeId: "a",
+      typeList: [
+        { name: "餐饮", id: "a" },
+        { name: "住房生活", id: "b" },
+        { name: "服饰美容", id: "c" },
+        { name: "交通", id: "d" },
+        { name: "购物", id: "e" },
+        { name: "学习", id: "f" },
+        { name: "娱乐", id: "g" },
+        { name: "旅游", id: "h" },
+        { name: "亲子", id: "i" },
+        { name: "宠物", id: "j" },
+        { name: "医疗", id: "k" },
+        { name: "红包", id: "l" },
+        { name: "礼物", id: "m" },
+        { name: "保险", id: "n" },
+        { name: "投资", id: "o" },
+        { name: "意外", id: "p" },
+        { name: "其他", id: "q" },
+      ],
+      checkList: {
+        a: "餐饮",
+        b: "住房生活",
+        c: "服饰美容",
+        d: "交通",
+        e: "购物",
+        f: "学习",
+        g: "娱乐",
+        h: "旅游",
+        i: "亲子",
+        j: "宠物",
+        k: "医疗",
+        l: "红包",
+        m: "礼物",
+        n: "保险",
+        o: "投资",
+        p: "意外",
+        q: "其他",
+      },
+      bill: [],
+      todayTime:"",
+      time:"",
+      budjet:400,
+      todayBudjet:0,
+    };
+  },
+  methods: {
+    changeBudjet: function(){
+      if(this.budjet >= 0){
+        let tempUserData = JSON.parse(localStorage.userData);
+        tempUserData.budjet = this.budjet;
+        localStorage.userData = JSON.stringify(tempUserData);
+      }else{
+        alert("预算不能为负数哦~");
+      };
+    },
+  },
+  beforeCreate() {
+    console.log("beforeCreate");
+  },
+  created() {
+    console.log("created");
+
+    this.todayTime = new Date(parseInt(new Date().getTime()));
+    let y = this.todayTime.getFullYear();
+    let m = this.todayTime.getMonth();
+    let d = this.todayTime.getDate();
+    
+    let tempUserData = JSON.parse(localStorage.userData)
+    let tempBillData = JSON.parse(localStorage.billData)
+
+    // 更新显示balance、budjet
+    this.balance = calcBalance(tempBillData,y,m,d);
+    this.budjet = tempUserData.budjet;
+  },
+  beforeMount() {
+    console.log("beforeMount");
+  },
+  mounted() {
+    console.log("mounted");
+    for (let index = 0; index < 5; index++) {
+        console.log(index);
+    }
+  },
+  beforeUpdate() {
+    console.log("beforeUpdate");
+    this.todayTime = new Date(parseInt(new Date().getTime()))
+  },
+  updated() {
+    console.log("updated");
+  },
+  beforeDestroy() {
+    console.log("beforeDestroy");
+  },
+  destroyed() {
+    console.log("destroyed");
+  },
+};
+
+// 总余额计算（截至当天）
+function calcBalance(tempBillData,y,m,d){
+  let balance = 0;
+
+  // 加总年表
+  for (const i in tempBillData) {
+    if(i < y){
+      balance += Number(tempBillData[i]["data"]["yearBalance"]);
+    }
+  }
+  // 加总月表
+  for (const i in tempBillData[y]["list"]) {
+    if(i < m){
+      balance += Number(tempBillData[y]["list"][i]["data"]["monthBalance"]);
+    }
+  }
+  // 加总日表
+  for (const i in tempBillData[y]["list"][m]["list"]) {
+    if(i <= d){
+      balance += Number(tempBillData[y]["list"][m]["list"][i]["data"]["dateBalance"]);
+    }
+  }
+
+  return(balance)
+}
+</script>
+
+<style lang="css">
+div {
+  /* min-width: 10vw; */
+}
+</style>
