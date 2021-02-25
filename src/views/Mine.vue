@@ -1,7 +1,6 @@
 <template>
   <div class="mine">
     <h1>This is a mine page</h1>
-    <div>【bill侧滑删除】【样式优化】【页面布局优化】【日期优化】</div> 
     <div>
       设置每日预算:
       <input type="number" v-model="budjet" placeholder="设置每日预算" />
@@ -154,8 +153,15 @@ function calcBalance(tempBillData,y,m,d){
     }
   }
 
+  // 消除浮点影响，取小数后一位
+  if(balance > 0){
+    balance = parseInt(balance * 10 + 0.1)/10;
+  }else if(balance < 0){
+    balance = parseInt(balance * 10 - 0.1)/10;
+  }
   return(balance)
 }
+
 </script>
 
 <style lang="css">

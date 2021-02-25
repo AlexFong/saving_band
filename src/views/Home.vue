@@ -33,7 +33,7 @@
 
         <van-row style="height:10vh;border-bottom:1px solid black;display:flex;justify-content:space-around;flex-direction:column">
           <div style="height:3vh;line-height:3vh;font-size:3vh;text-align:center;padding-top:0.5vh;">
-            今日预算:
+            本日预算:
           </div> 
           <div style="height:3.5vh;line-height:3.5vh">
             <input type="number" v-model="todayBudjet" style="font-size:2.5vh;width:50%;text-align:center;margin-right:0.3vh" placeholder="设置今日预算" />
@@ -42,9 +42,8 @@
         </van-row>
 
         <van-row style="height:35vh;justify-content:space-around;display:flex;flex-direction:column">
-          
           <!-- 纸币100元 -->
-          <div style="height:5vh;display:flex;justify-content:center;padding:0vh 0vw 0vh;align-item:center;"
+          <div style="height:4vh;display:flex;justify-content:center;padding-top:2vh;align-item:center;"
             :style="{
               display: todayBalanceShow[100] > 0 ? 'flex' : 'none',
             }">
@@ -98,15 +97,25 @@
           </div>
 
           <!-- 显示余额 -->
-          <div style="align-content:center;height:2.5vh;align-item:center;">
-            <div style="height:2.5vh;line-height:2.5vh;"
-            :style="{
-              top: todayBalanceShow < 0 ? 7 + 'vh' : 0 + 'vh',
-              position: todayBalanceShow < 0 ? 'relative' : 'unset',
-              'font-size': todayBalanceShow < 0 ? 3.5+'vh' : 2.5+'vh',
-              'font-weight': todayBalanceShow < 0 ? 'bolder' : 'normal',
-            }">
+          <div style="align-content:center;justify-content:center;height:2.5vh;align-item:center;display:flex">
+            <div style="font-size:2.5vh;line-height:2.5vh;"
+              :style="{
+                display: todayBalanceShow < 0 || todayBalance == 0 ? 'none' : 'unset',
+              }">
               余额:{{ todayBalance }}
+            </div>
+            <div style="top:4vh;position:relative;font-size:7vw;line-height:9vw;font-weight:bolder"
+              :style="{
+                display: todayBalanceShow < 0 || todayBalance == 0 ? 'unset' : 'none',
+              }">
+              <div style="font-size:7vw;">余额:</div>
+              <div style="font-size:7vw;"
+                :style="{
+                  color: todayBalanceShow < 0 ? 'red' : 'unset',
+                }">
+                {{ todayBalance }}
+              </div>
+              
             </div> 
           </div>
           
@@ -114,11 +123,12 @@
       </van-col>
 
       <van-col span="16" style="height:55vh;border-left:1px solid black">
-        <div id="billListOuter" style="height:55vh">
+        <div style="height:5vh;font-size:3vh;line-height:5vh;border-bottom:1px solid black">本日账单</div>
+        <div id="billListOuter" style="height:49.9vh">
           <div id="billListInner">
             <div v-for="(item, index) in bill">
-              <van-swipe-cell style="margin-bottom:2vw;border-radius:2vw">
-                <div style="font-size:5vw;line-height:10vw;background-color:#fff;display:flex">
+              <van-swipe-cell style="margin-bottom:2vw;border-radius:2vw;">
+                <div style="font-size:5vw;line-height:10vw;background-color:#ffffff;border:2px solid #f0ffff;display:flex">
                   <span style="font-size:4.5vw;width:20vw">
                     {{ new Date(item.time).getHours() }}:{{
                       new Date(item.time).getMinutes() < 10
@@ -128,7 +138,7 @@
                   </span>
                   <span style="font-size:4.5vw;width:22vw">{{ checkList[item.id] }}</span>
                   <span style="font-size:4.5vw;width:15vw">￥{{ item.cost }} </span>
-                  <van-icon style="font-size:4vw;margin-left:3vw;width:5vw" class="iconfont" class-prefix='icon' name='left' />
+                  <van-icon id="billList" class="iconfont" class-prefix='icon' name='left' />
                 </div>
                 <template #right>
                   <van-button @click="delFun(index,item)" square text="删除" type="danger" class="delete-button" />
@@ -142,8 +152,12 @@
     
 
     <!-- tabbar高度是15vw -->
-    <div id="addBill" style="height:23vh;bottom: 16vw;display:flex;flex-direction:column;justify-content:flex-end;">
-      <div style="margin:1vh 3vh">
+    <div id="addBill" style="height:23vh;bottom: 16vw;display:flex;flex-direction:column;"
+    :style="{
+      'justify-content': height/width > 1.5 ? 'space-around' : 'flex-end',
+      height : height/width > 1.5 ? 25 + 'vh': 23 + 'vh',
+    }">
+      <div style="margin:0 3vh">
       <!-- type="radio"时为单选题，type="checkbox"时为多选题 -->
         <span v-for="(item, index) in typeList" style="white-space: nowrap;">
           <input type="radio" :id="item.id" :value="item.id" v-model="typeId" />
@@ -151,10 +165,13 @@
         </span>
       </div>
 
-      <div style="font-size:2.5vh">
-        ￥<input type="number" v-model="cost" placeholder="输入金额" />
+      <div style="font-size:2.5vh;"
+      :style="{
+        margin : height/width > 1.5 ? 0: 2 + 'vh ' + 0 ,
+      }">
+        ￥<input style="width:35vw" type="number" v-model="cost" placeholder="输入金额" />
         <button @click="addFun">花钱</button>
-        <button @click="dayRollBack">回滚1天</button>
+        <button @click="dayRollBack">回滚2天</button>
       </div>
     </div>
   </div>
@@ -251,8 +268,10 @@ export default {
         4:[{left:0,top:3},{left:5,top:4},{left:10,top:6},{left:13,top:9}],
         3:[{left:3,top:3},{left:8,top:5},{left:11,top:8}],
         2:[{left:5,top:4},{left:10,top:7}],
-        1:[{left:7,top:6}],
-      }
+        1:[{left:8,top:5}],
+      },
+      width:0,
+      height:0,
     };
   },
   methods: {
@@ -312,8 +331,8 @@ export default {
       tempBillData[y]["list"][m]["data"]["monthBalance"] = calcMonthBalance(tempBillData,y,m);
       tempBillData[y]["data"]["yearBalance"] = calcYearBalance(tempBillData,y);
       // 如果改变的是未来的数据，calcBalance可不执行-------------优化方向，不一定有好处--------------
-      this.balance = calcBalance(tempBillData,y,m,d);
-      this.todayBalance = calcDateBalance(tempBillData,yy,mm,dd);
+      this.balance = calcBalance(tempBillData,yy,mm,dd);
+      this.todayBalance = calcDateBalance(tempBillData,y,m,d);
       this.todayBalanceShow = calcTodayBalanceShow(this.todayBalance);
       
       // stringify再parse会使时间格式发生变化
@@ -397,29 +416,29 @@ export default {
       let mm = dateTime.getMonth();
       let dd = dateTime.getDate();
 
-      // let y = this.todayTime.getFullYear();
-      // let m = this.todayTime.getMonth();
-      // let d = this.todayTime.getDate();
+      // 删除对象键值对
+      if(tempBillData[yy]["list"][mm]["list"][dd]){
+        delete tempBillData[yy]["list"][mm]["list"][dd]
+      }
+      
+      dateTime = new Date(dateTime.setDate(dateTime.getDate()-1));
+
+      // 回滚第二天
+      yy = dateTime.getFullYear();
+      mm = dateTime.getMonth();
+      dd = dateTime.getDate();
 
       // 删除对象键值对
       if(tempBillData[yy]["list"][mm]["list"][dd]){
         delete tempBillData[yy]["list"][mm]["list"][dd]
       }
       
-
-      // this.todayBudjet = tempBillData[y]["list"][m]["list"][d]["data"]["budjet"];
-      // this.todayBalance = tempBillData[y]["list"][m]["list"][d]["data"]["dateBalance"];
-      // this.balance = calcBalance(tempBillData,yy,mm,dd);
-      // this.budjet = tempUserData.budjet;
-      // this.todayBalanceShow = calcTodayBalanceShow(this.todayBalance);
-
       dateTime = new Date(dateTime.setDate(dateTime.getDate()-1));
+
 
       tempUserData.latestLoginDate = formatLongDate(dateTime,1);
       localStorage.userData = JSON.stringify(tempUserData);
-
       localStorage.billData = JSON.stringify(tempBillData);
-      // this.bill = JSON.parse(localStorage.billData)[y]["list"][m]["list"][d]["list"];
     }
   },
   beforeCreate() {
@@ -427,6 +446,9 @@ export default {
   },
   created() {
     console.log("created");
+    this.width = document.body.clientWidth;
+    this.height = document.body.clientHeight;
+    // console.log(this.height,this.width);
 
     this.todayTime = new Date(parseInt(new Date().getTime()));
     this.time = this.todayTime;
@@ -527,6 +549,9 @@ export default {
   beforeUpdate() {
     console.log("beforeUpdate");
     this.todayTime = new Date(parseInt(new Date().getTime()));
+    this.width = document.body.clientWidth;
+    this.height = document.body.clientHeight;
+    console.log(this.height,this.width);
   },
   updated() {
     console.log("updated");
@@ -618,7 +643,11 @@ function calcDateBalance(tempBillData,y,m,d){
     dateBalance -= Number(tempBillData[y]["list"][m]["list"][d]["list"][i]["cost"]);
   }
   // 消除浮点影响，取小数后一位
-  dateBalance = parseInt(dateBalance * 10 + 0.1)/10;
+  if(dateBalance > 0){
+    dateBalance = parseInt(dateBalance * 10 + 0.1)/10;
+  }else if(dateBalance < 0){
+    dateBalance = parseInt(dateBalance * 10 - 0.1)/10;
+  }
   return(dateBalance);
 }
 
@@ -679,7 +708,11 @@ function calcBalance(tempBillData,y,m,d){
   }
 
   // 消除浮点影响，取小数后一位
-  balance = parseInt(balance * 10 + 0.1)/10;
+  if(balance > 0){
+    balance = parseInt(balance * 10 + 0.1)/10;
+  }else if(balance < 0){
+    balance = parseInt(balance * 10 - 0.1)/10;
+  }
   return(balance)
 }
 
@@ -700,7 +733,6 @@ function calcTodayBalanceShow(todayBalance){
   todayBalanceShow[100] = parseInt(todayBalance/100);
   // 余数
   let a = todayBalance - parseInt(todayBalance/100)*100;
-  console.log(1,"---------",todayBalance,parseInt(todayBalance/100)*100);
   if(a == 0){
     return todayBalanceShow;
   }
@@ -715,7 +747,6 @@ function calcTodayBalanceShow(todayBalance){
 
   for (let i = parseInt(a/20); i > 0; i--) {
     todayBalanceShow.paper.push(20);
-    console.log(i);
   }
   a = a%20;
   if(a == 0){
@@ -755,7 +786,6 @@ function calcTodayBalanceShow(todayBalance){
   // +0.1是为了消除浮点的影响。先进到循环,再减
   for (let i = parseInt(a/0.1+0.1); i > 0; i--) {
     todayBalanceShow.coin.push(0.1);
-    console.log(i);
   }
   return todayBalanceShow;
 }
@@ -788,20 +818,18 @@ function calcTodayBalanceShow(todayBalance){
     overflow: hidden;
     touch-action: auto;
     pointer-events: auto;
-    background-color: aliceblue;
+    // background-color: aliceblue;
 }
 
 #billListInner{
     height: 100%;
-    padding: 1%;
+    padding: 3% 1%;
     overflow-y: scroll;
 }
 
 
 #addBill{
-  
   position: fixed;
-  /* background-color: rgb(184, 217, 245); */
 }
 
 .money{
@@ -825,7 +853,6 @@ function calcTodayBalanceShow(todayBalance){
   transform: translate3d(20vw, 0, 0);
 
   .van-swipe-cell__right{
-    // padding-left: 0.5vw;
     width: 20vw;
     transform: translate3d(102%,0,0);
     .delete-button{
@@ -844,5 +871,11 @@ function calcTodayBalanceShow(todayBalance){
 
 .fontSize3vw{
   font-size:3.5vh;
+}
+
+#billList{
+  font-size:4vw;
+  margin-left:3vw;
+  width:5vw;
 }
 </style>

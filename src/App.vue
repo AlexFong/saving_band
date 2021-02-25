@@ -15,7 +15,7 @@
           <van-icon style="font-size:7vw" class="iconfont" class-prefix='icon' name='piechart' />
         </template>
       </van-tabbar-item>
-      <van-tabbar-item badge="3" to="/about">
+      <van-tabbar-item badge="3" to="/funnel">
         <span>统计</span>
         <template #icon="props">
           <van-icon style="font-size:7vw" class="iconfont" class-prefix='icon' name='barchart' />
@@ -33,7 +33,7 @@
           <van-icon style="font-size:7vw" class="iconfont" class-prefix='icon' name='user' />
         </template>
       </van-tabbar-item>
-      <!-- <van-tabbar-item icon="search" to="/about">统计</van-tabbar-item>
+      <!-- <van-tabbar-item icon="search" to="/funnel">统计</van-tabbar-item>
       <van-tabbar-item icon="search" to="/wishlist">愿望清单</van-tabbar-item>
       <van-tabbar-item icon="setting-o" to="/mine">我的</van-tabbar-item> -->
     </van-tabbar>
