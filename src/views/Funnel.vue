@@ -3,19 +3,28 @@
 <!-- <h1>This is an funnel page</h1> -->
 <div id="header">
   <div style="width:20vw;"></div>
-  <div style="width:60vw;">记账漏斗——{{time.getFullYear()}}-{{time.getMonth()+1}}</div>
+  <div style="width:60vw;display:flex;justify-content:center;align-self:center">
+    <button style="border:none;background-color:unset" @click="changeTime(-1)"><van-icon class="iconfont fontSize7vw" class-prefix='icon' name='left' /></button>
+    <div style="font-size:6vw" @click="changeTime(0)">{{time.getFullYear()}}-{{time.getMonth()+1}}</div>
+    <van-icon class="iconfont fontSize7vw" class-prefix='icon' name='accountbook' />
+    <button style="border:none;background-color:unset" @click="changeTime(1)"><van-icon class="iconfont fontSize7vw" class-prefix='icon' name='right' /></button>
+  </div>
   <div style="width:20vw;"></div>
 </div>
 
 <div id="body">
   <van-collapse v-model="activeNames">
+    
     <!-- 1 -->
     <van-collapse-item name="1">
       <template #title>
         <div style="display:flex">
           <div style="width:40%">本月收入</div>
           <div style="width:30%"></div>
-          <div style="width:20%;">{{Number(fixedSalary)+Number(fixedRentIncome)+Number(otherSalary)+Number(otherIncome)}}</div>
+          <div style="width:20%;">
+            {{Number(fixedSalary)+fixedRentIncome+otherSalary+otherIncome}}
+            <!-- {{fixedSalary?Number(fixedSalary):Number(0)+fixedRentIncome?fixedRentIncome:0+otherSalary?otherSalary:0+otherIncome?otherIncome:0}} -->
+          </div>
         </div>
       </template>
 
@@ -117,15 +126,12 @@
         <van-swipe-cell>
           <div :id="'necessarySpending'+index" style="display:flex">
             <div style="width:40%">{{item.name}}</div>
-            <div style="width:20%">
-              <!-- {{necessarySpendingListSwitch[index].switch}} -->
-            </div>
-            <!-- <div style="width:20%">{{item.payList[formatLongDate(time,2)]}}</div> -->
+            <div style="width:20%"></div>
             <div style="width:40%">
               <!-- 原始样式 -->
               <div :style="{display: necessarySpendingListSwitch[index].switch == 'true' ? 'none' : 'flex'}">
                 <div style="width:90%" @click="necessarySpendingListSwitch[index].switch = 'true'">
-                  {{item.payList[formatLongDate(time,2)]}}
+                  {{ item.payList[formatLongDate(time,2)] ? item.payList[formatLongDate(time,2)] : 0 }}
                 </div>
                 <van-icon id="billList" style="width:10%" class="iconfont" class-prefix='icon' name='left' />
                 <!-- <van-icon style="align-self:center" name="edit" /> -->
@@ -178,7 +184,7 @@
               <!-- 原始样式 -->
               <div :style="{display: optionalSpendingListSwitch[index].switch == 'true' ? 'none' : 'flex'}">
                 <div style="width:90%" @click="optionalSpendingListSwitch[index].switch = 'true'">
-                  {{item.payList[formatLongDate(time,2)]}}
+                  {{item.payList[formatLongDate(time,2)] ? item.payList[formatLongDate(time,2)] : 0}}
                 </div>
                 <van-icon id="billList" style="width:10%" class="iconfont" class-prefix='icon' name='left' />
                 <!-- <van-icon style="align-self:center" name="edit" /> -->
@@ -204,6 +210,7 @@
       </div>
     </van-collapse-item>
 
+    <!-- 4 -->
     <van-collapse-item name="4">
       <template #title>
         <div id="" style="display:flex">
@@ -212,18 +219,13 @@
           <div style="width:40%">-{{monthCost}}/-{{monthBudjet}}</div>
         </div>
       </template>
-      <!-- <div style="display:flex">
-        <div style="width:40%">上月结余开支</div>
-        <div style="width:20%"></div>
-        <div style="width:40%">200</div>
-      </div> -->
       <div style="display:flex">
-        <div style="width:40%">本月已用开支</div>
+        <div style="width:40%">本月开支</div>
         <div style="width:20%"></div>
         <div style="width:40%">{{monthCost}}</div>
       </div>
       <div style="display:flex">
-        <div style="width:40%">本月预计开支</div>
+        <div style="width:40%">本月预算</div>
         <div style="width:20%"></div>
         <div style="width:40%">{{monthBudjet}}</div>
       </div>
@@ -234,6 +236,7 @@
       </div>
     </van-collapse-item>
 
+    <!-- 5 -->
     <van-collapse-item name="5">
       <template #title>
         <div id="" style="display:flex">
@@ -243,7 +246,7 @@
         </div>
       </template>
       <div style="display:flex">
-        <div style="width:40%">当前剩余资产</div>
+        <div style="width:40%">实际剩余资产</div>
         <div style="width:20%"></div>
         <div style="width:40%">{{Number(fixedSalary)+Number(fixedRentIncome)+Number(otherSalary)+Number(otherIncome)-Number(necessarySpending)-Number(optionalSpending)-monthCost}}</div>
       </div>
@@ -259,6 +262,7 @@
     <br>
     <!-- <van-divider dashed :style="{borderColor: '#aaa', padding: '0 16px' }"></van-divider> -->
 
+    <!-- 6 -->
     <van-collapse-item name="6" style="padding-top:1vw">
       <template #title>
         <div id="" style="display:flex">
@@ -278,9 +282,9 @@
         </div>
       </template>
       <div style="display:flex">
-        <div style="width:40%">当前剩余资产</div>
+        <div style="width:40%">实际剩余资产</div>
         <div style="width:20%"></div>
-        <div style="width:40%">{{addUpAsset+Number(fixedSalary)+Number(fixedRentIncome)+Number(otherSalary)+Number(otherIncome)-Number(necessarySpending)-Number(optionalSpending)-monthCost}}</div>
+        <div style="width:40%">{{addUpAsset+Number(fixedSalary)+fixedRentIncome+otherSalary+otherIncome-necessarySpending-optionalSpending-monthCost}}</div>
       </div>
       <div style="display:flex">
         <div style="width:40%">预计剩余资产</div>
@@ -460,9 +464,9 @@
 
 <script>
 import { Component, Vue } from "vue-property-decorator";
-import { Collapse, CollapseItem, Popup, Field, Button, Toast, SwipeCell, Form, Radio, RadioGroup, Popover, Grid, GridItem, Divider } from 'vant';
+import { Collapse, CollapseItem, Popup, Field, Button, Toast, SwipeCell, Form, Radio, RadioGroup, Popover, Grid, GridItem, Divider, Icon } from 'vant';
 
-Vue.use(Radio);Vue.use(RadioGroup);Vue.use(Form);Vue.use(Toast);Vue.use(Button);Vue.use(Field);Vue.use(Popup);Vue.use(Popover);Vue.use(Collapse);Vue.use(CollapseItem);Vue.use(SwipeCell);Vue.use(Grid);Vue.use(GridItem);Vue.use(Divider);
+Vue.use(Radio);Vue.use(RadioGroup);Vue.use(Form);Vue.use(Toast);Vue.use(Button);Vue.use(Field);Vue.use(Popup);Vue.use(Popover);Vue.use(Collapse);Vue.use(CollapseItem);Vue.use(SwipeCell);Vue.use(Grid);Vue.use(GridItem);Vue.use(Divider);Vue.use(Icon);
 
 export default {
   name: "funnel",
@@ -566,14 +570,13 @@ export default {
       let tempInExData = JSON.parse(localStorage.inExData);
       tempInExData["monthData"][y][m]["otherIncome"] -= tempInExData["monthData"][y][m]["otherIncomeList"][index].incomeNumber;
       tempInExData["monthData"][y][m]["otherIncomeList"].splice(index,1);
-      console.log(index);
       this.otherIncome = tempInExData["monthData"][y][m]["otherIncome"];
       this.otherIncomeList = tempInExData["monthData"][y][m]["otherIncomeList"];
       localStorage.inExData = JSON.stringify(tempInExData)
     },
+    // changeIncome针对写死的几个部分
     changeIncome(item,tempFixedSalary,y,m){
       if(tempFixedSalary){
-        console.log(item,tempFixedSalary,y,m);
         this[item] = tempFixedSalary;
         this['temp'+item.charAt(0).toUpperCase()+item.slice(1)] = '';
         let tempInExData = JSON.parse(localStorage.inExData);
@@ -820,11 +823,9 @@ export default {
       //   }, 20);
       // }
     },
-    
     cl(i){
       console.log(i);
     },
-
     // HTML里面要调用
     formatLongDate (date,type=0) {
       let myyear = date.getFullYear();
@@ -859,7 +860,102 @@ export default {
       }
       return (a)
     },
+    changeTime (index){
+      let y = this.time.getFullYear();
+      let m = this.time.getMonth();
+      let d = this.time.getDate();
+      let yy = this.todayTime.getFullYear();
+      let mm = this.todayTime.getMonth();
+      let dd = this.todayTime.getDate();
 
+      if(index == 1 || index == -1){   // 加减月份
+        this.time=new Date(parseInt(new Date(y,m+1+index,0,'23','59','59').getTime()));
+        if(this.time.getMonth() == this.todayTime.getMonth() & this.time.getFullYear() == this.todayTime.getFullYear()){
+          this.time = this.todayTime;
+        }
+      }else if(index == 0){   // 回到现在
+        this.time = this.todayTime;
+      }else{    //设置日期，这里还没写
+        this.time = new Date(parseInt(index.setDate(index.getDate())));
+      }
+      y = this.time.getFullYear();
+      m = this.time.getMonth();
+      d = this.time.getDate();
+
+      let tempInExData = JSON.parse(localStorage.inExData);
+      // 读取月度数据显示出来
+      if(!tempInExData["monthData"][y]){  // 不存在年数据
+        this.fixedSalary = 0;
+        this.fixedRentIncome = 0;
+        this.otherSalary = 0;
+        this.otherIncome = 0;
+        this.otherIncomeList = [];
+      }else{  // 存在年数据
+        if(!tempInExData["monthData"][y][m]){ // 不存在月数据
+          this.fixedSalary = 0;
+          this.fixedRentIncome = 0;
+          this.otherSalary = 0;
+          this.otherIncome = 0;
+          this.otherIncomeList = [];
+        }else{  // 存在月数据
+          this.fixedSalary = tempInExData["monthData"][y][m]["fixedSalary"];
+          this.fixedRentIncome = tempInExData["monthData"][y][m]["fixedRentIncome"];
+          this.otherSalary = tempInExData["monthData"][y][m]["otherSalary"];
+          this.otherIncome = tempInExData["monthData"][y][m]["otherIncome"];
+          this.otherIncomeList = tempInExData["monthData"][y][m]["otherIncomeList"];
+        }
+      }
+      
+      this.necessarySpendingList = tempInExData["necessarySpendingList"];
+      this.optionalSpendingList = tempInExData["optionalSpendingList"];
+      // 读取心愿清单数据显示出来
+
+      // 新建必要开支开关/可选开关
+      this.necessarySpendingListSwitch = [];
+      for (const i in this.necessarySpendingList) {
+        this.necessarySpendingListSwitch.push({switch:'false'});
+      }
+      this.optionalSpendingListSwitch = [];
+      for (const i in this.optionalSpendingList) {
+        this.optionalSpendingListSwitch.push({switch:'false'});
+      }
+
+      // 更新必要开支/可选开支
+      let a = formatLongDate(this.time,2);
+      this.necessarySpending = updateNecessarySpending(a,this.necessarySpendingList)
+      this.optionalSpending = updateOptionalSpending(a,this.optionalSpendingList)
+
+      let tempBillData = JSON.parse(localStorage.billData);
+      let tempUserData = JSON.parse(localStorage.userData)
+      this.balance = calcBalance(tempBillData,y,m,d);
+      // +++++++++++++++++calcBalance只计算到当前的数据，可能会有冲突，要留意
+
+      let b = 0;
+      let c = 0;
+      if(tempBillData[y]){
+        if(tempBillData[y]['list'][m]){
+          for(const k in tempBillData[y]['list'][m]['list']){
+            for(const l in tempBillData[y]['list'][m]['list'][k]['list']){
+              b += Number(tempBillData[y]['list'][m]['list'][k]['list'][l]['cost']);
+            }
+            c += Number(tempBillData[y]['list'][m]['list'][k]['data']['budjet']);
+          }
+        }
+      }
+      this.monthCost = Math.ceil(b);
+
+      // 获得当前月份天数的方法,date写0可以获取上月最后一天
+      let ddd = new Date(y,m+1,0);
+      // 只有在当月才执行此预算计算逻辑
+      if(y==yy & m==mm){
+        this.monthBudjet = Math.ceil(c + (ddd.getDate() - d) * tempUserData['budjet']);
+      }else{
+        this.monthBudjet = c;
+      };
+
+      let dddd = new Date(y,m,0);
+      this.addUpAsset = Math.ceil(updateAddUpAsset(tempInExData,tempBillData,dddd.getFullYear(),dddd.getMonth()));
+    },
   },
   
   watch:{
@@ -991,6 +1087,7 @@ export default {
     this.todayTime = new Date(parseInt(new Date().getTime()))
     let y = this.todayTime.getFullYear();
     let m = this.todayTime.getMonth();
+    let d = this.todayTime.getDate();
 
     this.time = this.todayTime;
     let yy = this.todayTime.getFullYear();
@@ -1005,15 +1102,15 @@ export default {
           fixedRentIncome:1,
           // otherFixedIncome:2,
           otherSalary:7,
-          otherIncome:0,
+          otherIncome:4000,
           otherIncomeList:[
             {incomeName: "睡觉", incomeNumber: "3000"},
             {incomeName: "红包", incomeNumber: "1000"}],
           necessarySpending:'',
           optionalSpending:'',
-          investSpending:1000,
-          freedomSpending:100,
-          remainAsset:1000,
+          // investSpending:1000,
+          // freedomSpending:100,
+          // remainAsset:1000,
         }}},
         necessarySpendingList:[
           {name:"房贷",sustainable:'false',interval:'month',price:7654321,payment:50000,payMonth:'',y:2021,m:1,payList:{'202103':500},status:'finish'},
@@ -1031,14 +1128,13 @@ export default {
 
     let tempInExData = JSON.parse(localStorage.inExData);
     // 读取月度数据显示出来
-    this.fixedSalary = tempInExData["monthData"][y][m]["fixedSalary"]
-    this.fixedRentIncome = tempInExData["monthData"][y][m]["fixedRentIncome"]
-    this.otherFixedIncome = tempInExData["monthData"][y][m]["otherFixedIncome"]
-    this.otherSalary = tempInExData["monthData"][y][m]["otherSalary"]
-    this.otherIncome = tempInExData["monthData"][y][m]["otherIncome"]
-    this.otherIncomeList = tempInExData["monthData"][y][m]["otherIncomeList"]
-    this.necessarySpendingList = tempInExData["necessarySpendingList"]
-    this.optionalSpendingList = tempInExData["optionalSpendingList"]
+    this.fixedSalary = tempInExData["monthData"][y][m]["fixedSalary"];
+    this.fixedRentIncome = tempInExData["monthData"][y][m]["fixedRentIncome"];
+    this.otherSalary = tempInExData["monthData"][y][m]["otherSalary"];
+    this.otherIncome = tempInExData["monthData"][y][m]["otherIncome"];
+    this.otherIncomeList = tempInExData["monthData"][y][m]["otherIncomeList"];
+    this.necessarySpendingList = tempInExData["necessarySpendingList"];
+    this.optionalSpendingList = tempInExData["optionalSpendingList"];
     // 读取心愿清单数据显示出来
 
     // 新建必要开支开关/可选开关
@@ -1056,22 +1152,33 @@ export default {
 
     let tempBillData = JSON.parse(localStorage.billData);
     let tempUserData = JSON.parse(localStorage.userData)
-    this.balance = calcBalance(tempBillData,yy,mm,dd);
-    let b = 0;  // 已开放预算
-    let c = 0;  // 已开放的剩余预算
-    for (const i in tempBillData[yy]['list'][mm]['list']) {
-      b += Number(tempBillData[yy]['list'][mm]['list'][i]['data']['budjet']);
-      c += Number(tempBillData[yy]['list'][mm]['list'][i]['data']['dateBalance']);
+    this.balance = calcBalance(tempBillData,y,m,d);
+    
+    let b = 0;
+    let c = 0;
+    if(tempBillData[y]){
+      if(tempBillData[y]['list'][m]){
+        for(const k in tempBillData[y]['list'][m]['list']){
+          for(const l in tempBillData[y]['list'][m]['list'][k]['list']){
+            b += Number(tempBillData[y]['list'][m]['list'][k]['list'][l]['cost']);
+          }
+          c += Number(tempBillData[y]['list'][m]['list'][k]['data']['budjet']);
+        }
+      }
     }
-    this.monthCost = b-c;
+    this.monthCost = Math.ceil(b);
 
     // 获得当前月份天数的方法,date写0可以获取上月最后一天
-    var d = new Date(yy,mm+1,0);
+    let ddd = new Date(y,m+1,0);
+    // 只有在当月才执行此预算计算逻辑
+    if(y==yy & m==mm){
+      this.monthBudjet = Math.ceil(c + (ddd.getDate() - d) * tempUserData['budjet']);
+    }else{
+      this.monthBudjet = c;
+    };
 
-    this.monthBudjet = b + (d.getDate() - dd) * tempUserData['budjet'];
-
-    this.addUpAsset = updateAddUpAsset(tempInExData,tempBillData,yy,mm);
-
+    let dddd = new Date(y,m,0);
+    this.addUpAsset = Math.ceil(updateAddUpAsset(tempInExData,tempBillData,dddd.getFullYear(),dddd.getMonth()));
   },
   beforeMount() {
     console.log("beforeMount");
@@ -1151,6 +1258,7 @@ function updateOptionalSpending(ym,optionalSpendingList){
 };
 
 function updateAddUpAsset(inExData,billData,y,m){
+  // 计算的范围含y、m
   let a = 0;
 
   // 遍历monthData
@@ -1158,23 +1266,13 @@ function updateAddUpAsset(inExData,billData,y,m){
     if(i < y){
       // 老年份的全部遍历计算
       for(const j in inExData.monthData[i]){
-        a += inExData.monthData[i][j]['fixedSalary'] + inExData.monthData[i][j]['fixedRentIncome'] + inExData.monthData[i][j]['otherSalary'];
-
-        // 遍历otherIncome
-        for(const k in inExData.monthData[i][j]['otherIncomeList']){
-          a += inExData.monthData[i][j]['otherIncomeList']['incomeNumber'];
-        }
+        a += inExData.monthData[i][j]['fixedSalary'] + inExData.monthData[i][j]['fixedRentIncome'] + inExData.monthData[i][j]['otherSalary'] + inExData.monthData[i][j]['otherIncome'];
       }
     }else if(i == y){
       // 当年的老月份遍历计算
       for(const j in inExData.monthData[i]){
-        if(j < m){
-          a += inExData.monthData[i][j]['fixedSalary'] + inExData.monthData[i][j]['fixedRentIncome'] + inExData.monthData[i][j]['otherSalary'];
-
-          // 遍历otherIncome
-          for(const k in inExData.monthData[i][j]['otherIncomeList']){
-            a += inExData.monthData[i][j]['otherIncomeList']['incomeNumber'];
-          }
+        if(j <= m){
+          a += inExData.monthData[i][j]['fixedSalary'] + inExData.monthData[i][j]['fixedRentIncome'] + inExData.monthData[i][j]['otherSalary'] + inExData.monthData[i][j]['otherIncome'];
         }
       }
     }
@@ -1182,17 +1280,17 @@ function updateAddUpAsset(inExData,billData,y,m){
 
   // 计算ym
   let ym = 0;
-  if(0 <= m <= 8){
+  if(0 <= m & m <= 8){
     ym = y + '0' + (m+1); 
-  }else if(9 <= m <= 11){
-    ym = y + m;
+  }else if(9 <= m & m <= 11){
+    ym = String(y) + m;
   }
-  
+ 
   // 遍历necessarySpending
   for(const i in inExData.necessarySpendingList){
     for(const j in inExData.necessarySpendingList[i]['payList']){
       // 判定键的时间比本日小
-      if(j < ym){
+      if(j <= ym){
         a -= inExData.necessarySpendingList[i]['payList'][j];
       }
     }
@@ -1202,20 +1300,42 @@ function updateAddUpAsset(inExData,billData,y,m){
   for(const i in inExData.optionalSpendingList){
     for(const j in inExData.optionalSpendingList[i]['payList']){
       // 判定键的时间比本日小
-      if(j < ym){
+      if(j <= ym){
         a -= inExData.optionalSpendingList[i]['payList'][j];
       }
     }
   }
 
   // 遍历日常开支
-  // date写0可以获取上月最后一天
-  let d = new Date(y,m,0);
-  a += calcBalance(billData,d.getFullYear(),d.getMonth(),d.getDate());
-
+  a -= updateAddUpMonthCost(billData,y,m);
   return a;
 }
 
+function updateAddUpMonthCost(billData,y,m){
+  let a = 0;
+  for (const i in billData) {
+    if(i < y){
+      for (const j in billData[i]['list']){
+        for(const k in billData[i]['list'][j]['list']){
+          for(const l in billData[i]['list'][j]['list'][k]['list']){
+            a += Number(billData[i]['list'][j]['list'][k]['list'][l]['cost']);
+          }
+        }
+      }
+    }else if(i == y){
+      for (const j in billData[y]['list']){
+        if(j <= m){
+          for(const k in billData[i]['list'][j]['list']){
+            for(const l in billData[i]['list'][j]['list'][k]['list']){
+              a += Number(billData[i]['list'][j]['list'][k]['list'][l]['cost']);
+            }
+          }
+        }
+      }
+    }
+  };
+  return a;
+}
 // 总余额计算（截至当天）
 function calcBalance(tempBillData,y,m,d){
   let balance = 0;
@@ -1226,16 +1346,21 @@ function calcBalance(tempBillData,y,m,d){
       balance += Number(tempBillData[i]["data"]["yearBalance"]);
     }
   }
+
   // 加总月表
-  for (const i in tempBillData[y]["list"]) {
-    if(i < m){
-      balance += Number(tempBillData[y]["list"][i]["data"]["monthBalance"]);
+  if(tempBillData[y]){
+    for (const i in tempBillData[y]["list"]) {
+      if(i < m){
+        balance += Number(tempBillData[y]["list"][i]["data"]["monthBalance"]);
+      }
     }
-  }
-  // 加总日表
-  for (const i in tempBillData[y]["list"][m]["list"]) {
-    if(i <= d){
-      balance += Number(tempBillData[y]["list"][m]["list"][i]["data"]["dateBalance"]);
+    if(tempBillData[y]["list"][m]){
+      // 加总日表
+      for (const i in tempBillData[y]["list"][m]["list"]) {
+        if(i <= d){
+          balance += Number(tempBillData[y]["list"][m]["list"][i]["data"]["dateBalance"]);
+        }
+      }
     }
   }
 
@@ -1319,5 +1444,9 @@ function calcBalance(tempBillData,y,m,d){
 
 .van-grid-item__content{
   padding:0
+}
+
+.fontSize7vw{
+  font-size:7vw;
 }
 </style>

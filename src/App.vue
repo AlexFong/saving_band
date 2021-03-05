@@ -9,20 +9,20 @@
   
   <div id="footer">
     <van-tabbar style="height:15vw" v-model="active">
-      <van-tabbar-item badge="3" to="/">
-        <span>每日数据</span>
+      <van-tabbar-item badge="" to="/">
+        <span>天天记账</span>
         <template #icon="props">
           <van-icon style="font-size:7vw" class="iconfont" class-prefix='icon' name='piechart' />
         </template>
       </van-tabbar-item>
-      <van-tabbar-item badge="3" to="/funnel">
-        <span>统计</span>
+      <van-tabbar-item badge="" to="/funnel">
+        <span>记账漏斗</span>
         <template #icon="props">
           <van-icon style="font-size:7vw" class="iconfont" class-prefix='icon' name='barchart' />
         </template>
       </van-tabbar-item>
-      <van-tabbar-item badge="3" to="/wishlist">
-        <span>愿望清单</span>
+      <van-tabbar-item badge="" to="/wishlist">
+        <span>心愿清单</span>
         <template #icon="props">
           <van-icon style="font-size:7vw" class="iconfont" class-prefix='icon' name='heart' />
         </template>
