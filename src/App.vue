@@ -1,12 +1,9 @@
 <template>
-  
 <div id="app">
   
-
   <!-- 显示路由路径下的内容 -->
   <router-view/>
 
-  
   <div id="footer">
     <van-tabbar style="height:15vw" v-model="active">
       <van-tabbar-item badge="3" to="/">
@@ -38,7 +35,6 @@
       <van-tabbar-item icon="setting-o" to="/mine">我的</van-tabbar-item> -->
     </van-tabbar>
   </div>
-  
 </div>
 </template>
 
@@ -65,7 +61,6 @@ export default {
 };
   
 </script>
-
 
 <style lang="scss">
 *{
