@@ -2,7 +2,7 @@
   <div id="home">
     <div id="header">
       <div style="width:36vw;line-height:6vw;font-size:4vw;margin:1vw 0 0 2vw;justify-content:left;text-align:left">
-        总余额:
+        累计余额:
         <div style="background-color:#fff;font-size:4vw;border:1px solid #ccc;width:30vw;border-radius:1vw;margin-left:-0.5vw">
           ￥{{ balance }}
         </div>
@@ -16,18 +16,18 @@
     <van-row style="height:55vh;border-top:1px solid black;border-bottom:1px solid black">
       <van-col span="8" style="height:55vh">
         <van-row style="height:10vh;border-bottom:1px solid black;display:flex;justify-content:space-around;flex-direction:column;">
-          <div style="height:4vh;display:flex;align-item:center;justify-content:center">
+          <div style="height:4vh;display:flex;align-items:center;justify-content:center">
             <div style="font-size:3vh;line-height:4.5vh;">
               {{ time.getMonth() + 1 }}月{{ time.getDate() }}日
             </div>
             <!-- iconfont引入用法（1/2) -->
-            <van-icon class="iconfont fontSize3vw" class-prefix='icon' name='accountbook' />
+            <van-icon class="iconfont fontSize7vw" class-prefix='icon' name='accountbook' />
           </div>
 
           <div style="height:4vh;line-height:4vh;display:flex;align-item:center;justify-content:center">
-            <button style="border:none;background-color:unset" @click="changeTime(-1)"><van-icon class="iconfont fontSize3vw" class-prefix='icon' name='left' /></button>
+            <button style="border:none;background-color:unset" @click="changeTime(-1)"><van-icon class="iconfont fontSize7vw" class-prefix='icon' name='left' /></button>
             <button @click="changeTime(0)" style="margin:0 0.5vh;font-size:2.5vh;line-height:3.5vh">今天</button>
-            <button style="border:none;background-color:unset" @click="changeTime(1)"><van-icon class="iconfont fontSize3vw" class-prefix='icon' name='right' /></button>
+            <button style="border:none;background-color:unset" @click="changeTime(1)"><van-icon class="iconfont fontSize7vw" class-prefix='icon' name='right' /></button>
           </div>
         </van-row>
 
@@ -169,9 +169,9 @@
       :style="{
         margin : height/width > 1.5 ? 0: 2 + 'vh ' + 0 ,
       }">
-        ￥<input style="width:35vw" type="number" v-model="cost" placeholder="输入金额" />
+        ￥<input style="width:50vw" type="number" v-model="cost" placeholder="输入金额" />
         <button @click="addFun">花钱</button>
-        <button @click="dayRollBack">回滚2天</button>
+        <!-- <button @click="dayRollBack">回滚2天</button> -->
       </div>
     </div>
   </div>
@@ -869,8 +869,8 @@ function calcTodayBalanceShow(todayBalance){
   }
 }
 
-.fontSize3vw{
-  font-size:3.5vh;
+.fontSize7vw{
+  font-size:7vw;
 }
 
 #billList{
