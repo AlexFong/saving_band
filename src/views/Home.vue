@@ -7,7 +7,7 @@
           <div style="line-height:15vw;font-size:4vw;">余额:{{ balance }}</div> 
           <!-- <div style="background-color:#fff;font-size:4vw;border:1px solid #ccc;width:30vw;border-radius:1vw;margin-left:-0.5vw"></div> -->
         </div>
-        <div style="width:28vw;">天天记账</div>
+        <div style="width:28vw;">天天记账1</div>
         <div style="width:36vw;"></div>
       </div>
     </div>
