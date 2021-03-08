@@ -4,10 +4,10 @@
       <div style="height:5vw"></div>
       <div style="display:flex;line-height:15vw">
         <div style="width:36vw;margin:1vw 0 0 2vw;justify-content:left;text-align:left">
-          <div style="line-height:15vw;font-size:4vw;">余额:{{ balance }}</div> 
+          <div style="line-height:15vw;font-size:3vw;">余额:{{ balance }}</div> 
           <!-- <div style="background-color:#fff;font-size:4vw;border:1px solid #ccc;width:30vw;border-radius:1vw;margin-left:-0.5vw"></div> -->
         </div>
-        <div style="width:28vw;">天天记账1</div>
+        <div style="width:28vw;">天天记账1.01</div>
         <div style="width:36vw;"></div>
       </div>
     </div>
@@ -17,7 +17,7 @@
       <van-col span="8" style="height:55vh">
         <van-row style="height:10vh;border-bottom:1px solid black;display:flex;justify-content:space-around;flex-direction:column;">
           <div style="height:4vh;display:flex;align-items:center;justify-content:center">
-            <div style="font-size:5.5vw;line-height:4.5vh;">
+            <div style="font-size:3.5vw;line-height:4.5vh;">
               {{ time.getMonth() + 1 }}月{{ time.getDate() }}日
             </div>
             <!-- iconfont引入用法（1/2) -->
@@ -26,7 +26,7 @@
 
           <div style="height:4vh;line-height:4vh;display:flex;align-item:center;justify-content:center">
             <button style="border:none;background-color:unset" @click="changeTime(-1)"><van-icon class="iconfont fontSize7vw" class-prefix='icon' name='left' /></button>
-            <span @click="changeTime(0)" style="margin:0 0.5vw;font-size:5.5vw;line-height:4vh;width:16vw;border:1px solid #aaa;">今天</span>
+            <span @click="changeTime(0)" style="margin:0 0.5vw;font-size:3.5vw;line-height:4vh;width:16vw;border:1px solid #aaa;">今天</span>
             <button style="border:none;background-color:unset" @click="changeTime(1)"><van-icon class="iconfont fontSize7vw" class-prefix='icon' name='right' /></button>
           </div>
         </van-row>
@@ -799,8 +799,8 @@ function calcTodayBalanceShow(todayBalance){
 *{
   margin: 0;
   padding: 0;
-  font-size: 5vw;
-  /* background-color: #f5f5f5; */
+  font-size: 4vw;
+  line-height: 4vw;
 }
 
 #header {
@@ -874,7 +874,7 @@ function calcTodayBalanceShow(todayBalance){
 }
 
 .fontSize7vw{
-  font-size:6vw;
+  font-size:4vw;
 }
 
 #billList{
