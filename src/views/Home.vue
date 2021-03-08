@@ -17,7 +17,7 @@
       <van-col span="8" style="height:55vh">
         <van-row style="height:10vh;border-bottom:1px solid black;display:flex;justify-content:space-around;flex-direction:column;">
           <div style="height:4vh;display:flex;align-items:center;justify-content:center">
-            <div style="font-size:3vh;line-height:4.5vh;">
+            <div style="font-size:5.5vw;line-height:4.5vh;">
               {{ time.getMonth() + 1 }}月{{ time.getDate() }}日
             </div>
             <!-- iconfont引入用法（1/2) -->
@@ -26,18 +26,18 @@
 
           <div style="height:4vh;line-height:4vh;display:flex;align-item:center;justify-content:center">
             <button style="border:none;background-color:unset" @click="changeTime(-1)"><van-icon class="iconfont fontSize7vw" class-prefix='icon' name='left' /></button>
-            <button @click="changeTime(0)" style="margin:0 0.5vh;font-size:2.5vh;line-height:3.5vh">今天</button>
+            <button @click="changeTime(0)" style="margin:0 0.5vw;font-size:5.5vw;line-height:3.5vh;width:16vw">今天</button>
             <button style="border:none;background-color:unset" @click="changeTime(1)"><van-icon class="iconfont fontSize7vw" class-prefix='icon' name='right' /></button>
           </div>
         </van-row>
 
         <van-row style="height:10vh;border-bottom:1px solid black;display:flex;justify-content:space-around;flex-direction:column">
-          <div style="height:3vh;line-height:3vh;font-size:3vh;text-align:center;padding-top:0.5vh;">
+          <div style="height:3vh;line-height:3vh;font-size:5.5vw;text-align:center;padding-top:0.5vh;">
             本日预算:
           </div> 
           <div style="height:3.5vh;line-height:3.5vh">
-            <input type="number" v-model="todayBudjet" style="font-size:2.5vh;width:50%;text-align:center;margin-right:0.3vh" placeholder="设置今日预算" />
-            <button @click="changeTodayBudjet()" style="font-size:2.5vh">设置</button>
+            <input type="number" v-model="todayBudjet" style="font-size:5.5vw;width:45%;text-align:center;margin-right:3%" placeholder="设置今日预算" />
+            <button @click="changeTodayBudjet()" style="font-size:5.5vw;width:36%">设置</button>
           </div>
         </van-row>
 
@@ -152,12 +152,15 @@
     
 
     <!-- tabbar高度是15vw -->
-    <div id="addBill" style="height:23vh;bottom: 16vw;display:flex;flex-direction:column;"
+    <div id="addBill" style="height:calc(45vh - 30vw);bottom: 16vw;display:flex;flex-direction:column;"
     :style="{
       'justify-content': height/width > 1.5 ? 'space-around' : 'flex-end',
-      height : height/width > 1.5 ? 25 + 'vh': 23 + 'vh',
     }">
-      <div style="margin:0 3vh">
+      <div style=":0 3vh;:70%"
+      :style="{
+      width: height/width > 1.5 ? '90%' : '70%',
+      margin : height/width > 1.5 ? '0 5%': '0 15%',
+      }">
       <!-- type="radio"时为单选题，type="checkbox"时为多选题 -->
         <span v-for="(item, index) in typeList" style="white-space: nowrap;">
           <input type="radio" :id="item.id" :value="item.id" v-model="typeId" />
@@ -809,7 +812,7 @@ function calcTodayBalanceShow(todayBalance){
 }
 
 #home{
-  height: calc(100vh - 50px);
+  height: calc(100vh - 15vw);
 }
 
 #billListOuter{
@@ -829,7 +832,8 @@ function calcTodayBalanceShow(todayBalance){
 
 
 #addBill{
-  position: fixed;
+  // position: fixed;
+  // height: calc(45vh - 30vw);
 }
 
 .money{
@@ -870,7 +874,7 @@ function calcTodayBalanceShow(todayBalance){
 }
 
 .fontSize7vw{
-  font-size:7vw;
+  font-size:6vw;
 }
 
 #billList{
