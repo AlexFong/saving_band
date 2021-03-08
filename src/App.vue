@@ -39,16 +39,13 @@
 
 
 <script>
-  import Vconsole from 'vconsole';
-  new Vconsole();
-  console.log('Hello world');
-</script>
-
-<script>
 // iconfont引入用法（2/2)
 import "./assets/font_2356633_61czw08nnlw/iconfont.css";
 import Vue from 'vue';
 import { Button, Tabbar, TabbarItem } from 'vant';
+import Vconsole from 'vconsole';
+new Vconsole();
+console.log('Hello world');
 
 Vue.use(Tabbar);
 Vue.use(TabbarItem);
