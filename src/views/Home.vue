@@ -3,12 +3,12 @@
     <div id="header">
       <div style="height:5vw"></div>
       <div style="display:flex;line-height:15vw">
-        <div style="width:36vw;margin:1vw 0 0 2vw;justify-content:left;text-align:left">
+        <div style="width:34vw;text-align:left">
           <div style="line-height:15vw;font-size:3vw;">余额:{{ balance }}</div> 
           <!-- <div style="background-color:#fff;font-size:4vw;border:1px solid #ccc;width:30vw;border-radius:1vw;margin-left:-0.5vw"></div> -->
         </div>
-        <div style="width:28vw;">天天记账1.01</div>
-        <div style="width:36vw;"></div>
+        <div style="width:32vw;line-height:15vw;">天天记账1.02</div>
+        <div style="width:34vw;"></div>
       </div>
     </div>
     
@@ -17,7 +17,7 @@
       <van-col span="8" style="height:55vh">
         <van-row style="height:10vh;border-bottom:1px solid black;display:flex;justify-content:space-around;flex-direction:column;">
           <div style="height:4vh;display:flex;align-items:center;justify-content:center">
-            <div style="font-size:3.5vw;line-height:4.5vh;">
+            <div style="line-height:4.5vh;">
               {{ time.getMonth() + 1 }}月{{ time.getDate() }}日
             </div>
             <!-- iconfont引入用法（1/2) -->
@@ -26,18 +26,18 @@
 
           <div style="height:4vh;line-height:4vh;display:flex;align-item:center;justify-content:center">
             <button style="border:none;background-color:unset" @click="changeTime(-1)"><van-icon class="iconfont fontSize7vw" class-prefix='icon' name='left' /></button>
-            <span @click="changeTime(0)" style="margin:0 0.5vw;font-size:3.5vw;line-height:4vh;width:16vw;border:1px solid #aaa;">今天</span>
+            <span @click="changeTime(0)" style="margin:0 0.5vw;line-height:3.5vh;width:14vw;border:1px solid #aaa;">今天</span>
             <button style="border:none;background-color:unset" @click="changeTime(1)"><van-icon class="iconfont fontSize7vw" class-prefix='icon' name='right' /></button>
           </div>
         </van-row>
 
         <van-row style="height:10vh;border-bottom:1px solid black;display:flex;justify-content:space-around;flex-direction:column">
-          <div style="height:3vh;line-height:3vh;font-size:5.5vw;text-align:center;padding-top:0.5vh;">
+          <div style="height:3vh;line-height:3vh;text-align:center;padding-top:0.5vh;">
             本日预算:
           </div> 
           <div style="height:3.5vh;line-height:3.5vh">
-            <input type="number" v-model="todayBudjet" style="font-size:5.5vw;width:45%;text-align:center;margin-right:3%" placeholder="设置今日预算" />
-            <span @click="changeTodayBudjet()" style="font-size:5.5vw;width:36%;border:1px solid #aaa;">设置</span>
+            <input type="number" v-model="todayBudjet" style="width:45%;text-align:center;margin-right:3%" placeholder="设置今日预算" />
+            <span @click="changeTodayBudjet()" style="width:36%;border:1px solid #aaa;">设置</span>
           </div>
         </van-row>
 
@@ -98,18 +98,18 @@
 
           <!-- 显示余额 -->
           <div style="align-content:center;justify-content:center;height:2.5vh;align-item:center;display:flex">
-            <div style="font-size:2.5vh;line-height:2.5vh;"
+            <div
               :style="{
                 display: todayBalanceShow < 0 || todayBalance == 0 ? 'none' : 'unset',
               }">
               余额:{{ todayBalance }}
             </div>
-            <div style="top:4vh;position:relative;font-size:7vw;line-height:9vw;font-weight:bolder"
+            <div style="top:4vh;position:relative;font-weight:bolder"
               :style="{
                 display: todayBalanceShow < 0 || todayBalance == 0 ? 'unset' : 'none',
               }">
-              <div style="font-size:7vw;">余额:</div>
-              <div style="font-size:7vw;"
+              <div style="font-size:7vw;line-height:9vw;">余额:</div>
+              <div style="font-size:7vw;line-height:9vw;"
                 :style="{
                   color: todayBalanceShow < 0 ? 'red' : 'unset',
                 }">
@@ -123,21 +123,21 @@
       </van-col>
 
       <van-col span="16" style="height:55vh;border-left:1px solid black">
-        <div style="height:5vh;font-size:3vh;line-height:5vh;border-bottom:1px solid black">本日账单</div>
-        <div id="billListOuter" style="height:49.9vh">
+        <div style="height:5vh;line-height:5vh;border-bottom:1px solid black">本日账单</div>
+        <div id="billListOuter" style="height:50vh">
           <div id="billListInner">
             <div v-for="(item, index) in bill">
               <van-swipe-cell style="margin-bottom:2vw;border-radius:2vw;">
-                <div style="font-size:5vw;line-height:10vw;background-color:#ffffff;border:2px solid #f0ffff;display:flex">
-                  <span style="font-size:4.5vw;width:20vw">
+                <div style="line-height:10vw;background-color:#ffffff;border:2px solid #f0ffff;display:flex">
+                  <span style="width:14vw">
                     {{ new Date(item.time).getHours() }}:{{
                       new Date(item.time).getMinutes() < 10
                         ? "0" + new Date(item.time).getMinutes()
                         : new Date(item.time).getMinutes()
                     }}
                   </span>
-                  <span style="font-size:4.5vw;width:22vw">{{ checkList[item.id] }}</span>
-                  <span style="font-size:4.5vw;width:15vw">￥{{ item.cost }} </span>
+                  <span style="width:30vw">{{ checkList[item.id] }}</span>
+                  <span style="width:13vw">￥{{ item.cost }} </span>
                   <van-icon id="billList" class="iconfont" class-prefix='icon' name='left' />
                 </div>
                 <template #right>
@@ -168,11 +168,11 @@
         </span>
       </div>
 
-      <div style="font-size:2.5vh;"
+      <div
       :style="{
         margin : height/width > 1.5 ? 0: 2 + 'vh ' + 0 ,
       }">
-        ￥<input style="width:50vw" type="number" v-model="cost" placeholder="输入金额" />
+        ￥<input style="width:40vw" type="number" v-model="cost" placeholder="输入金额" />
         <button @click="addFun">花钱</button>
         <!-- <button @click="dayRollBack">回滚2天</button> -->
       </div>

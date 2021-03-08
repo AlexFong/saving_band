@@ -8,25 +8,25 @@
       <van-tabbar-item badge="" to="/">
         <span>天天记账</span>
         <template #icon="props">
-          <van-icon style="font-size:7vw" class="iconfont" class-prefix='icon' name='piechart' />
+          <van-icon class="iconfont" class-prefix='icon' name='piechart' />
         </template>
       </van-tabbar-item>
       <van-tabbar-item badge="" to="/funnel">
         <span>记账漏斗</span>
         <template #icon="props">
-          <van-icon style="font-size:7vw" class="iconfont" class-prefix='icon' name='barchart' />
+          <van-icon class="iconfont" class-prefix='icon' name='barchart' />
         </template>
       </van-tabbar-item>
       <van-tabbar-item badge="" to="/wishlist">
         <span>心愿清单</span>
         <template #icon="props">
-          <van-icon style="font-size:7vw" class="iconfont" class-prefix='icon' name='heart' />
+          <van-icon class="iconfont" class-prefix='icon' name='heart' />
         </template>
       </van-tabbar-item>
       <van-tabbar-item badge="3" to="/mine">
         <span>我的</span>
         <template #icon="props">
-          <van-icon style="font-size:7vw" class="iconfont" class-prefix='icon' name='user' />
+          <van-icon class="iconfont" class-prefix='icon' name='user' />
         </template>
       </van-tabbar-item>
       <!-- <van-tabbar-item icon="search" to="/funnel">统计</van-tabbar-item>
@@ -43,9 +43,8 @@
 import "./assets/font_2356633_61czw08nnlw/iconfont.css";
 import Vue from 'vue';
 import { Button, Tabbar, TabbarItem } from 'vant';
-import Vconsole from 'vconsole';
-new Vconsole();
-// console.log('Hello world');
+// import Vconsole from 'vconsole';
+// new Vconsole();
 
 Vue.use(Tabbar);
 Vue.use(TabbarItem);
@@ -69,6 +68,7 @@ export default {
 *{
   margin: 0;
   padding: 0;
+  font-size: 3.5vw;
 }
 
 #app {
@@ -94,7 +94,8 @@ export default {
   }
 
   .iconfont{
-    font-size:8vw
+    font-size:7vw;
+    line-height: 9vw;
   }
   .van-tabbar-item{
     .icon{
