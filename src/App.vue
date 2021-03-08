@@ -81,7 +81,7 @@ export default {
 }
 
 #footer{
-  height: 15vw;
+  height: 20vw;
   // .van-tabbar-item__icon{
   //   height: 6vh;
   //   font-size: 4vh;

@@ -1,14 +1,14 @@
 <template>
   <div id="home">
     <div id="header">
-      <div style="width:36vw;line-height:6vw;font-size:4vw;margin:1vw 0 0 2vw;justify-content:left;text-align:left">
-        累计余额:
-        <div style="background-color:#fff;font-size:4vw;border:1px solid #ccc;width:30vw;border-radius:1vw;margin-left:-0.5vw">
-          ￥{{ balance }}
+      <div style="height:5vw"></div>
+      <div style="display:flex;line-height:15vw">
+        <div style="width:36vw;margin:1vw 0 0 2vw;justify-content:left;text-align:left">
+          <div style="line-height:15vw;font-size:4vw;">余额:{{ balance }}</div> 
+          <!-- <div style="background-color:#fff;font-size:4vw;border:1px solid #ccc;width:30vw;border-radius:1vw;margin-left:-0.5vw"></div> -->
         </div>
-      </div>
-      <div style="width:28vw;">天天记账</div>
-      <div style="width:36vw;">
+        <div style="width:28vw;">天天记账</div>
+        <div style="width:36vw;"></div>
       </div>
     </div>
     
@@ -26,7 +26,7 @@
 
           <div style="height:4vh;line-height:4vh;display:flex;align-item:center;justify-content:center">
             <button style="border:none;background-color:unset" @click="changeTime(-1)"><van-icon class="iconfont fontSize7vw" class-prefix='icon' name='left' /></button>
-            <button @click="changeTime(0)" style="margin:0 0.5vw;font-size:5.5vw;line-height:3.5vh;width:16vw">今天</button>
+            <span @click="changeTime(0)" style="margin:0 0.5vw;font-size:5.5vw;line-height:4vh;width:16vw;border:1px solid #aaa;">今天</span>
             <button style="border:none;background-color:unset" @click="changeTime(1)"><van-icon class="iconfont fontSize7vw" class-prefix='icon' name='right' /></button>
           </div>
         </van-row>
@@ -37,7 +37,7 @@
           </div> 
           <div style="height:3.5vh;line-height:3.5vh">
             <input type="number" v-model="todayBudjet" style="font-size:5.5vw;width:45%;text-align:center;margin-right:3%" placeholder="设置今日预算" />
-            <button @click="changeTodayBudjet()" style="font-size:5.5vw;width:36%">设置</button>
+            <span @click="changeTodayBudjet()" style="font-size:5.5vw;width:36%;border:1px solid #aaa;">设置</span>
           </div>
         </van-row>
 
@@ -152,7 +152,7 @@
     
 
     <!-- tabbar高度是15vw -->
-    <div id="addBill" style="height:calc(45vh - 30vw);bottom: 16vw;display:flex;flex-direction:column;"
+    <div id="addBill" style="height:calc(45vh - 40vw);bottom: 16vw;display:flex;flex-direction:column;"
     :style="{
       'justify-content': height/width > 1.5 ? 'space-around' : 'flex-end',
     }">
@@ -805,14 +805,14 @@ function calcTodayBalanceShow(todayBalance){
 
 #header {
   width: 100%;
-  height: 15vw;
+  height: 20vw;
   background-color: bisque;
-  line-height: 15vw;
-  display: flex;
+  // line-height: 20vw;
+  // display: flex;
 }
 
 #home{
-  height: calc(100vh - 15vw);
+  height: calc(100vh - 20vw);
 }
 
 #billListOuter{
