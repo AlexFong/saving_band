@@ -1,6 +1,5 @@
 <template>
 <div id="app">
-  
   <!-- 显示路由路径下的内容 -->
   <router-view/>
 
@@ -37,6 +36,13 @@
   </div>
 </div>
 </template>
+
+
+<script>
+  import Vconsole from 'vconsole';
+  new Vconsole();
+  console.log('Hello world');
+</script>
 
 <script>
 // iconfont引入用法（2/2)
