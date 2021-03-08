@@ -45,7 +45,7 @@ import Vue from 'vue';
 import { Button, Tabbar, TabbarItem } from 'vant';
 import Vconsole from 'vconsole';
 new Vconsole();
-console.log('Hello world');
+// console.log('Hello world');
 
 Vue.use(Tabbar);
 Vue.use(TabbarItem);

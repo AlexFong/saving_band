@@ -151,15 +151,15 @@
     </van-row>
     
 
-    <!-- tabbar高度是15vw -->
-    <div id="addBill" style="height:calc(45vh - 40vw);bottom: 16vw;display:flex;flex-direction:column;"
+    <!-- tabbar高度是20vw -->
+    <div id="addBill" style="height:calc(45vh - 40vw);display:flex;flex-direction:column;"
     :style="{
       'justify-content': height/width > 1.5 ? 'space-around' : 'flex-end',
     }">
-      <div style=":0 3vh;:70%"
+      <div 
       :style="{
-      width: height/width > 1.5 ? '90%' : '70%',
-      margin : height/width > 1.5 ? '0 5%': '0 15%',
+        width: height/width > 1.5 ? '90%' : '70%',
+        margin : height/width > 1.5 ? '0 5%': '0 15%',
       }">
       <!-- type="radio"时为单选题，type="checkbox"时为多选题 -->
         <span v-for="(item, index) in typeList" style="white-space: nowrap;">
