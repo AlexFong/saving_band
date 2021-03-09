@@ -7,7 +7,7 @@
           <div style="line-height:15vw;font-size:3vw;padding-left:2vw">余额:{{ balance }}</div> 
           <!-- <div style="background-color:#fff;font-size:4vw;border:1px solid #ccc;width:30vw;border-radius:1vw;margin-left:-0.5vw"></div> -->
         </div>
-        <div style="width:32vw;line-height:15vw;">天天记账1.08</div>
+        <div style="width:32vw;line-height:15vw;">天天记账1.09</div>
         <div style="width:34vw;"></div>
       </div>
     </div>
@@ -152,7 +152,7 @@
     
 
     <!-- tabbar高度是15vw -->
-    <div id="addBill" style="height:calc(45vh - 35vw);display:flex;flex-direction:column;"
+    <div id="addBill" style="height:calc(45vh - 40vw);display:flex;flex-direction:column;"
     :style="{
       'justify-content': height/width > 1.5 ? 'space-around' : 'flex-end',
     }">

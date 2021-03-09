@@ -4,7 +4,7 @@
   <router-view/>
 
   <div id="footer">
-    <van-tabbar style="height:15vw" v-model="active">
+    <van-tabbar style="height:16vw;padding-bottom:4vw" v-model="active">
       <van-tabbar-item badge="" to="/">
         <span>天天记账</span>
         <template #icon="props">
@@ -134,6 +134,8 @@ export default {
 //     }
 //   }
 // }
-
+.van-info{
+  margin-top: 10px;
+}
 
 </style>
