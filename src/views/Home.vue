@@ -126,17 +126,17 @@
           <div id="billListInner">
             <div v-for="(item, index) in bill">
               <van-swipe-cell style="margin-bottom:2vw;border-radius:2vw;">
-                <div style="line-height:10vw;background-color:#ffffff;border:2px solid #f0ffff;display:flex">
-                  <span style="width:14vw">
+                <div style="line-height:8vw;background-color:#ffffff;border:2px solid #f0ffff;display:flex">
+                  <span style="width:14vw;font-size:3vw">
                     {{ new Date(item.time).getHours() }}:{{
                       new Date(item.time).getMinutes() < 10
                         ? "0" + new Date(item.time).getMinutes()
                         : new Date(item.time).getMinutes()
                     }}
                   </span>
-                  <span style="width:30vw">{{ checkList[item.id] }}</span>
-                  <span style="width:13vw">￥{{ item.cost }} </span>
-                  <van-icon id="billList" class="iconfont" class-prefix='icon' name='left' />
+                  <span style="width:28vw;font-size:3vw">{{ checkList[item.id] }}</span>
+                  <span style="width:12vw;font-size:3vw">￥{{ item.cost }} </span>
+                  <van-icon id="billList" class="iconfont fontSize3vw" class-prefix='icon' name='left' />
                 </div>
                 <template #right>
                   <van-button @click="delFun(index,item)" square text="删除" type="danger" class="delete-button" />
@@ -869,6 +869,9 @@ function calcTodayBalanceShow(todayBalance){
   font-size:4vw;
 }
 
+.fontSize3vw{
+  font-size:3vw;
+}
 #billList{
   margin-left:3vw;
   width:5vw;
