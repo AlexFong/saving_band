@@ -109,6 +109,7 @@ export default {
   margin-top: 2vw;
   font-size:2vw;
   min-width: 2vw;
+  min-height: 2vw;
 }
 
 </style>
