@@ -122,7 +122,7 @@
 
       <van-col span="16" style="height:55vh;border-left:1px solid black">
         <div style="height:5vh;line-height:5vh;border-bottom:1px solid black">本日账单</div>
-        <div id="billListOuter" style="height:50vh">
+        <div id="billListOuter" style="height:49.5vh">
           <div id="billListInner">
             <div v-for="(item, index) in bill">
               <van-swipe-cell style="margin-bottom:2vw;border-radius:2vw;">
@@ -817,7 +817,8 @@ function calcTodayBalanceShow(todayBalance){
 
 #billListInner{
     height: 100%;
-    padding: 3% 1%;
+    padding: 0 1%;
+    margin: 1% 0;
     overflow-y: scroll;
 }
 
