@@ -70,17 +70,17 @@
           </div>
 
           <!-- 硬币1元 -->
-          <div style="height:4vh;width:30vw;margin:0vh 1.5vw;display:flex;flex-direction:row;align-content:space-around;justify-content:space-around;"
+          <div style="width:30vw;margin:0vh 1.5vw;display:flex;flex-direction:row;align-content:space-around;justify-content:space-around;"
             :style="{
               display: todayBalanceShow[1] > 0 ? 'flex' : 'none',
             }">
             <div v-for="item of todayBalanceShow[1]">
-              <div class="coin" style="background-color:#eee;border-radius:3vh;width:3vh;height:3vh;font-size:2.5vh;line-height:3.5vh">1</div>
+              <div class="coin" style="background-color:#eee;border-radius:3vh;width:3vh;height:3vh;font-size:2.5vh;line-height:3vh">1</div>
             </div>
           </div>
 
           <!-- 硬币角 -->
-          <div style="height:3.5vh;width:30vw;margin:0vh 1.5vw;display:flex;flex-direction:row;align-content:space-around;justify-content:space-around;"
+          <div style="width:30vw;margin:0vh 1.5vw;display:flex;flex-direction:row;align-content:space-around;justify-content:space-around;"
             :style="{
               display: !todayBalanceShow.coin || todayBalanceShow.coin.length == 0 ? 'none' : 'flex',
             }">
