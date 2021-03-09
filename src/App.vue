@@ -92,7 +92,7 @@ export default {
   .van-tabbar-item{
     .icon{
       font-size: 6vw;
-      line-height: 8vw;
+      line-height: 6.5vw;
     }
   }
   
@@ -105,6 +105,8 @@ export default {
 
 .van-info{
   margin-top: 2vw;
+  font-size:2vw;
+  min-width: 2vw;
 }
 
 </style>
