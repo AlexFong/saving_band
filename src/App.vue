@@ -109,9 +109,9 @@ export default {
   margin-top: 2vw;
   font-size:2vw;
   line-height:4vw;
-  width: 4vw;
-  height: 4vw;
-  border-radius: 4vw;
+  width: 5vw;
+  height: 5vw;
+  border-radius: 5vw;
 }
 
 </style>
