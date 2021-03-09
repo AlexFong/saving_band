@@ -98,13 +98,13 @@ export default {
   
   .van-tabbar-item__text{
     span{
-      font-size: 3vw;
+      font-size: 2vw;
     }
   }
 }
 
 .van-info{
-  margin-top: 10px;
+  margin-top: 2vw;
 }
 
 </style>
