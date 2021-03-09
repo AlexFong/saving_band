@@ -7,7 +7,7 @@
           <div style="line-height:15vw;font-size:3vw;padding-left:2vw">余额:{{ balance }}</div> 
           <!-- <div style="background-color:#fff;font-size:4vw;border:1px solid #ccc;width:30vw;border-radius:1vw;margin-left:-0.5vw"></div> -->
         </div>
-        <div style="width:32vw;line-height:15vw;">天天记账1.14</div>
+        <div style="width:32vw;line-height:15vw;">天天记账1.15</div>
         <div style="width:34vw;"></div>
       </div>
     </div>
@@ -43,7 +43,7 @@
 
         <van-row style="height:35vh;justify-content:space-around;display:flex;flex-direction:column">
           <!-- 纸币100元 -->
-          <div style="height:4vh;line-height:4vh;display:flex;justify-content:center;padding-top:2vh;align-item:center;"
+          <div style="height:4vh;line-height:4vh;display:flex;justify-content:center;padding-top:1vh;align-item:center;"
             :style="{
               display: todayBalanceShow[100] > 0 ? 'flex' : 'none',
             }">
@@ -95,7 +95,7 @@
           </div>
 
           <!-- 显示余额 -->
-          <div style="align-content:center;justify-content:center;height:2.5vh;align-item:center;display:flex">
+          <div style="align-content:center;justify-content:center;align-item:center;display:flex">
             <div
               :style="{
                 display: todayBalanceShow < 0 || todayBalance == 0 ? 'none' : 'unset',
