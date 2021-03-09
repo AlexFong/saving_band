@@ -156,13 +156,13 @@
     :style="{
       'justify-content': height/width > 1.5 ? 'space-around' : 'flex-end',
     }">
-      <div  style="white-space: normal;"
+      <div 
       :style="{
         width: height/width > 1.5 ? '90%' : '70%',
         margin : height/width > 1.5 ? '0 5%': '0 15%',
       }">
       <!-- type="radio"时为单选题，type="checkbox"时为多选题 -->
-        <span v-for="(item, index) in typeList" style="white-space: nowrap;">
+        <span v-for="(item, index) in typeList" >
           <input type="radio" :id="item.id" :value="item.id" v-model="typeId" />
           <label :for="item.id" style="font-size:2.5vh">{{ item.name }}</label>
         </span>
