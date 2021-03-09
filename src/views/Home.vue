@@ -4,10 +4,10 @@
       <div style="height:5vw"></div>
       <div style="display:flex;line-height:15vw">
         <div style="width:34vw;text-align:left">
-          <div style="line-height:15vw;font-size:3vw;">余额:{{ balance }}</div> 
+          <div style="line-height:15vw;font-size:3vw;padding-left:2vw">余额:{{ balance }}</div> 
           <!-- <div style="background-color:#fff;font-size:4vw;border:1px solid #ccc;width:30vw;border-radius:1vw;margin-left:-0.5vw"></div> -->
         </div>
-        <div style="width:32vw;line-height:15vw;">天天记账1.02</div>
+        <div style="width:32vw;line-height:15vw;">天天记账1.03</div>
         <div style="width:34vw;"></div>
       </div>
     </div>
@@ -156,7 +156,7 @@
     :style="{
       'justify-content': height/width > 1.5 ? 'space-around' : 'flex-end',
     }">
-      <div 
+      <div  style="white-space: normal;"
       :style="{
         width: height/width > 1.5 ? '90%' : '70%',
         margin : height/width > 1.5 ? '0 5%': '0 15%',
@@ -807,8 +807,6 @@ function calcTodayBalanceShow(todayBalance){
   width: 100%;
   height: 20vw;
   background-color: bisque;
-  // line-height: 20vw;
-  // display: flex;
 }
 
 #home{
@@ -821,7 +819,6 @@ function calcTodayBalanceShow(todayBalance){
     overflow: hidden;
     touch-action: auto;
     pointer-events: auto;
-    // background-color: aliceblue;
 }
 
 #billListInner{
@@ -878,7 +875,6 @@ function calcTodayBalanceShow(todayBalance){
 }
 
 #billList{
-  font-size:4vw;
   margin-left:3vw;
   width:5vw;
 }
