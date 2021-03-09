@@ -7,7 +7,7 @@
           <div style="line-height:15vw;font-size:3vw;padding-left:2vw">余额:{{ balance }}</div> 
           <!-- <div style="background-color:#fff;font-size:4vw;border:1px solid #ccc;width:30vw;border-radius:1vw;margin-left:-0.5vw"></div> -->
         </div>
-        <div style="width:32vw;line-height:15vw;">天天记账1.15</div>
+        <div style="width:32vw;line-height:15vw;">天天记账1.16</div>
         <div style="width:34vw;"></div>
       </div>
     </div>
@@ -125,17 +125,17 @@
         <div id="billListOuter" style="height:49.5vh">
           <div id="billListInner">
             <div v-for="(item, index) in bill">
-              <van-swipe-cell style="margin-bottom:1.5vw;border-radius:2vw;">
+              <van-swipe-cell style="margin-bottom:1.5vw;border-radius:2vw;width:63vw">
                 <div style="line-height:7vw;background-color:#ffffff;border:2px solid #f0ffff;display:flex">
-                  <span style="width:14vw;font-size:3vw">
+                  <span style="width:14vw;font-size:3vw;">
                     {{ new Date(item.time).getHours() }}:{{
                       new Date(item.time).getMinutes() < 10
                         ? "0" + new Date(item.time).getMinutes()
                         : new Date(item.time).getMinutes()
                     }}
                   </span>
-                  <span style="width:28vw;font-size:3vw">{{ checkList[item.id] }}</span>
-                  <span style="width:12vw;font-size:3vw">￥{{ item.cost }} </span>
+                  <span style="width:28vw;font-size:3vw;">{{ checkList[item.id] }}</span>
+                  <span style="width:12vw;font-size:3vw;">￥{{ item.cost }} </span>
                   <van-icon id="billList" class="iconfont fontSize3vw" class-prefix='icon' name='left' />
                 </div>
                 <template #right>
@@ -817,7 +817,6 @@ function calcTodayBalanceShow(todayBalance){
 
 #billListInner{
     height: 100%;
-    width:95%;
     padding: 0 1%;
     margin: 1% 0;
     overflow-y: scroll;
