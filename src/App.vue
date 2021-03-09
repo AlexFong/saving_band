@@ -23,7 +23,7 @@
           <van-icon class="iconfont" class-prefix='icon' name='heart' />
         </template>
       </van-tabbar-item>
-      <van-tabbar-item badge="3" to="/mine">
+      <van-tabbar-item badge="99" to="/mine">
         <span>我的</span>
         <template #icon="props">
           <van-icon class="iconfont" class-prefix='icon' name='user' />
@@ -108,8 +108,10 @@ export default {
 .van-info{
   margin-top: 2vw;
   font-size:2vw;
-  min-width: 2vw;
-  min-height: 2vw;
+  line-height:4vw;
+  width: 4vw;
+  height: 4vw;
+  border-radius: 4vw;
 }
 
 </style>

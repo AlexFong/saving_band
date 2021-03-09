@@ -7,7 +7,7 @@
           <div style="line-height:15vw;font-size:3vw;padding-left:2vw">余额:{{ balance }}</div> 
           <!-- <div style="background-color:#fff;font-size:4vw;border:1px solid #ccc;width:30vw;border-radius:1vw;margin-left:-0.5vw"></div> -->
         </div>
-        <div style="width:32vw;line-height:15vw;">天天记账1.16</div>
+        <div style="width:32vw;line-height:15vw;">天天记账1.17</div>
         <div style="width:34vw;"></div>
       </div>
     </div>
@@ -791,13 +791,6 @@ function calcTodayBalanceShow(todayBalance){
 </script>
 
 <style lang="scss">
-// *{
-//   margin: 0;
-//   padding: 0;
-//   font-size: 4vw;
-//   line-height: 4vw;
-// }
-
 #header {
   width: 100%;
   height: 20vw;
@@ -809,18 +802,18 @@ function calcTodayBalanceShow(todayBalance){
 }
 
 #billListOuter{
-    position: relative;
-    width: 100%;
-    overflow: hidden;
-    touch-action: auto;
-    pointer-events: auto;
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  touch-action: auto;
+  pointer-events: auto;
 }
 
 #billListInner{
-    height: 100%;
-    padding: 0 1%;
-    margin: 1% 0;
-    overflow-y: scroll;
+  height: 100%;
+  padding: 0 1%;
+  margin: 1% 0;
+  overflow-y: scroll;
 }
 
 
@@ -873,6 +866,7 @@ function calcTodayBalanceShow(todayBalance){
 .fontSize3vw{
   font-size:3vw;
 }
+
 #billList{
   margin-left:3vw;
   width:5vw;
