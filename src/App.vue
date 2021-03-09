@@ -68,7 +68,8 @@ export default {
 *{
   margin: 0;
   padding: 0;
-  font-size: 3.5vw;
+  font-size: 4vw;
+  // line-height: 4vw;
 }
 
 #app {

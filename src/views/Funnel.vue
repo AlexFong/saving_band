@@ -1447,6 +1447,6 @@ function calcBalance(tempBillData,y,m,d){
 }
 
 .fontSize7vw{
-  font-size:7vw;
+  font-size:4vw;
 }
 </style>

@@ -305,12 +305,12 @@ function calcBalance(tempBillData,y,m,d){
 </script>
 
 <style lang="css">
-*{
+/* *{
   border: 0;
   padding: 0;
   font-size: 4.5vw;
   line-height: 4.5vw;
-}
+} */
 
 #header {
   width: 100%;
