@@ -163,10 +163,10 @@
       }">
       <!-- type="radio"时为单选题，type="checkbox"时为多选题 -->
         <div v-for="(item, index) in typeList" class="itemOuter">
-          <span class="itemInner">
+          <!-- <span class="itemInner"> -->
             <input type="radio" :id="item.id" :value="item.id" v-model="typeId" />
             <label :for="item.id">{{ item.name }}</label>
-          </span>
+          <!-- </span> -->
         </div>
       </div>
 
@@ -882,8 +882,9 @@ function calcTodayBalanceShow(todayBalance){
 }
 
 .itemOuter{
-  white-space: pre-wrap;
-  width: fit-content;
+  // white-space: pre-wrap;
+  white-space: nowrap;
+  // width: fit-content;
 }
 
 .itemInner{
