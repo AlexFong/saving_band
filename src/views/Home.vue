@@ -7,7 +7,7 @@
           <div style="line-height:15vw;font-size:3vw;padding-left:2vw">余额:{{ balance }}</div> 
           <!-- <div style="background-color:#fff;font-size:4vw;border:1px solid #ccc;width:30vw;border-radius:1vw;margin-left:-0.5vw"></div> -->
         </div>
-        <div style="width:32vw;line-height:15vw;">天天记账1.04</div>
+        <div style="width:32vw;line-height:15vw;">天天记账1.05</div>
         <div style="width:34vw;"></div>
       </div>
     </div>
@@ -162,9 +162,11 @@
         margin : height/width > 1.5 ? '0 5%': '0 15%',
       }">
       <!-- type="radio"时为单选题，type="checkbox"时为多选题 -->
-        <span v-for="(item, index) in typeList" class="item">
-          <input type="radio" :id="item.id" :value="item.id" v-model="typeId" />
-          <label :for="item.id">{{ item.name }}</label>
+        <span v-for="(item, index) in typeList">
+          <span class="item">
+            <input type="radio" :id="item.id" :value="item.id" v-model="typeId" />
+            <label :for="item.id">{{ item.name }}</label>
+          </span>
         </span>
       </div>
 
@@ -880,7 +882,7 @@ function calcTodayBalanceShow(todayBalance){
 }
 
 .item{
-  white-space: pre-wrap;
+  white-space: nowrap;
   width: fit-content;
 }
 </style>
