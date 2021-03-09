@@ -43,8 +43,10 @@
 import "./assets/font_2356633_61czw08nnlw/iconfont.css";
 import Vue from 'vue';
 import { Button, Tabbar, TabbarItem } from 'vant';
-import Vconsole from 'vconsole';
-new Vconsole();
+
+// vConsole工作台
+// import Vconsole from 'vconsole';
+// new Vconsole();
 
 Vue.use(Tabbar);
 Vue.use(TabbarItem);

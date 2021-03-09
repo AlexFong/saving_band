@@ -817,6 +817,7 @@ function calcTodayBalanceShow(todayBalance){
 
 #billListInner{
     height: 100%;
+    width:95%;
     padding: 0 1%;
     margin: 1% 0;
     overflow-y: scroll;
