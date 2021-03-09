@@ -69,7 +69,6 @@ export default {
   margin: 0;
   padding: 0;
   font-size: 4vw;
-  // line-height: 4vw;
 }
 
 #app {
@@ -86,27 +85,15 @@ export default {
 
 #footer{
   height: 20vw;
-  // .van-tabbar-item__icon{
-  //   height: 6vh;
-  //   font-size: 4vh;
-  // }
   .van-tabbar-item__icon{
     margin-bottom: -1vw;
   }
 
-  .iconfont{
-    font-size:7vw;
-    line-height: 9vw;
-  }
   .van-tabbar-item{
     .icon{
-      font-size: 7vw;
+      font-size: 6vw;
+      line-height: 8vw;
     }
-    // &.van-tabbar-item--active{
-    //   .icon{
-    //     font-size: 7vw;
-    //   }
-    // }
   }
   
   .van-tabbar-item__text{
@@ -116,25 +103,6 @@ export default {
   }
 }
 
-// #nav {
-//   padding: 30px;
-  
-//   // router-link 转译之后变成a标签
-//   a {
-//     font-weight: bold;
-//     color: #2c3e50;
-//     height: 6vh;
-
-//     img{
-//       width: 5vh;
-//       height: 5vh;
-//     }
-//     // 导航条激活时的样式
-//     &.router-link-exact-active {
-//       color: #42b983;
-//     }
-//   }
-// }
 .van-info{
   margin-top: 10px;
 }

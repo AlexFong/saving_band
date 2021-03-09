@@ -7,7 +7,7 @@
           <div style="line-height:15vw;font-size:3vw;padding-left:2vw">余额:{{ balance }}</div> 
           <!-- <div style="background-color:#fff;font-size:4vw;border:1px solid #ccc;width:30vw;border-radius:1vw;margin-left:-0.5vw"></div> -->
         </div>
-        <div style="width:32vw;line-height:15vw;">天天记账1.10</div>
+        <div style="width:32vw;line-height:15vw;">天天记账1.11</div>
         <div style="width:34vw;"></div>
       </div>
     </div>
@@ -26,7 +26,7 @@
 
           <div style="height:4vh;line-height:4vh;display:flex;align-item:center;justify-content:center">
             <button style="border:none;background-color:unset" @click="changeTime(-1)"><van-icon class="iconfont fontSize7vw" class-prefix='icon' name='left' /></button>
-            <span @click="changeTime(0)" style="margin:0 0.5vw;line-height:3.5vh;width:14vw;border:1px solid #aaa;border-radius:2vw">今天</span>
+            <span @click="changeTime(0)" style="margin:0 0.5vw;width:14vw;border:1px solid #aaa;border-radius:2vw">今天</span>
             <button style="border:none;background-color:unset" @click="changeTime(1)"><van-icon class="iconfont fontSize7vw" class-prefix='icon' name='right' /></button>
           </div>
         </van-row>
@@ -35,22 +35,20 @@
           <div style="height:3vh;line-height:3vh;text-align:center;padding-top:0.5vh;">
             本日预算:
           </div> 
-          <div style="height:3.5vh;line-height:3.5vh;display:flex;justify-content:center">
-            <input type="number" v-model="todayBudjet" style="width:45%;text-align:center;margin-right:3%;border:1px solid #aaa;border-radius:2vw" placeholder="设置今日预算" />
-            <span @click="changeTodayBudjet()" style="width:30%;border:1px solid #aaa;border-radius:2vw">设置</span>
+          <div style="height:4vh;line-height:4vh;display:flex;justify-content:center">
+            <input type="number" v-model="todayBudjet" style="width:45%;text-align:center;margin-right:1vw;border:1px solid #aaa;border-radius:2vw;" placeholder="设置今日预算" />
+            <span @click="changeTodayBudjet()" style="width:35%;border:1px solid #aaa;border-radius:2vw">设置</span>
           </div>
         </van-row>
 
         <van-row style="height:35vh;justify-content:space-around;display:flex;flex-direction:column">
           <!-- 纸币100元 -->
-          <div style="height:4vh;display:flex;justify-content:center;padding-top:2vh;align-item:center;"
+          <div style="height:4vh;line-height:4vh;display:flex;justify-content:center;padding-top:2vh;align-item:center;"
             :style="{
               display: todayBalanceShow[100] > 0 ? 'flex' : 'none',
             }">
-            <div class="money" style="background-color:red;position:relative;margin-right:2vw">
-              100
-            </div>
-            <div style="font-size:2.5vh">x{{ todayBalanceShow[100]}}</div>
+            <div class="money" style="background-color:red;position:relative;margin-right:2vw">100</div>
+            <div>x{{ todayBalanceShow[100]}}</div>
           </div>
 
           <!-- 纸币 -->
