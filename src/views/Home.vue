@@ -36,7 +36,7 @@
             本日预算:
           </div> 
           <div style="height:4vh;line-height:4vh;display:flex;justify-content:center">
-            <input type="number" v-model="todayBudjet" style="width:47%;text-align:center;margin-right:1vw;border:1px solid #aaa;border-radius:2vw;height:4vh" placeholder="设置今日预算" />
+            <input type="number" v-model="todayBudjet" style="width:47%;text-align:center;margin-right:1vw;border:1px solid #aaa;height:4vh" placeholder="设置今日预算" />
             <span @click="changeTodayBudjet()" style="width:38%;border:1px solid #aaa;border-radius:2vw;height:4vh">设置</span>
           </div>
         </van-row>
@@ -154,24 +154,25 @@
     :style="{
       'justify-content': height/width > 1.5 ? 'space-around' : 'flex-end',
     }">
-      <div style="display:flex;flex-wrap:wrap;justify-content:center;line-height:6vw"
+      <div style="display:flex;flex-wrap:wrap;justify-content:center;line-height:5vw"
       :style="{
         width: height/width > 1.5 ? '90%' : '70%',
         margin : height/width > 1.5 ? '0 5%': '0 15%',
       }">
       <!-- type="radio"时为单选题，type="checkbox"时为多选题 -->
         <div v-for="(item, index) in typeList" class="item">
-          <input type="radio" :id="item.id" :value="item.id" v-model="typeId" />
-          <label :for="item.id">{{ item.name }}</label>
+          <input style="font-size:3vw;" type="radio" :id="item.id" :value="item.id" v-model="typeId" />
+          <label style="font-size:3vw;" :for="item.id">{{ item.name }}</label>
         </div>
       </div>
 
-      <div style="display:flex;justify-content:center;line-height:8vw"
+      <div style="display:flex;justify-content:center;line-height:6vw;"
       :style="{
         margin : height/width > 1.5 ? 0: 2 + 'vh ' + 0 ,
       }">
-        ￥<input style="width:40vw" type="number" v-model="cost" placeholder="输入金额" />
-        <span @click="addFun" style="width:12vw;border:1px solid #aaa;border-radius:2vw;margin-left:2vw;line-height:8vw">花钱</span>
+        <span>￥</span> 
+        <input style="width:40vw;" type="number" v-model="cost" placeholder="输入金额" />
+        <span @click="addFun" style="width:12vw;border:1px solid #aaa;border-radius:2vw;margin-left:2vw;">花钱</span>
         <!-- <button @click="dayRollBack">回滚2天</button> -->
       </div>
     </div>
