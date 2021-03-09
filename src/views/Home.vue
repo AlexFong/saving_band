@@ -125,8 +125,8 @@
         <div id="billListOuter" style="height:49.5vh">
           <div id="billListInner">
             <div v-for="(item, index) in bill">
-              <van-swipe-cell style="margin-bottom:2vw;border-radius:2vw;">
-                <div style="line-height:8vw;background-color:#ffffff;border:2px solid #f0ffff;display:flex">
+              <van-swipe-cell style="margin-bottom:1.5vw;border-radius:2vw;">
+                <div style="line-height:7vw;background-color:#ffffff;border:2px solid #f0ffff;display:flex">
                   <span style="width:14vw;font-size:3vw">
                     {{ new Date(item.time).getHours() }}:{{
                       new Date(item.time).getMinutes() < 10
