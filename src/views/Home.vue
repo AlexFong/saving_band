@@ -151,20 +151,20 @@
     </van-row>
     
 
-    <!-- tabbar高度是20vw -->
-    <div id="addBill" style="height:calc(45vh - 40vw);display:flex;flex-direction:column;"
+    <!-- tabbar高度是15vw -->
+    <div id="addBill" style="height:calc(45vh - 35vw);display:flex;flex-direction:column;"
     :style="{
       'justify-content': height/width > 1.5 ? 'space-around' : 'flex-end',
     }">
-      <div 
+      <div style=""
       :style="{
         width: height/width > 1.5 ? '90%' : '70%',
         margin : height/width > 1.5 ? '0 5%': '0 15%',
       }">
       <!-- type="radio"时为单选题，type="checkbox"时为多选题 -->
-        <span v-for="(item, index) in typeList" >
+        <span v-for="(item, index) in typeList" class="item">
           <input type="radio" :id="item.id" :value="item.id" v-model="typeId" />
-          <label :for="item.id" style="font-size:2.5vh">{{ item.name }}</label>
+          <label :for="item.id">{{ item.name }}</label>
         </span>
       </div>
 
@@ -877,5 +877,10 @@ function calcTodayBalanceShow(todayBalance){
 #billList{
   margin-left:3vw;
   width:5vw;
+}
+
+.item{
+  white-space: pre;
+  width: fit-content;
 }
 </style>
