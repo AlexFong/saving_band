@@ -156,18 +156,18 @@
     :style="{
       'justify-content': height/width > 1.5 ? 'space-around' : 'flex-end',
     }">
-      <div style=""
+      <div style="display:flex;flex-wrap:wrap;justify-content:center"
       :style="{
         width: height/width > 1.5 ? '90%' : '70%',
         margin : height/width > 1.5 ? '0 5%': '0 15%',
       }">
       <!-- type="radio"时为单选题，type="checkbox"时为多选题 -->
-        <span v-for="(item, index) in typeList" class="itemOuter">
+        <div v-for="(item, index) in typeList" class="itemOuter">
           <span class="itemInner">
             <input type="radio" :id="item.id" :value="item.id" v-model="typeId" />
             <label :for="item.id">{{ item.name }}</label>
           </span>
-        </span>
+        </div>
       </div>
 
       <div
