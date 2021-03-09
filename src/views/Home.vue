@@ -7,7 +7,7 @@
           <div style="line-height:15vw;font-size:3vw;padding-left:2vw">余额:{{ balance }}</div> 
           <!-- <div style="background-color:#fff;font-size:4vw;border:1px solid #ccc;width:30vw;border-radius:1vw;margin-left:-0.5vw"></div> -->
         </div>
-        <div style="width:32vw;line-height:15vw;">天天记账1.07</div>
+        <div style="width:32vw;line-height:15vw;">天天记账1.08</div>
         <div style="width:34vw;"></div>
       </div>
     </div>
@@ -162,11 +162,9 @@
         margin : height/width > 1.5 ? '0 5%': '0 15%',
       }">
       <!-- type="radio"时为单选题，type="checkbox"时为多选题 -->
-        <div v-for="(item, index) in typeList" class="itemOuter">
-          <!-- <span class="itemInner"> -->
-            <input type="radio" :id="item.id" :value="item.id" v-model="typeId" />
-            <label :for="item.id">{{ item.name }}</label>
-          <!-- </span> -->
+        <div v-for="(item, index) in typeList" class="item">
+          <input type="radio" :id="item.id" :value="item.id" v-model="typeId" />
+          <label :for="item.id">{{ item.name }}</label>
         </div>
       </div>
 
@@ -212,8 +210,8 @@ export default {
       typeId: "a",
       typeList: [
         { name: "餐饮", id: "a" },
-        { name: "住房生活", id: "b" },
-        { name: "服饰美容", id: "c" },
+        { name: "生活", id: "b" },
+        { name: "服饰", id: "c" },
         { name: "交通", id: "d" },
         { name: "购物", id: "e" },
         { name: "学习", id: "f" },
@@ -224,15 +222,13 @@ export default {
         { name: "医疗", id: "k" },
         { name: "红包", id: "l" },
         { name: "礼物", id: "m" },
-        { name: "保险", id: "n" },
-        { name: "投资", id: "o" },
-        { name: "意外", id: "p" },
-        { name: "其他", id: "q" },
+        { name: "美容", id: "n" },
+        { name: "其他", id: "o" },
       ],
       checkList: {
         a: "餐饮",
-        b: "住房生活",
-        c: "服饰美容",
+        b: "生活",
+        c: "服饰",
         d: "交通",
         e: "购物",
         f: "学习",
@@ -243,10 +239,8 @@ export default {
         k: "医疗",
         l: "红包",
         m: "礼物",
-        n: "保险",
-        o: "投资",
-        p: "意外",
-        q: "其他",
+        n: "美容",
+        o: "其他",
       },
       bill: [],
       todayTime:"",
@@ -881,13 +875,8 @@ function calcTodayBalanceShow(todayBalance){
   width:5vw;
 }
 
-.itemOuter{
-  // white-space: pre-wrap;
+.item{
   white-space: nowrap;
-  // width: fit-content;
 }
 
-.itemInner{
-  white-space: nowrap;
-}
 </style>
