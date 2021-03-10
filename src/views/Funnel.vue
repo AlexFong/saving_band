@@ -274,11 +274,11 @@
           <div style="width:20%;color:black"></div>
           <div style="width:40%;color:black">{{addUpAsset}}</div>
         </div>
-        <div id="" style="display:flex;opacity:0">
+        <!-- <div id="" style="display:flex;opacity:0">
           <div style="width:40%;color:black">嘿嘿</div>
           <div style="width:20%;color:black"></div>
           <div style="width:40%;color:black"></div>
-        </div>
+        </div> -->
         <div id="" style="display:flex">
           <div style="width:40%;color:black">总资产合计</div>
           <div style="width:20%;color:black"></div>
@@ -1450,6 +1450,11 @@ function calcBalance(tempBillData,y,m,d){
 
 .fontSize7vw{
   font-size:4vw;
+}
+
+.van-cell{
+  font-size: 3vw;
+  line-height:5vw;
 }
 
 .van-collapse-item__content{
