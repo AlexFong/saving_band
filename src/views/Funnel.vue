@@ -2,14 +2,18 @@
 <div class="funnel" id="funnel" @click="closePopup($event)">
 <!-- <h1>This is an funnel page</h1> -->
 <div id="header">
-  <div style="width:20vw;"></div>
-  <div style="width:60vw;display:flex;justify-content:center;align-self:center">
-    <button style="border:none;background-color:unset" @click="changeTime(-1)"><van-icon class="iconfont fontSize7vw" class-prefix='icon' name='left' /></button>
-    <div style="font-size:6vw" @click="changeTime(0)">{{time.getFullYear()}}-{{time.getMonth()+1}}</div>
-    <van-icon class="iconfont fontSize7vw" class-prefix='icon' name='accountbook' />
-    <button style="border:none;background-color:unset" @click="changeTime(1)"><van-icon class="iconfont fontSize7vw" class-prefix='icon' name='right' /></button>
+  <div style="height:5vw"></div>
+  <div style="height:15vw">
+    <!-- <div style="width:20vw;"></div> -->
+    <div style="margin:0 20vw;width:60vw;line-height:15vw;display:flex;justify-content:center;align-items:center">
+      <button style="border:none;background-color:unset" @click="changeTime(-1)"><van-icon class="iconfont fontSize7vw" class-prefix='icon' name='left' /></button>
+      <div @click="changeTime(0)">{{time.getFullYear()}}-{{time.getMonth()+1}}</div>
+      <van-icon class="iconfont fontSize7vw" class-prefix='icon' name='accountbook' />
+      <button style="border:none;background-color:unset" @click="changeTime(1)"><van-icon class="iconfont fontSize7vw" class-prefix='icon' name='right' /></button>
+    </div>
+    <!-- <div style="width:20vw;"></div> -->
   </div>
-  <div style="width:20vw;"></div>
+  
 </div>
 
 <div id="body">
@@ -479,17 +483,17 @@ export default {
   },
   data() {
     return {
-      activeNames: ['4','5','6'],
+      activeNames: [],
       todayTime: 0,
       time:0,
 
-      fixedSalary:1,
+      fixedSalary:0,
       tempFixedSalary:'',
-      fixedRentIncome:1,
+      fixedRentIncome:0,
       tempFixedRentIncome:'',
-      otherSalary:1,
+      otherSalary:0,
       tempOtherSalary:'',
-      otherIncome:1,
+      otherIncome:0,
       otherIncomeList:[],
       addIncomeShow: false,
       incomeName: '',
@@ -534,11 +538,10 @@ export default {
       addOptionalSpendingShow: false,
       optionalSpendingListSwitch:[],
 
-      balance:1,
-      monthCost:2,
-      monthBudjet:3,
-      addUpAsset:4000,
-      // remainAsset:1000,
+      balance:0,
+      monthCost:0,
+      monthBudjet:0,
+      addUpAsset:0,
 
     };
   },
@@ -1098,14 +1101,14 @@ export default {
     if(!localStorage.inExData){
       localStorage.inExData = JSON.stringify({
         monthData:{[y]:{[m]:{
-          fixedSalary:5000,
-          fixedRentIncome:1,
-          // otherFixedIncome:2,
-          otherSalary:7,
-          otherIncome:4000,
+          fixedSalary:0,
+          fixedRentIncome:0,
+          otherSalary:0,
+          otherIncome:0,
           otherIncomeList:[
-            {incomeName: "睡觉", incomeNumber: "3000"},
-            {incomeName: "红包", incomeNumber: "1000"}],
+            // {incomeName: "睡觉", incomeNumber: "3000"},
+            // {incomeName: "红包", incomeNumber: "1000"}
+            ],
           necessarySpending:'',
           optionalSpending:'',
           // investSpending:1000,
@@ -1113,14 +1116,14 @@ export default {
           // remainAsset:1000,
         }}},
         necessarySpendingList:[
-          {name:"房贷",sustainable:'false',interval:'month',price:7654321,payment:50000,payMonth:'',y:2021,m:1,payList:{'202103':500},status:'finish'},
-          {name:"车贷",sustainable:'false',interval:'year',price:54321,payment:3000,payMonth:3,y:2021,m:1,payList:{'202102':500},status:'going'},
-          {name:"房租",sustainable:'true',interval:'month',price:0,payment:2000,payMonth:'',y:2021,m:1,payList:{'202101':500},status:'pause'},
-          {name:"净水滤芯",sustainable:'true',interval:'year',price:0,payment:500,payMonth:3,y:2021,m:1,payList:{'202003':500},status:'going'},
+          // {name:"房贷",sustainable:'false',interval:'month',price:7654321,payment:50000,payMonth:'',y:2021,m:1,payList:{'202103':500},status:'finish'},
+          // {name:"车贷",sustainable:'false',interval:'year',price:54321,payment:3000,payMonth:3,y:2021,m:1,payList:{'202102':500},status:'going'},
+          // {name:"房租",sustainable:'true',interval:'month',price:0,payment:2000,payMonth:'',y:2021,m:1,payList:{'202101':500},status:'pause'},
+          // {name:"净水滤芯",sustainable:'true',interval:'year',price:0,payment:500,payMonth:3,y:2021,m:1,payList:{'202003':500},status:'going'},
         ],
         optionalSpendingList:[
-          {name:'投资',period:'month',sustainable:'true',payment:5000,price:50000,payList:{'202103':500},y:2021,m:'03',status:'going'},
-          {name:'投资',period:'month',sustainable:'true',payment:5000,price:50000,payList:{'202101':500},y:2021,m:3,status:'pause'},
+          // {name:'投资',period:'month',sustainable:'true',payment:5000,price:50000,payList:{'202103':500},y:2021,m:'03',status:'going'},
+          // {name:'投资',period:'month',sustainable:'true',payment:5000,price:50000,payList:{'202101':500},y:2021,m:3,status:'pause'},
         ],
         itemData:{}
       });
@@ -1377,15 +1380,15 @@ function calcBalance(tempBillData,y,m,d){
 
 <style lang="css">
 #funnel{
-  height: calc(100vh - 30vw);
+  height: calc(100vh - 40vw);
 }
 
 #header {
   width: 100%;
-  height: 15vw;
+  height: 20vw;
   background-color: bisque;
-  line-height: 15vw;
-  display: flex;
+  /* line-height: 15vw; */
+  /* display: flex; */
 }
 
 #body{
@@ -1413,7 +1416,7 @@ function calcBalance(tempBillData,y,m,d){
 
 .van-radio__label{
   line-height: 100%;
-  font-size: 100%;
+  /* font-size: 100%; */
 }
 
 .van-field__label{
@@ -1429,7 +1432,7 @@ function calcBalance(tempBillData,y,m,d){
 
 .van-field__body{
   line-height: 100%;
-  font-size: 100%;
+  /* font-size: 100%; */
 }
 
 .tag{
@@ -1439,7 +1442,7 @@ function calcBalance(tempBillData,y,m,d){
 }
 
 .van-grid-item__text{
-  font-size:6vw;
+  /* font-size:6vw; */
 }
 
 .van-grid-item__content{
