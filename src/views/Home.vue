@@ -7,7 +7,7 @@
           <div style="line-height:15vw;font-size:3vw;padding-left:2vw">余额:{{ balance }}</div> 
           <!-- <div style="background-color:#fff;font-size:4vw;border:1px solid #ccc;width:30vw;border-radius:1vw;margin-left:-0.5vw"></div> -->
         </div>
-        <div style="width:32vw;line-height:15vw;">天天记账1.17</div>
+        <div style="width:32vw;line-height:15vw;">天天记账1.18</div>
         <div style="width:34vw;"></div>
       </div>
     </div>
@@ -837,6 +837,7 @@ function calcTodayBalanceShow(todayBalance){
 .coin{
   word-wrap:break-word;
   border: solid 1px #aaa;
+  // text-align: ;
 }
 
 .van-swipe-cell__wrapper{
