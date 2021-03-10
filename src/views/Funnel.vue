@@ -1438,7 +1438,6 @@ function calcBalance(tempBillData,y,m,d){
 .tag{
   margin:1vw;
   height: 8vw;
-  
 }
 
 .van-grid-item__text{
@@ -1451,5 +1450,10 @@ function calcBalance(tempBillData,y,m,d){
 
 .fontSize7vw{
   font-size:4vw;
+}
+
+.van-collapse-item__content{
+  font-size: 3vw;
+  line-height:7vw;
 }
 </style>
