@@ -2,7 +2,7 @@
 <div class="wishList">
 <div id="header">
   <div style="height:5vw"></div>
-  <div style="height:15vw;line-height:15vw">心愿清单1.00</div>
+  <div style="height:15vw;line-height:15vw">心愿清单1.01</div>
 </div>
 
 <div style="display:flex;">
@@ -704,10 +704,6 @@ function calcBalance(tempBillData,y,m,d){
 
 .van-collapse-item__content{
   color:#666;
-}
-
-.van-cell{
-  /* background-color: #fafafa; */
 }
 
 .red{
