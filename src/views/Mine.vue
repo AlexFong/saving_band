@@ -165,7 +165,7 @@ function calcBalance(tempBillData,y,m,d){
 </script>
 
 <style lang="css">
-div {
-  /* min-width: 10vw; */
+.mine{
+  min-height: calc(100vh - 20vw);
 }
 </style>

@@ -129,11 +129,9 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #ffca57;
-  color: #2c3e50;
   width: 100vw;
   height: 100vh;
-  overflow: hidden;
+  // overflow: hidden;
 }
 
 #footer{

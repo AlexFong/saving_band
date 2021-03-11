@@ -784,47 +784,6 @@ export default {
       }else if(this[tempSwitch] == 'true'){
         this[tempSwitch] = 'false';
       }
-      // console.log('++++++++',tempSwitch,this[tempSwitch]);
-
-      // 第一次赋值
-      // if(this.switch14 == 'false'){
-      //   if(this.temp5 != '' & this.temp6 == '' & this.switch15 == 'true'){
-      //     this.temp6 = this.temp5 * this.temp4;
-      //   }else if(this.temp5 == '' & this.temp6 != '' & this.switch15 == 'true'){
-      //     this.temp5 = Math.ceil(this.temp6 / this.temp4);
-      //   }
-
-      //   this.switch14 = 'true';
-      //   setTimeout(() => {
-      //     this.switch14 = 'false';
-      //   }, 20);
-      // }
-
-      // if(this.switch14 == 'false'){
-      //   if(this.temp4 != '' & this.temp6 == '' & this.switch16 == 'true'){
-      //     this.temp6 = this.temp4 * this.temp5;
-      //   }else if(this.temp4 == '' & this.temp6 != '' & this.switch16 == 'true'){
-      //     this.temp4 = Math.ceil(this.temp6 / this.temp5);
-      //   }
-
-      //   this.switch14 = 'true';
-      //   setTimeout(() => {
-      //     this.switch14 = 'false';
-      //   }, 20);
-      // }
-
-      // if(this.switch14 == 'false'){
-      //   if(this.temp4 != '' & this.temp5 == '' & this.switch17 == 'true'){
-      //     this.temp5 = Math.ceil(this.temp6 / this.temp4);
-      //   }else if(this.temp4 == '' & this.temp5 != '' & this.switch17 == 'true'){
-      //     this.temp4 = Math.ceil(this.temp6 / this.temp5);
-      //   }
-
-      //   this.switch14 = 'true';
-      //   setTimeout(() => {
-      //     this.switch14 = 'false';
-      //   }, 20);
-      // }
     },
     cl(i){
       console.log(i);
@@ -1380,7 +1339,7 @@ function calcBalance(tempBillData,y,m,d){
 
 <style lang="css">
 #funnel{
-  height: calc(100vh - 40vw);
+  min-height: calc(100vh - 20vw);
 }
 
 #header {
