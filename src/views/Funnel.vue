@@ -170,15 +170,46 @@
         <div style="display:flex">
           <div style="width:40%">可选开支</div>
           <div style="width:30%"></div>
-          <div style="width:20%">-{{optionalSpending}}</div>
+          <div style="width:20%">-{{optionalSpending + Number(wishListSpending)}}</div>
         </div>
         <div id="" style="display:flex">
-          <div style="width:40%"></div>
+          <div style="width:40%">(心愿清单)</div>
           <div style="width:20%"></div>
-          <div style="width:40%">={{Number(fixedSalary)+Number(fixedRentIncome)+Number(otherSalary)+Number(otherIncome)-Number(necessarySpending)-optionalSpending}}</div>
+          <div style="width:40%">={{Number(fixedSalary)+Number(fixedRentIncome)+Number(otherSalary)+Number(otherIncome)-Number(necessarySpending)-optionalSpending -Number(wishListSpending)}}</div>
         </div>
       </template>
 
+      <!-- 可选开支里的愿望清单 -->
+      <div v-for="item,index in wishList">
+        <van-swipe-cell>
+          <div :id="'wishList'+index" style="display:flex">
+            <div style="width:40%;overflow:hidden;text-overflow: ellipsis;white-space: nowrap;">{{item.name}}</div>
+            <div style="width:20%"></div>
+            <div style="width:40%">
+              <!-- 原始样式 -->
+              <div :style="{display: wishListSwitch[index].switch == 'true' ? 'none' : 'flex'}">
+                <div style="width:90%" @click="wishListSwitch[index].switch = 'true'">
+                  {{item.payList[formatLongDate(time,2)] ? item.payList[formatLongDate(time,2)] : 0}}
+                </div>
+                <van-icon id="billList" style="width:10%" class="iconfont" class-prefix='icon' name='left' />
+                <!-- <van-icon style="align-self:center" name="edit" /> -->
+              </div>
+              <!-- 改数值样式 -->
+              <div style="justify-content:space-around;align-items:center;" :style="{display: wishListSwitch[index].switch == 'true'  ? 'flex' : 'none'}">
+                <van-button style="height:100%" size="small" type="danger" @click="wishListSwitch[index].switch = 'false';temp17 = ''">x</van-button>
+                <input style="width:50%;height:100%" type="number" name="" id="" :placeholder='item.payList[formatLongDate(time,2)]' v-model="temp17">
+                <van-button style="height:100%" size="small" type="primary" @click="wishListSwitch[index].switch = 'false';">√</van-button>
+              </div>
+            </div>
+          </div>
+          <template #right>
+            <van-button @click="" square text="删除" type="danger" class="delete-button" />
+            <van-button @click="" square text="*编辑*" type="primary" class="delete-button" />
+          </template>
+        </van-swipe-cell>
+      </div>
+
+      <!-- 可选开支里的可选开支 -->
       <div v-for="item,index in optionalSpendingList">
         <van-swipe-cell>
           <div :id="'optionalSpending'+index" style="display:flex">
@@ -246,18 +277,20 @@
         <div id="" style="display:flex">
           <div style="width:40%;color:black">本月剩余资产</div>
           <div style="width:20%;color:black"></div>
-          <div style="width:40%;color:black">={{Number(fixedSalary)+Number(fixedRentIncome)+Number(otherSalary)+Number(otherIncome)-Number(necessarySpending)-Number(optionalSpending)-monthCost}}/{{Number(fixedSalary)+Number(fixedRentIncome)+Number(otherSalary)+Number(otherIncome)-Number(necessarySpending)-Number(optionalSpending)-monthBudjet}}</div>
+          <div style="width:40%;color:black">
+            ={{Number(fixedSalary)+Number(fixedRentIncome)+Number(otherSalary)+Number(otherIncome)-Number(necessarySpending)-Number(optionalSpending)-Number(wishListSpending)-monthCost}}
+            /{{Number(fixedSalary)+Number(fixedRentIncome)+Number(otherSalary)+Number(otherIncome)-Number(necessarySpending)-Number(optionalSpending)-Number(wishListSpending)-monthBudjet}}</div>
         </div>
       </template>
       <div style="display:flex">
         <div style="width:40%">实际剩余资产</div>
         <div style="width:20%"></div>
-        <div style="width:40%">{{Number(fixedSalary)+Number(fixedRentIncome)+Number(otherSalary)+Number(otherIncome)-Number(necessarySpending)-Number(optionalSpending)-monthCost}}</div>
+        <div style="width:40%">{{Number(fixedSalary)+Number(fixedRentIncome)+Number(otherSalary)+Number(otherIncome)-Number(necessarySpending)-Number(optionalSpending)-Number(wishListSpending)-monthCost}}</div>
       </div>
       <div style="display:flex">
         <div style="width:40%">预计剩余资产</div>
         <div style="width:20%"></div>
-        <div style="width:40%">{{Number(fixedSalary)+Number(fixedRentIncome)+Number(otherSalary)+Number(otherIncome)-Number(necessarySpending)-Number(optionalSpending)-monthBudjet}}</div>
+        <div style="width:40%">{{Number(fixedSalary)+Number(fixedRentIncome)+Number(otherSalary)+Number(otherIncome)-Number(necessarySpending)-Number(optionalSpending)-Number(wishListSpending)-monthBudjet}}</div>
       </div>
     </van-collapse-item>
     
@@ -282,18 +315,21 @@
         <div id="" style="display:flex">
           <div style="width:40%;color:black">总资产合计</div>
           <div style="width:20%;color:black"></div>
-          <div style="width:40%;color:black">={{addUpAsset+fixedSalary+fixedRentIncome+otherSalary+otherIncome-necessarySpending-Number(optionalSpending)-monthCost}}/{{addUpAsset+fixedSalary+fixedRentIncome+otherSalary+otherIncome-necessarySpending-Number(optionalSpending)-monthBudjet}}</div>
+          <div style="width:40%;color:black">
+            ={{addUpAsset+Number(fixedSalary)+fixedRentIncome+otherSalary+otherIncome-necessarySpending-optionalSpending-Number(wishListSpending)-monthCost}}
+            /{{addUpAsset+Number(fixedSalary)+Number(fixedRentIncome)+Number(otherSalary)+Number(otherIncome)-Number(necessarySpending)-Number(optionalSpending)-Number(wishListSpending)-monthBudjet}}
+          </div>
         </div>
       </template>
       <div style="display:flex">
         <div style="width:40%">实际剩余资产</div>
         <div style="width:20%"></div>
-        <div style="width:40%">{{addUpAsset+Number(fixedSalary)+fixedRentIncome+otherSalary+otherIncome-necessarySpending-optionalSpending-monthCost}}</div>
+        <div style="width:40%">{{addUpAsset+Number(fixedSalary)+fixedRentIncome+otherSalary+otherIncome-necessarySpending-optionalSpending-Number(wishListSpending)-monthCost}}</div>
       </div>
       <div style="display:flex">
         <div style="width:40%">预计剩余资产</div>
         <div style="width:20%"></div>
-        <div style="width:40%">{{addUpAsset+Number(fixedSalary)+Number(fixedRentIncome)+Number(otherSalary)+Number(otherIncome)-Number(necessarySpending)-Number(optionalSpending)-monthBudjet}}</div>
+        <div style="width:40%">{{addUpAsset+Number(fixedSalary)+Number(fixedRentIncome)+Number(otherSalary)+Number(otherIncome)-Number(necessarySpending)-Number(optionalSpending)-Number(wishListSpending)-monthBudjet}}</div>
       </div>
     </van-collapse-item>
     
@@ -537,6 +573,9 @@ export default {
       optionalSpendingList:[],
       addOptionalSpendingShow: false,
       optionalSpendingListSwitch:[],
+      wishListSpending:'',
+      wishList:[],
+      wishListSwitch:[],
 
       balance:0,
       monthCost:0,
@@ -1052,9 +1091,10 @@ export default {
     let d = this.todayTime.getDate();
 
     this.time = this.todayTime;
-    let yy = this.todayTime.getFullYear();
-    let mm = this.todayTime.getMonth();
-    let dd = this.todayTime.getDate();
+    let yy = this.time.getFullYear();
+    let mm = this.time.getMonth();
+    let dd = this.time.getDate();
+    let ym = formatLongDate(this.time,2);  // ym
 
     // 不存在就新建
     if(!localStorage.inExData){
@@ -1098,22 +1138,32 @@ export default {
     this.necessarySpendingList = tempInExData["necessarySpendingList"];
     this.optionalSpendingList = tempInExData["optionalSpendingList"];
     // 读取心愿清单数据显示出来
+    if(localStorage.wishList){
+      this.wishList = JSON.parse(localStorage.wishList);
+      this.wishList = this.wishList.filter((val) => {
+        return val.status === 'aim' || val.payList[ym]});
+    }
+    
 
     // 新建必要开支开关/可选开关
     for (const i in this.necessarySpendingList) {
       this.necessarySpendingListSwitch.push({switch:'false'});
-    }
+    };
     for (const i in this.optionalSpendingList) {
       this.optionalSpendingListSwitch.push({switch:'false'});
+    };
+    for (const i in this.wishList) {
+      this.wishListSwitch.push({switch:'false'});
     }
 
     // 更新必要开支/可选开支
-    let a = formatLongDate(this.time,2);
-    this.necessarySpending = updateNecessarySpending(a,this.necessarySpendingList)
-    this.optionalSpending = updateOptionalSpending(a,this.optionalSpendingList)
+    this.necessarySpending = updateNecessarySpending(ym,this.necessarySpendingList);
+    this.optionalSpending = updateOptionalSpending(ym,this.optionalSpendingList);
+    this.wishListSpending = updateWishListSpending(ym,this.wishList);
+    console.log(this.wishListSpending);
 
     let tempBillData = JSON.parse(localStorage.billData);
-    let tempUserData = JSON.parse(localStorage.userData)
+    let tempUserData = JSON.parse(localStorage.userData);
     this.balance = calcBalance(tempBillData,y,m,d);
     
     let b = 0;
@@ -1214,6 +1264,16 @@ function updateOptionalSpending(ym,optionalSpendingList){
   for (const i in optionalSpendingList) {
     if(optionalSpendingList[i]['payList'][ym]){
       a += Number(optionalSpendingList[i]['payList'][ym]);
+    }
+  };
+  return a;
+};
+
+function updateWishListSpending(ym,wishList){
+  let a = 0;
+  for (const i in wishList) {
+    if(wishList[i]['payList'][ym]){
+      a += Number(wishList[i]['payList'][ym]);
     }
   };
   return a;

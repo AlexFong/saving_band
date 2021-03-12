@@ -2,7 +2,7 @@
 <div class="wishList">
 <div id="header">
   <div style="height:5vw"></div>
-  <div style="height:15vw;line-height:15vw">心愿清单1.01</div>
+  <div style="height:15vw;line-height:15vw">心愿清单1.02</div>
 </div>
 
 <div style="display:flex;">
@@ -45,27 +45,27 @@
       <div style="display:flex;flex-direction:row">
         <!-- 状态 -->
         <div style="width:6vw">
-          <van-icon :name=item.status :class=colorStyle[item.status] @click.stop="show = true;tempId = item.id;tempName = item.name;temp5 = item.price" />
+          <van-icon :name=item.status :class=colorStyle[item.status] @click.stop="chooseWish(item)" />
         </div>
         <!-- 心愿名字 -->
         <div style="width:36vw;overflow:hidden;white-space:nowrap;margin:0 6vw 0 2vw;font-size:3vw;">{{ item.name }}</div>
         <!-- 价格 -->
-        <div style="width:35vw;display:flex;flex-direction:row;white-space:nowrap;border:2px solid #ccc"
+        <div style="width:30vw;display:flex;flex-direction:row;white-space:nowrap;border:2px solid #ccc"
         :style="{
-          display: item.status == 'aim' ? 'unset' : 'none',
+          display: sumList(item.payList) != 0 && item.status != 'checked' ? 'unset' : 'none',
         }">
           <div style="background-color:#aaffaa;height:100%;float:left;position:relative"
           :style="{
-            width : 35*(item.payment/item.price) + 'vw',
+            width : 30*( sumList(item.payList)/item.price) + 'vw',
           }">
           </div>
-          <div style="width:35vw;position:absolute;font-size:3vw;">
-            ￥{{ item.payment }}/{{ item.price }}
+          <div style="width:30vw;position:absolute;font-size:3vw;">
+            {{ sumList(item.payList) }}/{{ item.price }}
           </div>
         </div>
         <div style="width:35vw;font-size:3vw;"
           :style="{
-            display: item.status == 'aim' ? 'none' : 'unset',
+            display: sumList(item.payList) != 0 && item.status != 'checked' ? 'none' : 'unset',
           }">
             ￥{{ item.price }}
         </div>
@@ -146,17 +146,17 @@
 
 
 <!-- 3、添加可选开支的弹窗 -->
-<van-popup v-model="addOptionalSpendingShow" position="bottom" style="height:'50vh';justify-content:space-between;flex-direction: column;" :style="{
-  display: addOptionalSpendingShow ? 'flex' : 'none',
+<van-popup v-model="achieveWishShow" position="bottom" style="height:65vh;justify-content:space-between;flex-direction: column;" :style="{
+  display: achieveWishShow ? 'flex' : 'none',
 }">
-  <div style="background-color:#f1f1f1;padding:1.5vh">添加可选开支</div>
+  <div style="background-color:#f1f1f1;padding:1.5vh">实现心愿(可选开支)</div>
 
   <!-- 输入框 -->
   <div>
     <!-- 输入任意文本 -->
-    <van-field id="" style="height:10vw;line-height:10vw" v-model="tempName" label="支出项目" placeholder="请输入支出项目名" :readonly=true />
+    <van-field id="" style="line-height:8vw" v-model="tempName" label="支出项目" placeholder="请输入支出项目名" />
 
-    <van-field name="radio1" label="缴费周期" style="line-height:10vw;height:10vw">
+    <van-field name="radio1" label="缴费周期" style="line-height:8vw;" disabled>
       <template #input>
         <van-radio-group v-model="temp1" direction="horizontal" disabled>
           <van-radio name="oneTime">一次性</van-radio>
@@ -169,10 +169,14 @@
 
     <van-field id="temp4" style="line-height:8vw"  v-model="temp4" type="digit" label="期数" placeholder="请输入期数"  :style="{display: temp1 == 'oneTime'? 'none' : ''}" @blur="switch4==false & temp4 != '' ?changeSwitch('switch4'):''" />
 
-    <van-field id="temp5" style="line-height:8vw"  v-model="temp5" type="number" label="总金额" placeholder="请输入总金额" @blur="switch5==false & temp5 != '' ?changeSwitch('switch5'):''"/>
+    <van-field id="temp5" style="line-height:8vw"  v-model="temp5" type="number" label="待付金额" placeholder="请输入待付金额" @blur="switch5==false & temp5 != '' ?changeSwitch('switch5'):''"/>
+
+    <van-field id="temp7" style="line-height:8vw"  v-model="temp7" type="number" label="已付金额" placeholder="" :readonly=true disabled/>
+
+    <van-field id="temp6" style="line-height:8vw"  v-model="temp6" type="number" label="总金额" placeholder="请输入总金额" />
   </div>
 
-  <van-button type="primary" round  size="normal" style="width:30vw;margin:0 0 4vh 35vw" @click="addOptionalSpending(tempName,temp1,false,temp3,temp4,temp5,todayTime.getFullYear(),todayTime.getMonth())">提交</van-button>
+  <van-button type="primary" round  size="normal" style="width:30vw;margin:0 0 4vh 35vw" @click="achieveWish(tempName,temp1,temp3,temp4,temp5,todayTime.getFullYear(),todayTime.getMonth())">提交</van-button>
 </van-popup>
 
 
@@ -215,10 +219,10 @@ export default {
       tempId:'',
       tempName:'',
       actions: [
-        { name: '待定',icon: "circle" }, 
-        { name: '执行中...',icon: "aim" }, 
-        { name: '完成',icon: "checked" }, 
-        { name: '取消',icon: "clear" }
+        { name: '想想看',icon: "circle" }, 
+        { name: '分期实现',icon: "aim" }, 
+        { name: '实现心愿',icon: "checked" }, 
+        { name: '暂时取消',icon: "clear" }
       ],
       show: false,
       value: 'unfinished',
@@ -236,16 +240,16 @@ export default {
       addWishShow: false,
       wishName:'',
       wishPrice:'',
-      addOptionalSpendingShow: false,
+      achieveWishShow: false,
 
       temp1 : 'oneTime',
       temp2 : 'true',
       temp3 : '',
       temp4 : '',
       temp5 : '',
-      // temp6 : '',
-      // temp7 : '',
-      // temp8 : '',
+      temp6 : '',
+      temp7 : '',
+      temp8 : '',
       // temp9 : '',
       // temp10 : '',
       switch3: false,
@@ -256,65 +260,103 @@ export default {
     };
   },
   methods: {
-    // A2
-    addOptionalSpending(temp11,temp12,temp13,temp14,temp15,temp16,y,m){
-      // 做了本地化处理
+    // A1
+    chooseWish(item){
+      this.show = true;
+      this.tempId = item.id;
+      this.tempName = item.name;
+      console.log('+++',item,item.payList);
 
-      m++;
-      if(m < 10){
-        m = '0' + m;
+      let a = 0;
+      for(const i in item.payList){
+        a += Number(item.payList[i]);
+        console.log(item.payList[i],a);
       }
+      this.temp7 = a;
+      this.temp6 = item.price;
+      this.temp5 = Number(this.temp6) - Number(this.temp7);
+    },
+    // A2
+    onSelect(item) {
+      // 可以通过 close-on-click-action 属性开启自动收起
+      // 传入的item是actions里的其中选中项
+      Toast(item.name);
+
+      if(item.icon == 'aim'){
+        this.achieveWishShow = true;
+        this.temp1 = 'month';
+        this.temp8 = item.icon;
+        // ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        // 是否需要增加暂停状态
+      }else if(item.icon == 'checked'){
+        this.achieveWishShow = true;
+        this.temp1 = 'oneTime';
+        this.temp8 = item.icon;
+      }else{
+        for (const i in this.wishList) {
+          if(this.wishList[i]['id'] == this.tempId){
+            this.wishList[i]['status'] = item.icon;
+          }
+        };
+        localStorage.wishList = JSON.stringify(this.wishList);
+      };
+      this.show = false;
+    },
+    // A3
+    achieveWish(tempName,temp1,temp3,temp4,temp5,y,m){
+      m++;
+      if(m < 10){m = '0' + m;}
       let ym = String(y) + String(m);
 
-      if(!temp11){
+      if(!tempName){
         Toast('请输入开支名');
-        // document.querySelector('#temp11').focus();
-      }else if(temp12 == false & !temp14){
-        Toast("请输入每期金额")
+        document.querySelector('#temp1').focus();
+      }else if(temp1 == false & !temp3){
+        Toast("请输入每期金额");
         document.querySelector('#temp3').focus();
-      }else if(temp12 == false & !temp15){
+      }else if(temp1 == false & !temp4){
         Toast('请输入期数');
         document.querySelector('#temp4').focus();
-      }else if(!temp16){
-        Toast('请输入总金额');
+      }else if(!temp5){
+        Toast('请输入待付金额');
         document.querySelector('#temp5').focus();
       }else{
-        let tempInExData = JSON.parse(localStorage.inExData);
-        tempInExData["optionalSpendingList"].push({
-          name:temp11,
-          period:temp12,
-          sustainable:temp13,
-          payment:temp14,
-          price:temp16,
-          y:y,m:m,
-          payList: {[''+y+m]:temp14},
-          status: temp12 == 'oneTime' || temp15 == 1 ? 'finish' : 'going',
-        });
+        // 改变状态
+        for (const i in this.wishList) {
+          if(this.wishList[i]['id'] == this.tempId){
+            this.wishList[i]['name'] = tempName;
+            this.wishList[i]['payment'] = temp3;
+            this.wishList[i]['price'] = temp5;
+            if(!this.wishList[i]['payList'][ym]){
+              if(temp3 == ''){
+                this.wishList[i]['payList'][ym] = temp5;
+              }else{
+                this.wishList[i]['payList'][ym] = temp3;
+              }
+            }else{
+              if(temp3 == ''){
+                this.wishList[i]['payList'][ym] += temp5;
+              }else{
+                this.wishList[i]['payList'][ym] += temp3;
+              }
+            };
+            this.wishList[i]['status'] = this.temp8;
+            if(this.temp8 == 'checked'){
+              this.wishList[i]['finishDate'] = this.todayTime;
+            }
+          }
+        };
+        localStorage.wishList = JSON.stringify(this.wishList);
         Toast("添加成功!");
-        this.optionalSpendingList = tempInExData["optionalSpendingList"];
-        this.optionalSpending = updateOptionalSpending(ym,this.optionalSpendingList)
-        localStorage.inExData = JSON.stringify(tempInExData);
-        this.temp11='';
-        this.temp12='oneTime';
-        this.temp13='true';
-        this.temp14='';
-        this.temp15='';
-        this.temp16='';
-        this.addOptionalSpendingShow = false;
+        
+        this.achieveWishShow = false;
         this.switch3 = 'false';
         this.switch4 = 'false';
         this.switch5 = 'false';
 
         this.tempName = '';
-        // 改变显示状态
-        for (const i in this.wishList) {
-          if(this.wishList[i]['id'] == this.tempId){
-            this.wishList[i]['status'] = 'aim';
-          }
-        };
-        localStorage.wishList = JSON.stringify(this.wishList);
+        this.temp3 = '';
       };
-
     },
     changeSwitch(tempSwitch){
       if(this[tempSwitch] == false){
@@ -346,33 +388,6 @@ export default {
     showPopup(e) {
       this[e] = true;
     },
-    // A1
-    onSelect(item) {
-      // 可以通过 close-on-click-action 属性开启自动收起
-      // 传入的item是actions里的其中选中项
-      Toast(item.name);
-
-      // addOptionalSpending(temp11,temp12,temp13,temp14,temp15,temp16,y,m)
-      if(item.icon == 'aim'){
-        this.addOptionalSpendingShow = true;
-        this.temp1 = 'month';
-        // ++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        // 是否需要增加暂停状态
-        // 
-      }else if(item.icon == 'checked'){
-        this.addOptionalSpendingShow = true;
-        this.temp1 = 'oneTime';
-        // ++++++++++++++++++++++++++++++++++++++++++++++++++++++
-      }else{
-        for (const i in this.wishList) {
-          if(this.wishList[i]['id'] == this.tempId){
-            this.wishList[i]['status'] = item.icon;
-          }
-        };
-        localStorage.wishList = JSON.stringify(this.wishList);
-      };
-      this.show = false;
-    },
     onConfirm() {
       this.$refs.item.toggle();
     },
@@ -385,7 +400,8 @@ export default {
         status:"circle",
         name:name,
         price:price,
-        payment:[],
+        payment:'',
+        payList:{},
         addDate:this.todayTime,
         finishDate:'',
         ps:'',
@@ -439,6 +455,13 @@ export default {
       }
       return (a)
     },
+    sumList(list){
+      let a = 0;
+      for(const i in list){
+        a += Number(list[i]);
+      }
+      return a;
+    }
   },
   watch:{
     temp3(newval,val){
@@ -491,6 +514,8 @@ export default {
         }else if(this.temp3 != '' & this.temp4 != ''){
           this.temp4 = Math.ceil(newval / this.temp3) == 0 ? '' : Math.ceil(newval / this.temp3);
         }
+        this.temp6 = Number(this.temp7) + Number(newval);
+
         this.switch6 = true;
         setTimeout(() => {
           this.switch6 = false;
@@ -499,6 +524,18 @@ export default {
       if(newval == ''){
         this.switch5 = false;
       }
+    },
+
+    temp6(newval,val){
+      if(this.switch6 == false){
+        this.temp5 = Number(newval) - Number(this.temp7);
+
+        // this.switch6 = true;
+        // setTimeout(() => {
+        //   this.switch6 = false;
+        // }, 20);
+      }
+      
     },
   },
   computed: {
@@ -542,6 +579,7 @@ export default {
           name:"电脑11111111111111111111",
           price:5000,
           payment:1000,
+          payList:{'202103':1000,'202102':2000,'202101':2000},
           addDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
           finishDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
           ps:0,
@@ -554,7 +592,8 @@ export default {
           status:"circle",
           name:"电脑2",
           price:4000,
-          payment:0,
+          payment:1000,
+          payList:{},
           addDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
           finishDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
           ps:0,
@@ -567,7 +606,8 @@ export default {
           status:"clear",
           name:"电脑333",
           price:3000,
-          payment:2000,
+          payment:1000,
+          payList:{'202103':100,'202102':2000,'202101':200},
           addDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
           finishDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
           ps:0,
@@ -580,7 +620,8 @@ export default {
           status:"aim",
           name:"电脑4444444444444444444",
           price:2000,
-          payment:1500,
+          payment:1000,
+          payList:{'202103':100,'202102':200,'202101':200},
           addDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
           finishDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
           ps:0,
@@ -612,7 +653,7 @@ export default {
     this.todayTime = new Date(parseInt(new Date().getTime()))
   },
   updated() {
-    console.log("updated",this.activeNames);
+    console.log("updated");
   },
   beforeDestroy() {
     console.log("beforeDestroy");
