@@ -48,7 +48,7 @@
           <van-icon :name=item.status :class=colorStyle[item.status] @click.stop="show = true;tempId = item.id;tempName = item.name;temp5 = item.price" />
         </div>
         <!-- 心愿名字 -->
-        <div style="width:36vw;overflow:hidden;white-space:nowrap;margin:0 6vw 0 2vw">{{ item.name }}</div>
+        <div style="width:36vw;overflow:hidden;white-space:nowrap;margin:0 6vw 0 2vw;font-size:3vw;">{{ item.name }}</div>
         <!-- 价格 -->
         <div style="width:35vw;display:flex;flex-direction:row;white-space:nowrap;border:2px solid #ccc"
         :style="{
@@ -59,11 +59,11 @@
             width : 35*(item.payment/item.price) + 'vw',
           }">
           </div>
-          <div style="width:35vw;position:absolute">
+          <div style="width:35vw;position:absolute;font-size:3vw;">
             ￥{{ item.payment }}/{{ item.price }}
           </div>
         </div>
-        <div style="width:35vw"
+        <div style="width:35vw;font-size:3vw;"
           :style="{
             display: item.status == 'aim' ? 'none' : 'unset',
           }">
@@ -75,12 +75,12 @@
     <!-- 折叠内容 -->
     <!-- 1 -->
     <div style="display:flex;background-color:#fff;border-bottom:1px solid #eee">
-      <div style="margin:0 5vw">
+      <div style="margin:0 5vw;font-size:3vw;">
         添加日期:
         <br>
         {{ formatLongDate(item.addDate,1) }}
       </div>
-      <div
+      <div style="font-size:3vw;"
       :style="{
         display: item.status == 'clear' || item.status == 'checked' ? 'unset' : 'none',
       }">
@@ -90,16 +90,16 @@
       </div> 
     </div>
     <!-- 2 -->
-    <div style="margin:2vw 0">
-      <span @click="changeIcon(item.saveMoney,'saveMoney',item.id)">
+    <div style="margin:2vw 0 0 0">
+      <span style="font-size:3vw;" @click="changeIcon(item.saveMoney,'saveMoney',item.id)">
         <van-icon :name=item.saveMoney :class=colorStyle[item.saveMoney] />
         省钱？
       </span>
-      <span @click="changeIcon(item.noWaste,'noWaste',item.id)">
+      <span style="font-size:3vw;" @click="changeIcon(item.noWaste,'noWaste',item.id)">
         <van-icon :name=item.noWaste :class=colorStyle[item.noWaste] />
         不浪费？
       </span>
-      <span @click="changeIcon(item.saveTime,'saveTime',item.id)">
+      <span style="font-size:3vw;" @click="changeIcon(item.saveTime,'saveTime',item.id)">
         <van-icon :name=item.saveTime :class=colorStyle[item.saveTime] />
         省时间？
       </span>
@@ -130,7 +130,7 @@
 />
 
 <!-- 1、添加心愿的弹窗 -->
-<van-popup v-model="addWishShow" position="bottom" style="height:28vh;justify-content:space-between;flex-direction:column;" :style="{ 
+<van-popup v-model="addWishShow" position="bottom" style="height:40vh;justify-content:space-between;flex-direction:column;" :style="{ 
   display: addWishShow ? 'flex' : 'none',
 }">
   <div style="background-color:#f1f1f1;padding:1.5vh">添加愿望</div>
@@ -146,11 +146,9 @@
 
 
 <!-- 3、添加可选开支的弹窗 -->
-<van-popup v-model="addOptionalSpendingShow" position="bottom" :style="{ 
-  height: '50vh',
-  'justify-content': 'space-between',
+<van-popup v-model="addOptionalSpendingShow" position="bottom" style="height:'50vh';justify-content:space-between;flex-direction: column;" :style="{
   display: addOptionalSpendingShow ? 'flex' : 'none',
-  'flex-direction': 'column' }">
+}">
   <div style="background-color:#f1f1f1;padding:1.5vh">添加可选开支</div>
 
   <!-- 输入框 -->
@@ -359,6 +357,8 @@ export default {
         this.addOptionalSpendingShow = true;
         this.temp1 = 'month';
         // ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        // 是否需要增加暂停状态
+        // 
       }else if(item.icon == 'checked'){
         this.addOptionalSpendingShow = true;
         this.temp1 = 'oneTime';
