@@ -1,15 +1,24 @@
 <template>
-  <div class="mine">
-    <h1>This is a mine page</h1>
-    <div>
-      设置每日预算:
-      <input type="number" v-model="budjet" placeholder="设置每日预算" />
-      <button @click="changeBudjet()">调整</button>
-    </div>
-    <br>
-    <div>总余额:{{ balance }}</div>
-    
+<div class="mine">
+<div id="header">
+  <div style="height:5vw"></div>
+  <div style="height:15vw;line-height:15vw">我的1.00</div>
+</div>
+<br>
+<div>
+  <div>
+    <span>设置每日预算:</span>
+    <input type="number" v-model="budjet" placeholder="设置每日预算" />
+    <button @click="changeBudjet()">调整</button>
   </div>
+  <br><br>
+  <button @click="delLocalStorage('inExData')">清理缓存inExData</button><br><br>
+  <button @click="delLocalStorage('billData')">清理缓存billData</button><br><br>
+  <button @click="delLocalStorage('userData')">清理缓存userData</button><br><br>
+  <button @click="delLocalStorage('wishList')">清理缓存wishList</button><br><br>
+  <!-- <div>总余额:{{ balance }}</div> -->
+</div>
+</div>
 </template>
 
 
@@ -87,6 +96,13 @@ export default {
         alert("预算不能为负数哦~");
       };
     },
+    delLocalStorage(e){
+      if(!e){
+        // localStorage.clear()
+      }else{
+        localStorage.removeItem(e)
+      }
+    },
   },
   beforeCreate() {
     console.log("beforeCreate");
@@ -111,9 +127,6 @@ export default {
   },
   mounted() {
     console.log("mounted");
-    for (let index = 0; index < 5; index++) {
-        console.log(index);
-    }
   },
   beforeUpdate() {
     console.log("beforeUpdate");
