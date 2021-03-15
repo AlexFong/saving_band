@@ -10,6 +10,7 @@
       <div @click="changeTime(0)">{{time.getFullYear()}}-{{time.getMonth()+1}}</div>
       <van-icon class="iconfont fontSize7vw" class-prefix='icon' name='accountbook' />
       <button style="border:none;background-color:unset" @click="changeTime(1)"><van-icon class="iconfont fontSize7vw" class-prefix='icon' name='right' /></button>
+      <span style="margin-left:5vw">1.00</span>
     </div>
     <!-- <div style="width:20vw;"></div> -->
   </div>
@@ -26,13 +27,12 @@
           <div style="width:40%">本月收入</div>
           <div style="width:30%"></div>
           <div style="width:20%;">
-            {{Number(fixedSalary)+fixedRentIncome+otherSalary+otherIncome}}
-            <!-- {{fixedSalary?Number(fixedSalary):Number(0)+fixedRentIncome?fixedRentIncome:0+otherSalary?otherSalary:0+otherIncome?otherIncome:0}} -->
+            {{Number(fixedSalary)+Number(fixedRentIncome)+Number(otherSalary)+Number(otherIncome)}}
           </div>
         </div>
       </template>
 
-      <!-- 稳定收入 -->
+      <!-- 固定工资 -->
       <div style="display:flex;align-content:center;justify-content:center">
         <div style="width:40%">固定工资</div>
         <div style="width:20%"></div>
@@ -40,12 +40,12 @@
           <!-- 原始样式 -->
           <div :style="{display: switch11 == 'true' ? 'none' : 'flex'}">
             <div style="width:90%">{{fixedSalary}}</div>
-            <van-icon style="align-self:center" @click="switch11 = 'true'" name="edit" />
+            <van-icon style="align-self:center" @click="switch11 = 'true';temp19='#fixedSalaryInput';getInputFocus()" name="edit" />
           </div>
           <!-- 改数值样式 -->
           <div style="justify-content:space-around;align-items:center;" :style="{display: switch11 == 'true'  ? 'flex' : 'none'}">
             <van-button style="height:100%" size="small" type="danger" @click="switch11 = 'false';tempFixedSalary = ''">x</van-button>
-            <input style="width:50%;height:100%" type="number" name="" id="" :placeholder='fixedSalary' v-model="tempFixedSalary">
+            <input style="width:50%;height:100%" type="number" name="" id="fixedSalaryInput" :placeholder='fixedSalary' v-model="tempFixedSalary">
             <van-button style="height:100%" size="small" type="primary" @click="switch11 = 'false';changeIncome('fixedSalary',tempFixedSalary,time.getFullYear(),time.getMonth())">√</van-button>
           </div>
         </div>
@@ -59,12 +59,12 @@
           <!-- 原始样式 -->
           <div :style="{display: switch12 == 'true' ? 'none' : 'flex'}">
             <div style="width:90%">{{fixedRentIncome}}</div>
-            <van-icon style="align-self:center" @click="switch12 = 'true'" name="edit" />
+            <van-icon style="align-self:center" @click="switch12 = 'true';temp19='#fixedRentIncomeInput';getInputFocus()" name="edit" />
           </div>
           <!-- 改数值样式 -->
           <div style="justify-content:space-around;align-items:center;" :style="{display: switch12 == 'true'  ? 'flex' : 'none'}">
             <van-button style="height:100%" size="small" type="danger" @click="switch12 = 'false';tempFixedRentIncome = ''">x</van-button>
-            <input style="width:50%;height:100%" type="number" name="" id="" :placeholder='fixedRentIncome' v-model="tempFixedRentIncome">
+            <input style="width:50%;height:100%" type="number" name="" id="fixedRentIncomeInput" :placeholder='fixedRentIncome' v-model="tempFixedRentIncome">
             <van-button style="height:100%" size="small" type="primary" @click="switch12 = 'false';changeIncome('fixedRentIncome',tempFixedRentIncome,time.getFullYear(),time.getMonth())">√</van-button>
           </div>
         </div>
@@ -78,12 +78,12 @@
           <!-- 原始样式 -->
           <div :style="{display: switch13 == 'true' ? 'none' : 'flex'}">
             <div style="width:90%">{{otherSalary}}</div>
-            <van-icon style="align-self:center" @click="switch13 = 'true'" name="edit" />
+            <van-icon style="align-self:center" @click="switch13 = 'true';temp19='#otherSalaryInput';getInputFocus()" name="edit" />
           </div>
           <!-- 改数值样式 -->
           <div style="justify-content:space-around;align-items:center;" :style="{display: switch13 == 'true'  ? 'flex' : 'none'}">
             <van-button style="height:100%" size="small" type="danger" @click="switch13 = 'false';tempOtherSalary = ''">x</van-button>
-            <input style="width:50%;height:100%" type="number" name="" id="" :placeholder='otherSalary' v-model="tempOtherSalary">
+            <input style="width:50%;height:100%" type="number" name="" id="otherSalaryInput" :placeholder='otherSalary' v-model="tempOtherSalary">
             <van-button style="height:100%" size="small" type="primary" @click="switch13 = 'false';changeIncome('otherSalary',tempOtherSalary,time.getFullYear(),time.getMonth())">√</van-button>
           </div>
         </div>
@@ -134,7 +134,7 @@
             <div style="width:40%">
               <!-- 原始样式 -->
               <div :style="{display: necessarySpendingListSwitch[index].switch == 'true' ? 'none' : 'flex'}">
-                <div style="width:90%" @click="necessarySpendingListSwitch[index].switch = 'true'">
+                <div style="width:90%" @click="necessarySpendingListSwitch[index].switch = 'true';temp19='#necessarySpendingListInput'+index;getInputFocus()">
                   {{ item.payList[formatLongDate(time,2)] ? item.payList[formatLongDate(time,2)] : 0 }}
                 </div>
                 <van-icon id="billList" style="width:10%" class="iconfont" class-prefix='icon' name='left' />
@@ -143,7 +143,7 @@
               <!-- 改数值样式 -->
               <div style="justify-content:space-around;align-items:center;" :style="{display: necessarySpendingListSwitch[index].switch == 'true'  ? 'flex' : 'none'}">
                 <van-button style="height:100%" size="small" type="danger" @click="necessarySpendingListSwitch[index].switch = 'false';temp8 = ''">x</van-button>
-                <input style="width:50%;height:100%" type="number" name="" id="" :placeholder='item.payList[formatLongDate(time,2)]' v-model="temp8">
+                <input style="width:50%;height:100%" type="number" name="" :id="'necessarySpendingListInput'+index" :placeholder='item.payList[formatLongDate(time,2)]' v-model="temp8">
                 <van-button style="height:100%" size="small" type="primary" @click="necessarySpendingListSwitch[index].switch = 'false';changeNecessarySpendingPay(index,temp8,formatLongDate(time,2))">√</van-button>
               </div>
             </div>
@@ -155,7 +155,6 @@
         </van-swipe-cell>
       </div>
 
-      
       <div style="display:flex">
         <div style="width:35%"></div>
         <van-button style="width:30%" @click="showPopup('addNecessarySpendingShow')">+添加</van-button>
@@ -188,7 +187,7 @@
             <div style="width:40%">
               <!-- 原始样式 -->
               <div :style="{display: wishListSwitch[index].switch == 'true' ? 'none' : 'flex'}">
-                <div style="width:90%" @click="wishListSwitch[index].switch = 'true'">
+                <div style="width:90%" @click="wishListSwitch[index].switch = 'true';temp19='#wishListInput'+index;getInputFocus()">
                   {{item.payList[formatLongDate(time,2)] ? item.payList[formatLongDate(time,2)] : 0}}
                 </div>
                 <van-icon id="billList" style="width:10%" class="iconfont" class-prefix='icon' name='left' />
@@ -196,9 +195,10 @@
               </div>
               <!-- 改数值样式 -->
               <div style="justify-content:space-around;align-items:center;" :style="{display: wishListSwitch[index].switch == 'true'  ? 'flex' : 'none'}">
-                <van-button style="height:100%" size="small" type="danger" @click="wishListSwitch[index].switch = 'false';temp17 = ''">x</van-button>
-                <input style="width:50%;height:100%" type="number" name="" id="" :placeholder='item.payList[formatLongDate(time,2)]' v-model="temp17">
-                <van-button style="height:100%" size="small" type="primary" @click="wishListSwitch[index].switch = 'false';">√</van-button>
+                <van-button style="height:100%" size="small" type="danger" @click="wishListSwitch[index].switch = 'false';temp18 = ''">x</van-button>
+                <input style="width:50%;height:100%" type="number"  :id="'wishListInput'+index" :placeholder='item.payList[formatLongDate(time,2)]' v-model="temp18">
+                <van-button style="height:100%" size="small" type="primary" @click="wishListSwitch[index].switch = 'false';cl('id',item.id);changeWishPay(item.id,temp18,formatLongDate(time,2))">√</van-button>
+                <!-- changeWishPay(index,temp18,formatLongDate(time,2)) -->
               </div>
             </div>
           </div>
@@ -218,7 +218,7 @@
             <div style="width:40%">
               <!-- 原始样式 -->
               <div :style="{display: optionalSpendingListSwitch[index].switch == 'true' ? 'none' : 'flex'}">
-                <div style="width:90%" @click="optionalSpendingListSwitch[index].switch = 'true'">
+                <div style="width:90%" @click="optionalSpendingListSwitch[index].switch = 'true';temp19='#optionalSpendingListInput'+index;getInputFocus()">
                   {{item.payList[formatLongDate(time,2)] ? item.payList[formatLongDate(time,2)] : 0}}
                 </div>
                 <van-icon id="billList" style="width:10%" class="iconfont" class-prefix='icon' name='left' />
@@ -227,7 +227,7 @@
               <!-- 改数值样式 -->
               <div style="justify-content:space-around;align-items:center;" :style="{display: optionalSpendingListSwitch[index].switch == 'true'  ? 'flex' : 'none'}">
                 <van-button style="height:100%" size="small" type="danger" @click="optionalSpendingListSwitch[index].switch = 'false';temp17 = ''">x</van-button>
-                <input style="width:50%;height:100%" type="number" name="" id="" :placeholder='item.payList[formatLongDate(time,2)]' v-model="temp17">
+                <input style="width:50%;height:100%" type="number" :id="'optionalSpendingListInput'+index" :placeholder='item.payList[formatLongDate(time,2)]' v-model="temp17">
                 <van-button style="height:100%" size="small" type="primary" @click="optionalSpendingListSwitch[index].switch = 'false';changeOptionalSpendingPay(index,temp17,formatLongDate(time,2))">√</van-button>
               </div>
             </div>
@@ -295,7 +295,7 @@
     </van-collapse-item>
     
     <br>
-    <div style="color:#ccc">------月/总分割线------</div>
+    <div style="color:#ccc">------分割线------</div>
     <br>
     <!-- <van-divider dashed :style="{borderColor: '#aaa', padding: '0 16px' }"></van-divider> -->
 
@@ -316,7 +316,7 @@
           <div style="width:40%;color:black">总资产合计</div>
           <div style="width:20%;color:black"></div>
           <div style="width:40%;color:black">
-            ={{addUpAsset+Number(fixedSalary)+fixedRentIncome+otherSalary+otherIncome-necessarySpending-optionalSpending-Number(wishListSpending)-monthCost}}
+            ={{Number(addUpAsset)+Number(fixedSalary)+Number(fixedRentIncome)+Number(otherSalary)+Number(otherIncome)-Number(necessarySpending)-Number(optionalSpending)-Number(wishListSpending)-Number(monthCost)}}
             /{{addUpAsset+Number(fixedSalary)+Number(fixedRentIncome)+Number(otherSalary)+Number(otherIncome)-Number(necessarySpending)-Number(optionalSpending)-Number(wishListSpending)-monthBudjet}}
           </div>
         </div>
@@ -324,7 +324,7 @@
       <div style="display:flex">
         <div style="width:40%">实际剩余资产</div>
         <div style="width:20%"></div>
-        <div style="width:40%">{{addUpAsset+Number(fixedSalary)+fixedRentIncome+otherSalary+otherIncome-necessarySpending-optionalSpending-Number(wishListSpending)-monthCost}}</div>
+        <div style="width:40%">{{Number(addUpAsset)+Number(fixedSalary)+Number(fixedRentIncome)+Number(otherSalary)+Number(otherIncome)-Number(necessarySpending)-Number(optionalSpending)-Number(wishListSpending)-Number(monthCost)}}</div>
       </div>
       <div style="display:flex">
         <div style="width:40%">预计剩余资产</div>
@@ -576,6 +576,10 @@ export default {
       wishListSpending:'',
       wishList:[],
       wishListSwitch:[],
+      temp18:'',
+      // 为了传值给nextTick
+      temp19:'',
+      temp20:'',
 
       balance:0,
       monthCost:0,
@@ -692,12 +696,10 @@ export default {
     },
     changeNecessarySpendingPay(index,temp,ym){
       if(temp){
-        // console.log(index,temp,ym);
         this.necessarySpendingList[index].payList[ym] = temp;
         let tempInExData = JSON.parse(localStorage.inExData);
         tempInExData["necessarySpendingList"][index].payList[ym] = temp;
         localStorage.inExData = JSON.stringify(tempInExData);
-        // console.log(JSON.parse(localStorage.inExData));
         
         this.temp8 = '';
         this.necessarySpending = updateNecessarySpending(ym,this.necessarySpendingList);
@@ -712,6 +714,20 @@ export default {
         
         this.temp17 = '';
         this.optionalSpending = updateOptionalSpending(ym,this.optionalSpendingList);
+      }
+    },
+    changeWishPay(id,temp,ym){
+      if(temp){
+        for(const i in this.wishList){
+          if(this.wishList[i].id == id){
+            // 要补逻辑，status和payList之类的情况要处理好
+            this.wishList[i].payList[ym] = temp;
+            localStorage.wishList = JSON.stringify(this.wishList);
+            
+            this.temp18 = '';
+            this.wishListSpending = updateWishListSpending(ym,this.wishList);
+          }
+        }
       }
     },
     addOptionalSpending(temp11,temp12,temp13,temp14,temp15,temp16,y,m){
@@ -743,10 +759,12 @@ export default {
           price:temp16,
           y:y,m:m,
           payList: {[''+y+m]:temp14},
-          status: temp12 == 'oneTime' || temp15 == 1 ? 'finish' : 'going'});
+          status: temp12 == 'oneTime' || temp15 == 1 ? 'finish' : 'going'
+        });
         Toast("添加成功!");
         this.optionalSpendingList = tempInExData["optionalSpendingList"];
-        this.optionalSpending = updateOptionalSpending(ym,this.optionalSpendingList)
+        this.optionalSpending = updateOptionalSpending(ym,this.optionalSpendingList);
+        this.optionalSpendingListSwitch.push({switch: "false"});
         localStorage.inExData = JSON.stringify(tempInExData);
         this.temp11='';
         this.temp12='oneTime';
@@ -767,10 +785,9 @@ export default {
       this.noptionalSpending = updateOptionalSpending(ym,this.optionalSpendingList);
       localStorage.inExData = JSON.stringify(tempInExData)
     },
+    // 点击其他地方，关闭临时窗口
     closePopup(event){
       // console.log(event);
-      // 点击其他地方，关闭临时窗口
-
       if(this.switch11 == "true"){    
         //以外的区域
         let btn = document.querySelector("#switch11");
@@ -778,7 +795,7 @@ export default {
           this.switch11 = false;
           this.tempFixedSalary = '';
         }
-      }
+      };
       if(this.switch12 == "true"){    
         //以外的区域
         let btn = document.querySelector("#switch12");
@@ -786,7 +803,7 @@ export default {
           this.switch12 = false;
           this.tempFixedRentIncome = '';
         }
-      }
+      };
       if(this.switch13 == "true"){    
         //以外的区域
         let btn = document.querySelector("#switch13");
@@ -794,7 +811,7 @@ export default {
           this.switch13 = false;
           this.tempOtherSalary = '';
         }
-      }
+      };
 
       for (const i in this.necessarySpendingListSwitch) {
         if (this.necessarySpendingListSwitch[i].switch == "true") {
@@ -804,7 +821,7 @@ export default {
             this.temp8 = '';
           }
         }
-      }
+      };
       for (const i in this.optionalSpendingListSwitch) {
         if (this.optionalSpendingListSwitch[i].switch == "true") {
           let btn = document.querySelector("#optionalSpending" + i);
@@ -813,7 +830,16 @@ export default {
             this.temp17 = '';
           }
         }
-      }
+      };
+      for (const i in this.wishListSwitch) {
+        if (this.wishListSwitch[i].switch == "true") {
+          let btn = document.querySelector("#wishList" + i);
+          if(!btn.contains(event.target)){
+            this.wishListSwitch[i].switch = false;
+            this.temp18 = '';
+          }
+        }
+      };
 
 
     },
@@ -824,8 +850,14 @@ export default {
         this[tempSwitch] = 'false';
       }
     },
-    cl(i){
-      console.log(i);
+    getInputFocus(){
+      // 通过函数传值好像传不进去
+      this.$nextTick(() => {
+        document.querySelector(this.temp19).focus();
+      })
+    },
+    cl(i,j,k,l,m){
+      console.log(i,j,k,l,m);
     },
     // HTML里面要调用
     formatLongDate (date,type=0) {
@@ -1155,7 +1187,7 @@ export default {
     for (const i in this.wishList) {
       this.wishListSwitch.push({switch:'false'});
     }
-
+    
     // 更新必要开支/可选开支
     this.necessarySpending = updateNecessarySpending(ym,this.necessarySpendingList);
     this.optionalSpending = updateOptionalSpending(ym,this.optionalSpendingList);
@@ -1204,7 +1236,7 @@ export default {
   },
   updated() {
     console.log("updated");
-    console.log();
+    console.log(document.activeElement);
   },
   beforeDestroy() {
     console.log("beforeDestroy");
@@ -1358,6 +1390,7 @@ function updateAddUpMonthCost(billData,y,m){
   };
   return a;
 }
+
 // 总余额计算（截至当天）
 function calcBalance(tempBillData,y,m,d){
   let balance = 0;

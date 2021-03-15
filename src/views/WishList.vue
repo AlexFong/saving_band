@@ -2,9 +2,10 @@
 <div class="wishList">
 <div id="header">
   <div style="height:5vw"></div>
-  <div style="height:15vw;line-height:15vw">心愿清单1.02</div>
+  <div style="height:15vw;line-height:15vw">心愿清单1.03</div>
 </div>
 
+<!-- 导航条 -->
 <div style="display:flex;">
   <van-dropdown-menu style="width:75vw">
     <!-- 1 -->
@@ -36,7 +37,7 @@
   </div>
 </div>
 
-
+<!-- 主体 -->
 <van-collapse v-model="activeNames">
   <!-- evenWishList是computed里监听的 -->
   <van-collapse-item :name="index"  v-for="(item, index) in evenWishList">
@@ -44,12 +45,12 @@
     <template #title>
       <div style="display:flex;flex-direction:row">
         <!-- 状态 -->
-        <div style="width:6vw">
+        <div style="width:8vw">
           <van-icon :name=item.status :class=colorStyle[item.status] @click.stop="chooseWish(item)" />
         </div>
         <!-- 心愿名字 -->
         <div style="width:36vw;overflow:hidden;white-space:nowrap;margin:0 6vw 0 2vw;font-size:3vw;">{{ item.name }}</div>
-        <!-- 价格 -->
+        <!-- 价格进度 -->
         <div style="width:30vw;display:flex;flex-direction:row;white-space:nowrap;border:2px solid #ccc"
         :style="{
           display: sumList(item.payList) != 0 && item.status != 'checked' ? 'unset' : 'none',
@@ -63,7 +64,8 @@
             {{ sumList(item.payList) }}/{{ item.price }}
           </div>
         </div>
-        <div style="width:35vw;font-size:3vw;"
+        <!-- 价格 -->
+        <div style="width:30vw;font-size:3vw;"
           :style="{
             display: sumList(item.payList) != 0 && item.status != 'checked' ? 'none' : 'unset',
           }">
@@ -573,62 +575,62 @@ export default {
     let tempBillData = JSON.parse(localStorage.billData)
     if(!localStorage.wishList){
       localStorage.wishList = JSON.stringify([
-        {
-          id:0,
-          status:"checked",
-          name:"电脑11111111111111111111",
-          price:5000,
-          payment:1000,
-          payList:{'202103':1000,'202102':2000,'202101':2000},
-          addDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
-          finishDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
-          ps:0,
-          noWaste:"checked",
-          saveTime:"checked",
-          saveMoney:"checked",
-        },
-        {
-          id:1,
-          status:"circle",
-          name:"电脑2",
-          price:4000,
-          payment:1000,
-          payList:{},
-          addDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
-          finishDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
-          ps:0,
-          noWaste:"circle",
-          saveTime:"circle",
-          saveMoney:"circle",
-        },
-        {
-          id:2,
-          status:"clear",
-          name:"电脑333",
-          price:3000,
-          payment:1000,
-          payList:{'202103':100,'202102':2000,'202101':200},
-          addDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
-          finishDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
-          ps:0,
-          noWaste:"clear",
-          saveTime:"clear",
-          saveMoney:"clear",
-        },
-        {
-          id:3,
-          status:"aim",
-          name:"电脑4444444444444444444",
-          price:2000,
-          payment:1000,
-          payList:{'202103':100,'202102':200,'202101':200},
-          addDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
-          finishDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
-          ps:0,
-          noWaste:"clear",
-          saveTime:"clear",
-          saveMoney:"clear",
-        }
+        // {
+        //   id:0,
+        //   status:"checked",
+        //   name:"电脑11111111111111111111",
+        //   price:5000,
+        //   payment:1000,
+        //   payList:{'202103':1000,'202102':2000,'202101':2000},
+        //   addDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
+        //   finishDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
+        //   ps:0,
+        //   noWaste:"checked",
+        //   saveTime:"checked",
+        //   saveMoney:"checked",
+        // },
+        // {
+        //   id:1,
+        //   status:"circle",
+        //   name:"电脑2",
+        //   price:4000,
+        //   payment:1000,
+        //   payList:{},
+        //   addDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
+        //   finishDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
+        //   ps:0,
+        //   noWaste:"circle",
+        //   saveTime:"circle",
+        //   saveMoney:"circle",
+        // },
+        // {
+        //   id:2,
+        //   status:"clear",
+        //   name:"电脑333",
+        //   price:3000,
+        //   payment:1000,
+        //   payList:{'202103':100,'202102':2000,'202101':200},
+        //   addDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
+        //   finishDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
+        //   ps:0,
+        //   noWaste:"clear",
+        //   saveTime:"clear",
+        //   saveMoney:"clear",
+        // },
+        // {
+        //   id:3,
+        //   status:"aim",
+        //   name:"电脑4444444444444444444",
+        //   price:2000,
+        //   payment:1000,
+        //   payList:{'202103':100,'202102':200,'202101':200},
+        //   addDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
+        //   finishDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
+        //   ps:0,
+        //   noWaste:"clear",
+        //   saveTime:"clear",
+        //   saveMoney:"clear",
+        // }
       ])
     };
     if(!tempUserData.wishId){
