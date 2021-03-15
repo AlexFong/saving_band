@@ -2,7 +2,7 @@
 <div class="wishList">
 <div id="header">
   <div style="height:5vw"></div>
-  <div style="height:15vw;line-height:15vw">心愿清单1.03</div>
+  <div style="height:15vw;line-height:15vw">心愿清单1.04</div>
 </div>
 
 <!-- 导航条 -->
