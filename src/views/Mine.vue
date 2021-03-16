@@ -2,20 +2,20 @@
 <div class="mine">
 <div id="header">
   <div style="height:5vw"></div>
-  <div style="height:15vw;line-height:15vw">我的1.01</div>
+  <div style="height:15vw;line-height:15vw">我的1.02</div>
 </div>
 <br>
 <div>
-  <div>
+  <div style="display:flex;justify-content:center">
     <span>设置每日预算:</span>
-    <input type="number" v-model="budjet" placeholder="设置每日预算" />
-    <button @click="changeBudjet()">调整</button>
+    <input style="margin:0 2vw;width:30vw" type="number" v-model="budjet" placeholder="设置每日预算" />
+    <span style="margin:0 0.5vw;width:14vw;border:1px solid #aaa;border-radius:2vw;height:4vh" @click="changeBudjet()">调整</span>
   </div>
   <br><br>
-  <button @click="chosen='inExData';showInfo='清理记账漏斗缓存/inExData';Dialog()">清理记账漏斗缓存/inExData</button><br><br>
-  <button @click="chosen='billData';showInfo='清理天天记账缓存/billData';Dialog()">清理天天记账缓存/billData</button><br><br>
-  <button @click="chosen='userData';showInfo='清理用户数据缓存/userData';Dialog()">清理用户数据缓存/userData</button><br><br>
-  <button @click="chosen='wishList';showInfo='清理心愿清单缓存/wishList';Dialog()">清理心愿清单缓存/wishList</button><br><br>
+  <button @click="chosen='inExData';showInfo='清理记账漏斗缓存/inExData';Dialog()">清理记账漏斗缓存<br>inExData</button><br><br>
+  <button @click="chosen='billData';showInfo='清理天天记账缓存/billData';Dialog()">清理日常开支缓存<br>billData</button><br><br>
+  <button @click="chosen='userData';showInfo='清理用户数据缓存/userData';Dialog()">清理用户数据缓存<br>userData</button><br><br>
+  <button @click="chosen='wishList';showInfo='清理心愿清单缓存/wishList';Dialog()">清理心愿清单缓存<br>wishList</button><br><br>
   <!-- <div>总余额:{{ balance }}</div> -->
 
   <!-- <van-dialog v-model="show" title="" show-cancel-button>
