@@ -7,7 +7,7 @@
       <div style="line-height:15vw;font-size:3vw;padding-left:2vw">余额:{{ balance }}</div> 
       <!-- <div style="background-color:#fff;font-size:4vw;border:1px solid #ccc;width:30vw;border-radius:1vw;margin-left:-0.5vw"></div> -->
     </div>
-    <div style="width:32vw;line-height:15vw;">天天记账1.21</div>
+    <div style="width:32vw;line-height:15vw;">天天记账1.22</div>
     <div style="width:34vw;"></div>
   </div>
 </div>
@@ -467,84 +467,85 @@ export default {
     let mm = this.todayTime.getMonth();
     let dd = this.todayTime.getDate();
     
-    if(!localStorage.userData){
-      // 新建userData,可以多加逻辑，记录用户首次登录时的信息+++++++++++++++++++++
-      localStorage.userData = JSON.stringify({
-        // 记录首次登录日期
-        fisrtLoginDate:this.todayTime,
-        name:"default",
-        latestLoginDate:this.todayTime,
-        budjet:400,
-      })
+    // if(!localStorage.userData){
+    //   // 新建userData,可以多加逻辑，记录用户首次登录时的信息+++++++++++++++++++++
+    //   localStorage.userData = JSON.stringify({
+    //     // 记录首次登录日期
+    //     fisrtLoginDate:this.todayTime,
+    //     name:"default",
+    //     latestLoginDate:this.todayTime,
+    //     budjet:400,
+    //   })
 
-      // 新建billData
-      let tempBillData = initBillData({},y,m,d,this.budjet);
+    //   // 新建billData
+    //   let tempBillData = initBillData({},y,m,d,this.budjet);
 
-      // 计算各层Balance
-      tempBillData[y]["list"][m]["list"][d]["data"]["dateBalance"] = calcDateBalance(tempBillData,y,m,d);
-      tempBillData[y]["list"][m]["data"]["monthBalance"] = calcMonthBalance(tempBillData,y,m);
-      tempBillData[y]["data"]["yearBalance"] = calcYearBalance(tempBillData,y);
-      this.balance = calcBalance(tempBillData,yy,mm,dd);
-      this.todayBalance = tempBillData[y]["list"][m]["list"][d]["data"]["dateBalance"];
-      this.todayBudjet = tempBillData[y]["list"][m]["list"][d]["data"]["budjet"];
+    //   // 计算各层Balance
+    //   tempBillData[y]["list"][m]["list"][d]["data"]["dateBalance"] = calcDateBalance(tempBillData,y,m,d);
+    //   tempBillData[y]["list"][m]["data"]["monthBalance"] = calcMonthBalance(tempBillData,y,m);
+    //   tempBillData[y]["data"]["yearBalance"] = calcYearBalance(tempBillData,y);
+    //   this.balance = calcBalance(tempBillData,yy,mm,dd);
+    //   this.todayBalance = tempBillData[y]["list"][m]["list"][d]["data"]["dateBalance"];
+    //   this.todayBudjet = tempBillData[y]["list"][m]["list"][d]["data"]["budjet"];
 
-      // stringify再parse会使时间格式发生变化
-      localStorage.billData = JSON.stringify(tempBillData);
-      // 使时间格式保持一致
-      this.bill = JSON.parse(localStorage.billData)[y]["list"][m]["list"][d]["list"];
-    }else{
-      let tempUserData = JSON.parse(localStorage.userData)
-      let tempBillData = JSON.parse(localStorage.billData)
+    //   // stringify再parse会使时间格式发生变化
+    //   localStorage.billData = JSON.stringify(tempBillData);
+    //   // 使时间格式保持一致
+    //   this.bill = JSON.parse(localStorage.billData)[y]["list"][m]["list"][d]["list"];
+    // }
+    
+    let tempUserData = JSON.parse(localStorage.userData)
+    let tempBillData = JSON.parse(localStorage.billData)
 
-      // 更新日期
-      let dateStart = new Date(tempUserData.latestLoginDate);
-      // 临时先用登录时间来记录最后一次登录时间+++++++++++++++++++++++++++++++
-      tempUserData.latestLoginDate = formatLongDate(this.todayTime,1);
-      let dateEnd = new Date(tempUserData.latestLoginDate);
-      let diffValue = (dateEnd - dateStart) / (1000 * 60 * 60 * 24);
-      localStorage.userData = JSON.stringify(tempUserData)
+    // // 更新日期
+    // let dateStart = new Date(tempUserData.latestLoginDate);
+    // // 临时先用登录时间来记录最后一次登录时间+++++++++++++++++++++++++++++++
+    // tempUserData.latestLoginDate = formatLongDate(this.todayTime,1);
+    // let dateEnd = new Date(tempUserData.latestLoginDate);
+    // let diffValue = (dateEnd - dateStart) / (1000 * 60 * 60 * 24);
+    // localStorage.userData = JSON.stringify(tempUserData)
 
 
-      // init好没有建立的日表
-      if (diffValue == 0){
-        // 保险起见
-        initBillData(tempBillData,y,m,d,tempUserData.budjet);
-        // 初始化后更新每日余额 tempBillData[y]["list"][m]["list"][d]["data"]["dateBalance"] = calcDateBalance(tempBillData,y,m,d);
-        console.log("diffValue == 0");
-      }else if(diffValue <= 7){ // 如果天数差大于7天，就不执行逻辑。新建中间空掉的日表。
-        for (let i = diffValue; i > 0; i--) {
-          // 满足条件执行，执行完再对数值进行调整
-          // 第二天：new Date(dateTime.setDate(dateTime.getDate()+1))
-          dateStart = new Date(dateStart.setDate(dateStart.getDate()+1))
-          let yy = dateStart.getFullYear();
-          let mm = dateStart.getMonth();
-          let dd = dateStart.getDate();
-          initBillData(tempBillData,yy,mm,dd,tempUserData.budjet);
-          console.log("----------------测试看出现几次----------------", dateStart);
-          console.log("diffValue <= 7 1111111");
-        }
-        console.log("diffValue <= 7 2222222");
-      }else if(diffValue > 7){  // 如果大于7天，只新建今天的日表。
-        initBillData(tempBillData,y,m,d);
-        console.log("太久没登录了，我们没给你更新数据了~");
-        alert("太久没登录了，我们没给你更新数据了~")
-      }else{
-        console.log("时间出错了，请重试");
-        alert("时间出错了，请重试")
-      }
+    // // init好没有建立的日表
+    // if (diffValue == 0){
+    //   // 保险起见+++++++++++++++++++++++这里initBillData不用把数据接回来吗？
+    //   initBillData(tempBillData,y,m,d,tempUserData.budjet);
+    //   // 初始化后更新每日余额 tempBillData[y]["list"][m]["list"][d]["data"]["dateBalance"] = calcDateBalance(tempBillData,y,m,d);
+    //   console.log("diffValue == 0");
+    // }else if(diffValue <= 7){ // 如果天数差大于7天，就不执行逻辑。新建中间空掉的日表。
+    //   for (let i = diffValue; i > 0; i--) {
+    //     // 满足条件执行，执行完再对数值进行调整
+    //     // 第二天：new Date(dateTime.setDate(dateTime.getDate()+1))
+    //     dateStart = new Date(dateStart.setDate(dateStart.getDate()+1))
+    //     let yy = dateStart.getFullYear();
+    //     let mm = dateStart.getMonth();
+    //     let dd = dateStart.getDate();
+    //     initBillData(tempBillData,yy,mm,dd,tempUserData.budjet);
+    //     console.log("----------------测试看出现几次----------------", dateStart);
+    //     console.log("diffValue <= 7 1111111");
+    //   }
+    //   console.log("diffValue <= 7 2222222");
+    // }else if(diffValue > 7){  // 如果大于7天，只新建今天的日表。
+    //   initBillData(tempBillData,y,m,d);
+    //   console.log("太久没登录了，我们没给你更新数据了~");
+    //   alert("太久没登录了，我们没给你更新数据了~")
+    // }else{
+    //   console.log("时间出错了，请重试");
+    //   alert("时间出错了，请重试")
+    // }
 
-      // 更新显示的账单、todayBalance、balance、todayBudjet
-      this.todayBudjet = tempBillData[y]["list"][m]["list"][d]["data"]["budjet"];
-      this.todayBalance = tempBillData[y]["list"][m]["list"][d]["data"]["dateBalance"];
-      this.balance = calcBalance(tempBillData,yy,mm,dd);
-      this.budjet = tempUserData.budjet;
-      this.todayBalanceShow = calcTodayBalanceShow(this.todayBalance);
+    // 更新显示的账单、todayBalance、balance、todayBudjet
+    this.todayBudjet = tempBillData[y]["list"][m]["list"][d]["data"]["budjet"];
+    this.todayBalance = tempBillData[y]["list"][m]["list"][d]["data"]["dateBalance"];
+    this.balance = calcBalance(tempBillData,yy,mm,dd);
+    this.budjet = tempUserData.budjet;
+    this.todayBalanceShow = calcTodayBalanceShow(this.todayBalance);
 
-      // stringify再parse会使时间格式发生变化
-      localStorage.billData = JSON.stringify(tempBillData);
-      // 使时间格式保持一致
-      this.bill = JSON.parse(localStorage.billData)[y]["list"][m]["list"][d]["list"];
-    }
+    // stringify再parse会使时间格式发生变化
+    localStorage.billData = JSON.stringify(tempBillData);
+    // 使时间格式保持一致
+    this.bill = JSON.parse(localStorage.billData)[y]["list"][m]["list"][d]["list"];
+    
 
 
   },

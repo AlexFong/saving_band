@@ -10,7 +10,7 @@
       <div @click="changeTime(0)">{{time.getFullYear()}}-{{time.getMonth()+1}}</div>
       <van-icon class="iconfont fontSize7vw" class-prefix='icon' name='accountbook' @click="DatetimePickerShow=true"/>
       <button style="border:none;background-color:unset" @click="changeTime(1)"><van-icon class="iconfont fontSize7vw" class-prefix='icon' name='right' /></button>
-      <span style="margin-left:5vw">1.00</span>
+      <span style="margin-left:5vw">1.01</span>
     </div>
     <!-- <div style="width:20vw;"></div> -->
   </div>
@@ -1174,36 +1174,36 @@ export default {
     let ym = formatLongDate(this.time,2);  // ym
 
     // 不存在就新建
-    if(!localStorage.inExData){
-      localStorage.inExData = JSON.stringify({
-        monthData:{[y]:{[m]:{
-          fixedSalary:0,
-          fixedRentIncome:0,
-          otherSalary:0,
-          otherIncome:0,
-          otherIncomeList:[
-            // {incomeName: "睡觉", incomeNumber: "3000"},
-            // {incomeName: "红包", incomeNumber: "1000"}
-            ],
-          necessarySpending:'',
-          optionalSpending:'',
-          // investSpending:1000,
-          // freedomSpending:100,
-          // remainAsset:1000,
-        }}},
-        necessarySpendingList:[
-          // {name:"房贷",sustainable:'false',interval:'month',price:7654321,payment:50000,payMonth:'',y:2021,m:1,payList:{'202103':500},status:'finish'},
-          // {name:"车贷",sustainable:'false',interval:'year',price:54321,payment:3000,payMonth:3,y:2021,m:1,payList:{'202102':500},status:'going'},
-          // {name:"房租",sustainable:'true',interval:'month',price:0,payment:2000,payMonth:'',y:2021,m:1,payList:{'202101':500},status:'pause'},
-          // {name:"净水滤芯",sustainable:'true',interval:'year',price:0,payment:500,payMonth:3,y:2021,m:1,payList:{'202003':500},status:'going'},
-        ],
-        optionalSpendingList:[
-          // {name:'投资',period:'month',sustainable:'true',payment:5000,price:50000,payList:{'202103':500},y:2021,m:'03',status:'going'},
-          // {name:'投资',period:'month',sustainable:'true',payment:5000,price:50000,payList:{'202101':500},y:2021,m:3,status:'pause'},
-        ],
-        itemData:{}
-      });
-    }
+    // if(!localStorage.inExData){
+    //   localStorage.inExData = JSON.stringify({
+    //     monthData:{[y]:{[m]:{
+    //       fixedSalary:0,
+    //       fixedRentIncome:0,
+    //       otherSalary:0,
+    //       otherIncome:0,
+    //       otherIncomeList:[
+    //         // {incomeName: "睡觉", incomeNumber: "3000"},
+    //         // {incomeName: "红包", incomeNumber: "1000"}
+    //         ],
+    //       // necessarySpending:'',
+    //       // optionalSpending:'',
+    //       // investSpending:1000,
+    //       // freedomSpending:100,
+    //       // remainAsset:1000,
+    //     }}},
+    //     necessarySpendingList:[
+    //       // {name:"房贷",sustainable:'false',interval:'month',price:7654321,payment:50000,payMonth:'',y:2021,m:1,payList:{'202103':500},status:'finish'},
+    //       // {name:"车贷",sustainable:'false',interval:'year',price:54321,payment:3000,payMonth:3,y:2021,m:1,payList:{'202102':500},status:'going'},
+    //       // {name:"房租",sustainable:'true',interval:'month',price:0,payment:2000,payMonth:'',y:2021,m:1,payList:{'202101':500},status:'pause'},
+    //       // {name:"净水滤芯",sustainable:'true',interval:'year',price:0,payment:500,payMonth:3,y:2021,m:1,payList:{'202003':500},status:'going'},
+    //     ],
+    //     optionalSpendingList:[
+    //       // {name:'投资',period:'month',sustainable:'true',payment:5000,price:50000,payList:{'202103':500},y:2021,m:'03',status:'going'},
+    //       // {name:'投资',period:'month',sustainable:'true',payment:5000,price:50000,payList:{'202101':500},y:2021,m:3,status:'pause'},
+    //     ],
+    //     itemData:{}
+    //   });
+    // }
 
     let tempInExData = JSON.parse(localStorage.inExData);
     // 读取InExData monthData 月度数据显示出来

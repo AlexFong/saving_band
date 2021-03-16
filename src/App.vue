@@ -30,7 +30,7 @@
         </template>
       </van-tabbar-item>
       <van-tabbar-item badge="99" to="/mine">
-        <span>我的</span>
+        <span>我的1.00</span>
         <template #icon="props">
           <van-icon class="iconfont" class-prefix='icon' name='user' />
         </template>
@@ -61,14 +61,433 @@ Vue.use(Button);
 export default {
   data() {
     return {
+      time:0,
+      todayTime:0,
+
+
+
       active: 0,
       icon: {
         active: 'https://img01.yzcdn.cn/vant/user-active.png',
         inactive: 'https://img01.yzcdn.cn/vant/user-inactive.png',
       },
+
     };
   },
+  methods: {
+    
+  },
+  watch:{
+
+  },
+  beforeCreate() {
+    console.log("App beforeCreate");
+  },
+  created() {
+    // y是time，yy是todayTime
+    console.log("App created");
+    this.todayTime = new Date(parseInt(new Date().getTime()))
+    let yy = this.todayTime.getFullYear();
+    let mm = this.todayTime.getMonth();
+    let dd = this.todayTime.getDate();
+
+    this.time = this.todayTime;
+    let y = this.time.getFullYear();
+    let m = this.time.getMonth();
+    let d = this.time.getDate();
+    let ym = formatLongDate(this.time,2);  // ym
+
+    // 首次登录新建数据
+    if(!localStorage.userData){
+      // 新建userData
+      localStorage.userData = JSON.stringify({
+        fisrtLoginDate:this.todayTime,
+        name:"default",
+        latestLoginDate:this.todayTime,
+        budjet:300,
+        wishId:0,
+      })
+
+      // 新建wishList
+      localStorage.wishList = JSON.stringify([]);
+
+      // 新建inExData
+      localStorage.inExData = JSON.stringify({
+        monthData:{[y]:{[m]:{
+          fixedSalary:0,
+          fixedRentIncome:0,
+          otherSalary:0,
+          otherIncome:0,
+          otherIncomeList:[],
+          necessarySpending:'',
+          optionalSpending:'',
+        }}},
+        necessarySpendingList:[],
+        optionalSpendingList:[],
+      });
+
+      let billData = initBillData({},y,m,d,300);
+      // 计算各层Balance
+      billData[y]["list"][m]["list"][d]["data"]["dateBalance"] = calcDateBalance(tempBillData,y,m,d);
+      billData[y]["list"][m]["data"]["monthBalance"] = calcMonthBalance(tempBillData,y,m);
+      billData[y]["data"]["yearBalance"] = calcYearBalance(tempBillData,y);
+      // 新建billData
+      localStorage.billData = JSON.stringify(billData);
+    }else{
+      // 老用户登录逻辑+++++++++++++++++++++
+      let userData = JSON.parse(localStorage.userData);
+      let billData = JSON.parse(localStorage.billData);
+      let inExData = JSON.parse(localStorage.inExData);
+      let wishList = JSON.parse(localStorage.wishList);
+
+      // 计算日期差
+      let dateStart = new Date(userData.latestLoginDate);
+      userData.latestLoginDate = formatLongDate(this.todayTime,1);
+      let dateEnd = new Date(userData.latestLoginDate);
+      let diffValue = (dateEnd - dateStart) / (1000 * 60 * 60 * 24);
+      // 1、更新userData
+      localStorage.userData = JSON.stringify(userData);
+
+      // 2、更新billData
+      if (diffValue == 0){  
+        // 当天重复登录
+      }else if(diffValue <= 31){ 
+        let tempTime = dateStart;
+        for (let i = diffValue; i > 0; i--) {
+          // 满足条件执行，执行完再对数值进行调整
+          tempTime = new Date(tempTime.setDate(tempTime.getDate()+1));
+          let yyy = tempTime.getFullYear();
+          let mmm = tempTime.getMonth();
+          let ddd = tempTime.getDate();
+          initBillData(billData,yyy,mmm,ddd,userData.budjet);
+        };
+        localStorage.billData = JSON.stringify(billData);
+      }else if(diffValue > 31){  
+        // 如果大于31天，只新建今天的日表。
+        initBillData(billData,y,m,d);
+        localStorage.billData = JSON.stringify(billData);
+        alert("太久没登录了，我们没给你更新数据了~");
+      }else{
+        alert("时间出错了，请重试");
+      }
+    
+      // 逐月更新
+      // 3、更新inExData
+      // 4、更新wishList
+      if(diffValue>0){
+        for(tempTime = dateStart;formatLongDate(dateEnd,2) - formatLongDate(tempTime,2) != 0;){
+          // 遍历每个月
+          // 当月不用，下个月才要
+          let tempTimeStart = tempTime;
+          tempTime = new Date(tempTime.setMonth(tempTime.getMonth()+1));
+          console.log('tempTime',tempTimeStart,tempTime);
+          ym = formatLongDate(tempTime,2);
+
+          // going的
+            // 永续的
+              // 年
+              // 月
+
+            // 不是永续的
+              // 年
+              // 月
+
+          // 更新necessarySpendingList
+          for(const i in inExData['necessarySpendingList']){
+            let a = inExData['necessarySpendingList'][i];
+            // status有going和finish两种状态
+            if(a['status'] == 'going'){
+              // 1.如果是永续的
+              if(a['sustainable'] == 'true'){
+                // 2.如果是月缴的
+                if(a['interval'] == 'month'){
+                  inExData['necessarySpendingList'][i]['payList'][ym] = a['payment'];
+                }else{
+                  if(a['payMonth']-1 == tempTime.getMonth()){
+                    inExData['necessarySpendingList'][i]['payList'][ym] = a['payment'];
+                  }
+                }
+              }
+              // 1.如果不是永续的
+              else{
+                // 计算payList已支付总额
+                let sumPayList = 0;
+                for(const j in a['payList']){
+                  sumPayList += Number(a['payList'][j]);
+                };
+                // 2.如果是月缴的
+                if(a['interval'] == 'month'){
+                  if(a['payment'] + sumPayList > a['price']){
+                    inExData['necessarySpendingList'][i]['payList'][ym] = a['price'] - sumPayList;
+                    inExData['necessarySpendingList'][i]['status'] = 'finish';
+                  }else{
+                    inExData['necessarySpendingList'][i]['payList'][ym] = a['payment'];
+                  }
+                }else{
+                  if(a['payMonth']-1 == tempTime.getMonth()){
+                    if(a['payment'] + sumPayList > a['price']){
+                      inExData['necessarySpendingList'][i]['payList'][ym] = a['price'] - sumPayList;
+                      inExData['necessarySpendingList'][i]['status'] = 'finish';
+                    }else{
+                      inExData['necessarySpendingList'][i]['payList'][ym] = a['payment'];
+                    }
+                  }
+                }
+              }
+            }
+          }
+          // interval: "month"
+          // m: "03"       
+          // name: "房租"
+          // payList: {202103: "1500"}
+          // payMonth: ""
+          // payment: "1500"
+          // price: ""
+          // status: "going"
+          // sustainable: "true"
+          // y: 2021
+
+
+
+          // status是going的
+            // sustainable是true的
+
+            // sustainable是false的
+
+          // 更新optionalSpendingList +++++++++++++++++++++++++++++
+          for(const i in inExData['optionalSpendingList']){
+            let a = inExData['optionalSpendingList'][i];
+            // status有going和finish两种状态
+            if(a['status'] == 'going'){
+              // 如果是永续的
+              if(a['sustainable'] == 'true'){
+                inExData['optionalSpendingList'][i]['payList'][ym] = a['payment'];
+              }
+              // 如果不是永续的
+              else{
+                // 计算payList已支付总额
+                let sumPayList = 0;
+                for(const j in a['payList']){
+                  sumPayList += Number(a['payList'][j]);
+                };
+                if(a['payment'] + sumPayList > a['price']){
+                  inExData['optionalSpendingList'][i]['payList'][ym] = a['price'] - sumPayList;
+                  inExData['optionalSpendingList'][i]['status'] = 'finish';
+                }else{
+                  inExData['optionalSpendingList'][i]['payList'][ym] = a['payment'];
+                }
+              }
+            }
+          }
+
+          // m: "03"
+          // name: "投资"
+          // payList: {202103: "100"}
+          // payment: "100"
+          // period: "oneTime"
+          // price: ""
+          // status: "finish"
+          // sustainable: "true"
+          // y: 2021
+
+
+
+          // status = aim时，
+
+          // 更新wishList
+          for(const i in wishList){
+            let a = wishList[i];
+            // status有4种状态
+            if(a['status'] == 'aim'){
+              // 计算payList已支付总额
+              let sumPayList = 0;
+              for(const j in a['payList']){
+                sumPayList += Number(a['payList'][j]);
+              };
+              if(a['payment'] + sumPayList > a['price']){
+                wishList[i]['payList'][ym] = a['price'] - sumPayList;
+                wishList[i]['status'] = 'finish';
+              }else{
+                wishList[i]['payList'][ym] = a['payment'];
+              }
+            }
+          }
+          // addDate: "2021-03-15T11:14:02.627Z"
+          // finishDate: ""
+          // id: 13
+          // name: "IPhone mini12"
+          // noWaste: "circle"
+          // payList: {}
+          // payment: ""
+          // price: "5300"
+          // ps: ""
+          // saveMoney: "circle"
+          // saveTime: "circle"
+          // status: "circle"
+
+
+          // 更新monthData
+          let a = inExData['monthData'][tempTimeStart.getFullYear()][tempTimeStart.getMonth()];
+          // 新建年
+          if(!inExData['monthData'][tempTime.getFullYear()]){
+            inExData['monthData'][tempTime.getFullYear()] = {}
+          }
+          // 新建月
+          inExData['monthData'][tempTime.getFullYear()][tempTime.getMonth()] = {
+            fixedRentIncome: a.fixedRentIncome,
+            fixedSalary: a.fixedSalary,
+            // necessarySpending: "",
+            // optionalSpending: "",
+            otherIncome: 0,
+            otherIncomeList: [],
+            otherSalary: "",
+          };
+
+
+        }
+      };
+      // 遍历完
+
+      // 把数据存回localStorage
+      localStorage.userData = JSON.stringify(userData)
+      localStorage.billData = JSON.stringify(billData)
+      localStorage.inExData = JSON.stringify(inExData)
+      localStorage.wishList = JSON.stringify(wishList)
+    }
+    // 通用逻辑还有要补充的吗？？++++++++++++
+    
+  },
+  beforeMount() {
+    console.log("App beforeMount");
+  },
+  mounted() {
+    console.log("App mounted");
+  },
+  beforeUpdate() {
+    console.log("App beforeUpdate",this.time,this.todayTime);
+    this.todayTime = new Date(parseInt(new Date().getTime()));
+  },
+  updated() {
+    console.log("App updated");
+    console.log(document.activeElement);
+  },
+  beforeDestroy() {
+    console.log("App beforeDestroy");
+  },
+  destroyed() {
+    console.log("App destroyed");
+  },
 };
+
+function formatLongDate (date,type=0) {
+  let myyear = date.getFullYear();
+  let mymonth = date.getMonth() + 1;
+  let myweekday = date.getDate();
+  let myHour = date.getHours();
+  let myMin = date.getMinutes();
+  let mySec = date.getSeconds();
+  if (mymonth < 10) {
+      mymonth = '0' + mymonth;
+  }
+  if (myweekday < 10) {
+      myweekday = '0' + myweekday;
+  }
+  if (myHour < 10) {
+      myHour = '0' + myHour;
+  }
+  if (myMin < 10) {
+      myMin = '0' + myMin;
+  }
+  if (mySec < 10) {
+      mySec = '0' + mySec;
+  }
+  
+  let a = '';
+  if(type==1){
+    a = myyear + '-' + mymonth + '-' + myweekday;
+  }else if(type==2){
+    a = myyear + mymonth;
+  }else{
+    a = myyear + '' + mymonth + '' + myweekday + ' ' + myHour + ':' + myMin + ':' + mySec;
+  }
+  return (a)
+};
+
+// 建立好数据结构,年月日表新建
+function initBillData(tempData,y,m,d,budjet){
+  if(!tempData[y]){
+    tempData[y] = {
+      data : {yearBalance:budjet},
+      list : {
+        [m] : {
+          data : {monthBalance:budjet},
+          list : {
+            [d] : {
+              data:{budjet : budjet,dateBalance:budjet},
+              list : []
+            }
+          },
+        },
+      }
+    };
+  } else if(!tempData[y]["list"][m]){
+    tempData[y]["list"][m] = {
+      data : {monthBalance:budjet},
+      list : {
+        [d] : {
+          data:{budjet : budjet,dateBalance:budjet},
+          list : []
+        }
+      },
+    }
+  } else if(!tempData[y]["list"][m]["list"][d]){
+    tempData[y]["list"][m]["list"][d] = {
+      data:{budjet : budjet,dateBalance:budjet},
+      list : []
+    }
+  };
+  
+  return(tempData);
+};
+
+// 封装日余额数据更新
+function calcDateBalance(tempBillData,y,m,d){
+  let dateBalance = tempBillData[y]["list"][m]["list"][d]["data"]["budjet"];
+  // 直接遍历(正常情况下，初始化后每天都会有数据)
+  for (const i in tempBillData[y]["list"][m]["list"][d]["list"]) {
+    dateBalance -= Number(tempBillData[y]["list"][m]["list"][d]["list"][i]["cost"]);
+  }
+  // 消除浮点影响，取小数后一位
+  if(dateBalance > 0){
+    dateBalance = parseInt(dateBalance * 10 + 0.1)/10;
+  }else if(dateBalance < 0){
+    dateBalance = parseInt(dateBalance * 10 - 0.1)/10;
+  }
+  return(dateBalance);
+}
+
+// 封装月余额数据更新
+function calcMonthBalance(tempBillData,y,m){
+  let monthBalance = 0;
+
+  // 直接遍历每天数据
+  for (const i in tempBillData[y]["list"][m]["list"]) {
+    monthBalance += Number(tempBillData[y]["list"][m]["list"][i]["data"]["dateBalance"]);
+  }
+  return(monthBalance);
+}
+
+// 封装年余额数据更新
+function calcYearBalance(tempBillData,y){
+  let yearBalance = 0;
+
+  // 直接遍历(正常情况下，初始化后每月都会有数据)
+  for (const i in tempBillData[y]["list"]) {
+    yearBalance += Number(tempBillData[y]["list"][i]["data"]["monthBalance"]);
+  }
+  return(yearBalance);
+}
+
 
 // created : 2017.8.21
 // author  : Guozhi_Han 

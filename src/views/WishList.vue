@@ -2,7 +2,7 @@
 <div class="wishList">
 <div id="header">
   <div style="height:5vw"></div>
-  <div style="height:15vw;line-height:15vw">心愿清单1.04</div>
+  <div style="height:15vw;line-height:15vw">心愿清单1.05</div>
 </div>
 
 <!-- 导航条 -->
@@ -571,78 +571,75 @@ export default {
     let m = this.todayTime.getMonth();
     let d = this.todayTime.getDate();
     
-    let tempUserData = JSON.parse(localStorage.userData)
+    // let tempUserData = JSON.parse(localStorage.userData)
+    // if(!localStorage.wishList){
+    //   localStorage.wishList = JSON.stringify([
+    //     // {
+    //     //   id:0,
+    //     //   status:"checked",
+    //     //   name:"电脑11111111111111111111",
+    //     //   price:5000,
+    //     //   payment:1000,
+    //     //   payList:{'202103':1000,'202102':2000,'202101':2000},
+    //     //   addDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
+    //     //   finishDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
+    //     //   ps:0,
+    //     //   noWaste:"checked",
+    //     //   saveTime:"checked",
+    //     //   saveMoney:"checked",
+    //     // },
+    //     // {
+    //     //   id:1,
+    //     //   status:"circle",
+    //     //   name:"电脑2",
+    //     //   price:4000,
+    //     //   payment:1000,
+    //     //   payList:{},
+    //     //   addDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
+    //     //   finishDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
+    //     //   ps:0,
+    //     //   noWaste:"circle",
+    //     //   saveTime:"circle",
+    //     //   saveMoney:"circle",
+    //     // },
+    //     // {
+    //     //   id:2,
+    //     //   status:"clear",
+    //     //   name:"电脑333",
+    //     //   price:3000,
+    //     //   payment:1000,
+    //     //   payList:{'202103':100,'202102':2000,'202101':200},
+    //     //   addDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
+    //     //   finishDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
+    //     //   ps:0,
+    //     //   noWaste:"clear",
+    //     //   saveTime:"clear",
+    //     //   saveMoney:"clear",
+    //     // },
+    //     // {
+    //     //   id:3,
+    //     //   status:"aim",
+    //     //   name:"电脑4444444444444444444",
+    //     //   price:2000,
+    //     //   payment:1000,
+    //     //   payList:{'202103':100,'202102':200,'202101':200},
+    //     //   addDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
+    //     //   finishDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
+    //     //   ps:0,
+    //     //   noWaste:"clear",
+    //     //   saveTime:"clear",
+    //     //   saveMoney:"clear",
+    //     // }
+    //   ])
+    // };
+    // if(!tempUserData.wishId){
+    //   tempUserData.wishId = 3;
+    //   localStorage.userData = JSON.stringify(tempUserData);
+    // }
+
     let tempBillData = JSON.parse(localStorage.billData)
-    if(!localStorage.wishList){
-      localStorage.wishList = JSON.stringify([
-        // {
-        //   id:0,
-        //   status:"checked",
-        //   name:"电脑11111111111111111111",
-        //   price:5000,
-        //   payment:1000,
-        //   payList:{'202103':1000,'202102':2000,'202101':2000},
-        //   addDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
-        //   finishDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
-        //   ps:0,
-        //   noWaste:"checked",
-        //   saveTime:"checked",
-        //   saveMoney:"checked",
-        // },
-        // {
-        //   id:1,
-        //   status:"circle",
-        //   name:"电脑2",
-        //   price:4000,
-        //   payment:1000,
-        //   payList:{},
-        //   addDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
-        //   finishDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
-        //   ps:0,
-        //   noWaste:"circle",
-        //   saveTime:"circle",
-        //   saveMoney:"circle",
-        // },
-        // {
-        //   id:2,
-        //   status:"clear",
-        //   name:"电脑333",
-        //   price:3000,
-        //   payment:1000,
-        //   payList:{'202103':100,'202102':2000,'202101':200},
-        //   addDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
-        //   finishDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
-        //   ps:0,
-        //   noWaste:"clear",
-        //   saveTime:"clear",
-        //   saveMoney:"clear",
-        // },
-        // {
-        //   id:3,
-        //   status:"aim",
-        //   name:"电脑4444444444444444444",
-        //   price:2000,
-        //   payment:1000,
-        //   payList:{'202103':100,'202102':200,'202101':200},
-        //   addDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
-        //   finishDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
-        //   ps:0,
-        //   noWaste:"clear",
-        //   saveTime:"clear",
-        //   saveMoney:"clear",
-        // }
-      ])
-    };
-    if(!tempUserData.wishId){
-      tempUserData.wishId = 3;
-      localStorage.userData = JSON.stringify(tempUserData);
-    }
-
     this.wishList = JSON.parse(localStorage.wishList);
-    // 更新显示balance、budjet
     this.balance = calcBalance(tempBillData,y,m,d);
-
-
   },
   beforeMount() {
     console.log("beforeMount");

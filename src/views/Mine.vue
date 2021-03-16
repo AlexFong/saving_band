@@ -2,7 +2,7 @@
 <div class="mine">
 <div id="header">
   <div style="height:5vw"></div>
-  <div style="height:15vw;line-height:15vw">我的1.02</div>
+  <div style="height:15vw;line-height:15vw">我的1.03</div>
 </div>
 <br>
 <div>
