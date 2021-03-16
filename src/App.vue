@@ -1,12 +1,18 @@
 <template>
 <div id="app">
+  <!-- 任意元素中加 v-wechat-title 指令 建议将标题放在 route 对应meta对象的定义中 -->
+  <div v-wechat-title="$route.meta.title"></div>
+  <!--或者-->
+  <!-- <router-view v-wechat-title="$route.meta.title"></router-view> -->
+
+
   <!-- 显示路由路径下的内容 -->
   <router-view/>
 
   <div id="footer">
     <van-tabbar style="height:16vw;padding-bottom:4vw" v-model="active">
       <van-tabbar-item badge="" to="/">
-        <span>天天记账</span>
+        <span>日常开支</span>
         <template #icon="props">
           <van-icon class="iconfont" class-prefix='icon' name='piechart' />
         </template>
