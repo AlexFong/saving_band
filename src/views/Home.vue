@@ -1,183 +1,186 @@
 <template>
-  <div id="home">
-    <div id="header">
-      <div style="height:5vw"></div>
-      <div style="display:flex;line-height:15vw">
-        <div style="width:34vw;text-align:left">
-          <div style="line-height:15vw;font-size:3vw;padding-left:2vw">余额:{{ balance }}</div> 
-          <!-- <div style="background-color:#fff;font-size:4vw;border:1px solid #ccc;width:30vw;border-radius:1vw;margin-left:-0.5vw"></div> -->
-        </div>
-        <div style="width:32vw;line-height:15vw;">天天记账1.21</div>
-        <div style="width:34vw;"></div>
-      </div>
+<div id="home">
+<div id="header">
+  <div style="height:5vw"></div>
+  <div style="display:flex;line-height:15vw">
+    <div style="width:34vw;text-align:left">
+      <div style="line-height:15vw;font-size:3vw;padding-left:2vw">余额:{{ balance }}</div> 
+      <!-- <div style="background-color:#fff;font-size:4vw;border:1px solid #ccc;width:30vw;border-radius:1vw;margin-left:-0.5vw"></div> -->
     </div>
-    
-    <!-- 分割矩形区域 -->
-    <van-row style="height:55vh;border-top:1px solid black;border-bottom:1px solid black">
-      <van-col span="8" style="height:55vh">
-        <van-row style="height:10vh;border-bottom:1px solid black;display:flex;justify-content:space-around;flex-direction:column;">
-          <div style="height:4vh;display:flex;align-items:center;justify-content:center">
-            <div style="line-height:4.5vh;">
-              {{ time.getMonth() + 1 }}月{{ time.getDate() }}日
-            </div>
-            <!-- iconfont引入用法（1/2) -->
-            <van-icon class="iconfont fontSize7vw" class-prefix='icon' name='accountbook' />
-          </div>
+    <div style="width:32vw;line-height:15vw;">天天记账1.21</div>
+    <div style="width:34vw;"></div>
+  </div>
+</div>
 
-          <div style="height:4vh;line-height:4vh;display:flex;align-item:center;justify-content:center">
-            <button style="border:none;background-color:unset" @click="changeTime(-1)"><van-icon class="iconfont fontSize7vw" class-prefix='icon' name='left' /></button>
-            <span @click="changeTime(0)" style="margin:0 0.5vw;width:14vw;border:1px solid #aaa;border-radius:2vw;height:4vh">今天</span>
-            <button style="border:none;background-color:unset" @click="changeTime(1)"><van-icon class="iconfont fontSize7vw" class-prefix='icon' name='right' /></button>
-          </div>
-        </van-row>
+<!-- 分割矩形区域 -->
+<van-row style="height:55vh;border-top:1px solid black;border-bottom:1px solid black">
+  <van-col span="8" style="height:55vh">
+    <van-row style="height:10vh;border-bottom:1px solid black;display:flex;justify-content:space-around;flex-direction:column;">
+      <div style="height:4vh;display:flex;align-items:center;justify-content:center">
+        <div style="line-height:4.5vh;">
+          {{ time.getMonth() + 1 }}月{{ time.getDate() }}日
+        </div>
+        <!-- iconfont引入用法（1/2) -->
+        <van-icon class="iconfont fontSize7vw" class-prefix='icon' name='accountbook' @click="calendarShow=true"/>
+      </div>
 
-        <van-row style="height:10vh;border-bottom:1px solid black;display:flex;justify-content:space-around;flex-direction:column">
-          <div style="height:3vh;line-height:3vh;text-align:center;padding-top:0.5vh;">
-            本日预算:
-          </div> 
-          <div style="height:4vh;line-height:4vh;display:flex;justify-content:center">
-            <input type="number" v-model="todayBudjet" style="width:47%;text-align:center;margin-right:1vw;border:1px solid #aaa;height:4vh" placeholder="设置今日预算" />
-            <span @click="changeTodayBudjet()" style="width:38%;border:1px solid #aaa;border-radius:2vw;height:4vh">设置</span>
-          </div>
-        </van-row>
+      <div style="height:4vh;line-height:4vh;display:flex;align-item:center;justify-content:center">
+        <button style="border:none;background-color:unset" @click="changeTime(-1)"><van-icon class="iconfont fontSize7vw" class-prefix='icon' name='left' /></button>
+        <span @click="changeTime(0)" style="margin:0 0.5vw;width:14vw;border:1px solid #aaa;border-radius:2vw;height:4vh">今天</span>
+        <button style="border:none;background-color:unset" @click="changeTime(1)"><van-icon class="iconfont fontSize7vw" class-prefix='icon' name='right' /></button>
+      </div>
+    </van-row>
 
-        <van-row style="height:35vh;justify-content:space-around;display:flex;flex-direction:column">
-          <!-- 纸币100元 -->
-          <div style="height:4vh;line-height:4vh;display:flex;justify-content:center;padding-top:1vh;align-item:center;"
+    <van-row style="height:10vh;border-bottom:1px solid black;display:flex;justify-content:space-around;flex-direction:column">
+      <div style="height:3vh;line-height:3vh;text-align:center;padding-top:0.5vh;">
+        本日预算:
+      </div> 
+      <div style="height:4vh;line-height:4vh;display:flex;justify-content:center">
+        <input type="number" v-model="todayBudjet" style="width:47%;text-align:center;margin-right:1vw;border:1px solid #aaa;height:4vh" placeholder="设置今日预算" />
+        <span @click="changeTodayBudjet()" style="width:38%;border:1px solid #aaa;border-radius:2vw;height:4vh">设置</span>
+      </div>
+    </van-row>
+
+    <van-row style="height:35vh;justify-content:space-around;display:flex;flex-direction:column">
+      <!-- 纸币100元 -->
+      <div style="height:4vh;line-height:4vh;display:flex;justify-content:center;padding-top:1vh;align-item:center;"
+        :style="{
+          display: todayBalanceShow[100] > 0 ? 'flex' : 'none',
+        }">
+        <div class="money" style="background-color:red;position:relative;margin-right:2vw">100</div>
+        <div>x{{ todayBalanceShow[100]}}</div>
+      </div>
+
+      <!-- 纸币 -->
+      <div style="height:14vh;position:relative;align-item:center;"
+        :style="{
+          display: !todayBalanceShow.paper || todayBalanceShow.paper.length == 0 ? 'none' : 'block',
+        }">
+        <div v-for="(item, index) in todayBalanceShow.paper">
+          <div class="money" style=""
             :style="{
-              display: todayBalanceShow[100] > 0 ? 'flex' : 'none',
-            }">
-            <div class="money" style="background-color:red;position:relative;margin-right:2vw">100</div>
-            <div>x{{ todayBalanceShow[100]}}</div>
+              'background-color':moneyColor[item],
+              transform:'rotate('+ (-30-15*todayBalanceShow.paper.length+30*index) + 'deg)',
+              left:moneyPosition[todayBalanceShow.paper.length][index].left + 'vw',
+              top: moneyPosition[todayBalanceShow.paper.length][index].top +'vh',
+              'z-index':9-index}">
+            {{item}}
           </div>
+        </div>
+      </div>
 
-          <!-- 纸币 -->
-          <div style="height:14vh;position:relative;align-item:center;"
+      <!-- 硬币1元 -->
+      <div style="width:30vw;margin:0vh 1.5vw;display:flex;flex-direction:row;align-content:space-around;justify-content:space-around;"
+        :style="{
+          display: todayBalanceShow[1] > 0 ? 'flex' : 'none',
+        }">
+        <div v-for="item of todayBalanceShow[1]">
+          <div class="coin" style="background-color:#eee;border-radius:3vh;width:3vh;height:3vh;font-size:2.5vh;line-height:3vh">1</div>
+        </div>
+      </div>
+
+      <!-- 硬币角 -->
+      <div style="width:30vw;margin:0vh 1.5vw;display:flex;flex-direction:row;align-content:space-around;justify-content:space-around;"
+        :style="{
+          display: !todayBalanceShow.coin || todayBalanceShow.coin.length == 0 ? 'none' : 'flex',
+        }">
+        <div v-for="(item, index) in todayBalanceShow.coin">
+          <div class="coin" style="border-radius:2.5vh;width:2.5vh;height:2.5vh;font-size:2vh;line-height:2.5vh"
             :style="{
-              display: !todayBalanceShow.paper || todayBalanceShow.paper.length == 0 ? 'none' : 'block',
+              'background-color':moneyColor[item],
             }">
-            <div v-for="(item, index) in todayBalanceShow.paper">
-              <div class="money" style=""
-                :style="{
-                  'background-color':moneyColor[item],
-                  transform:'rotate('+ (-30-15*todayBalanceShow.paper.length+30*index) + 'deg)',
-                  left:moneyPosition[todayBalanceShow.paper.length][index].left + 'vw',
-                  top: moneyPosition[todayBalanceShow.paper.length][index].top +'vh',
-                  'z-index':9-index}">
-                {{item}}
-              </div>
-            </div>
+            {{ String(item).slice(1,3) }}
           </div>
+        </div>
+      </div>
 
-          <!-- 硬币1元 -->
-          <div style="width:30vw;margin:0vh 1.5vw;display:flex;flex-direction:row;align-content:space-around;justify-content:space-around;"
+      <!-- 显示余额 -->
+      <div style="align-content:center;justify-content:center;align-item:center;display:flex">
+        <div
+          :style="{
+            display: todayBalanceShow < 0 || todayBalance == 0 ? 'none' : 'unset',
+          }">
+          余额:{{ todayBalance }}
+        </div>
+        <div style="top:4vh;position:relative;font-weight:bolder"
+          :style="{
+            display: todayBalanceShow < 0 || todayBalance == 0 ? 'unset' : 'none',
+          }">
+          <div style="font-size:7vw;line-height:9vw;">余额:</div>
+          <div style="font-size:7vw;line-height:9vw;"
             :style="{
-              display: todayBalanceShow[1] > 0 ? 'flex' : 'none',
+              color: todayBalanceShow < 0 ? 'red' : 'unset',
             }">
-            <div v-for="item of todayBalanceShow[1]">
-              <div class="coin" style="background-color:#eee;border-radius:3vh;width:3vh;height:3vh;font-size:2.5vh;line-height:3vh">1</div>
-            </div>
-          </div>
-
-          <!-- 硬币角 -->
-          <div style="width:30vw;margin:0vh 1.5vw;display:flex;flex-direction:row;align-content:space-around;justify-content:space-around;"
-            :style="{
-              display: !todayBalanceShow.coin || todayBalanceShow.coin.length == 0 ? 'none' : 'flex',
-            }">
-            <div v-for="(item, index) in todayBalanceShow.coin">
-              <div class="coin" style="border-radius:2.5vh;width:2.5vh;height:2.5vh;font-size:2vh;line-height:2.5vh"
-                :style="{
-                  'background-color':moneyColor[item],
-                }">
-                {{ String(item).slice(1,3) }}
-              </div>
-            </div>
-          </div>
-
-          <!-- 显示余额 -->
-          <div style="align-content:center;justify-content:center;align-item:center;display:flex">
-            <div
-              :style="{
-                display: todayBalanceShow < 0 || todayBalance == 0 ? 'none' : 'unset',
-              }">
-              余额:{{ todayBalance }}
-            </div>
-            <div style="top:4vh;position:relative;font-weight:bolder"
-              :style="{
-                display: todayBalanceShow < 0 || todayBalance == 0 ? 'unset' : 'none',
-              }">
-              <div style="font-size:7vw;line-height:9vw;">余额:</div>
-              <div style="font-size:7vw;line-height:9vw;"
-                :style="{
-                  color: todayBalanceShow < 0 ? 'red' : 'unset',
-                }">
-                {{ todayBalance }}
-              </div>
-              
-            </div> 
+            {{ todayBalance }}
           </div>
           
-        </van-row>
-      </van-col>
-
-      <van-col span="16" style="height:55vh;border-left:1px solid black">
-        <div style="height:5vh;line-height:5vh;border-bottom:1px solid black">本日账单</div>
-        <div id="billListOuter" style="height:49.5vh">
-          <div id="billListInner">
-            <div v-for="(item, index) in bill">
-              <van-swipe-cell style="margin-bottom:1.5vw;border-radius:2vw;width:63vw">
-                <div style="line-height:7vw;background-color:#ffffff;border:2px solid #f0ffff;display:flex">
-                  <span style="width:14vw;font-size:3vw;">
-                    {{ new Date(item.time).getHours() }}:{{
-                      new Date(item.time).getMinutes() < 10
-                        ? "0" + new Date(item.time).getMinutes()
-                        : new Date(item.time).getMinutes()
-                    }}
-                  </span>
-                  <span style="width:28vw;font-size:3vw;">{{ checkList[item.id] }}</span>
-                  <span style="width:12vw;font-size:3vw;">￥{{ item.cost }} </span>
-                  <van-icon id="billList" class="iconfont fontSize3vw" class-prefix='icon' name='left' />
-                </div>
-                <template #right>
-                  <van-button @click="delFun(index,item)" square text="删除" type="danger" class="delete-button" />
-                </template>
-              </van-swipe-cell>
-            </div>
-          </div>
-        </div>
-      </van-col>
-    </van-row>
-    
-
-    <!-- tabbar高度是15vw -->
-    <div id="addBill" style="height:calc(45vh - 40vw);display:flex;flex-direction:column;"
-    :style="{
-      'justify-content': height/width > 1.5 ? 'space-around' : 'flex-end',
-    }">
-      <div style="display:flex;flex-wrap:wrap;justify-content:center;line-height:5vw"
-      :style="{
-        width: height/width > 1.5 ? '90%' : '70%',
-        margin : height/width > 1.5 ? '0 5%': '0 15%',
-      }">
-      <!-- type="radio"时为单选题，type="checkbox"时为多选题 -->
-        <div v-for="(item, index) in typeList" class="item">
-          <input style="font-size:3vw;" type="radio" :id="item.id" :value="item.id" v-model="typeId" />
-          <label style="font-size:3vw;" :for="item.id">{{ item.name }}</label>
-        </div>
+        </div> 
       </div>
+      
+    </van-row>
+  </van-col>
 
-      <div style="display:flex;justify-content:center;line-height:6vw;"
-      :style="{
-        margin : height/width > 1.5 ? 0: 2 + 'vh ' + 0 ,
-      }">
-        <span>￥</span> 
-        <input style="width:40vw;" type="number" v-model="cost" placeholder="输入金额" />
-        <span @click="addFun" style="width:12vw;border:1px solid #aaa;border-radius:2vw;margin-left:2vw;">花钱</span>
-        <!-- <button @click="dayRollBack">回滚2天</button> -->
+  <van-col span="16" style="height:55vh;border-left:1px solid black">
+    <div style="height:5vh;line-height:5vh;border-bottom:1px solid black">本日账单</div>
+    <div id="billListOuter" style="height:49.5vh">
+      <div id="billListInner">
+        <div v-for="(item, index) in bill">
+          <van-swipe-cell style="margin-bottom:1.5vw;border-radius:2vw;width:63vw">
+            <div style="line-height:7vw;background-color:#ffffff;border:2px solid #f0ffff;display:flex">
+              <span style="width:14vw;font-size:3vw;">
+                {{ new Date(item.time).getHours() }}:{{
+                  new Date(item.time).getMinutes() < 10
+                    ? "0" + new Date(item.time).getMinutes()
+                    : new Date(item.time).getMinutes()
+                }}
+              </span>
+              <span style="width:28vw;font-size:3vw;">{{ checkList[item.id] }}</span>
+              <span style="width:12vw;font-size:3vw;">￥{{ item.cost }} </span>
+              <van-icon id="billList" class="iconfont fontSize3vw" class-prefix='icon' name='left' />
+            </div>
+            <template #right>
+              <van-button @click="delFun(index,item)" square text="删除" type="danger" class="delete-button" />
+            </template>
+          </van-swipe-cell>
+        </div>
       </div>
     </div>
+  </van-col>
+</van-row>
+
+
+<!-- tabbar高度是15vw -->
+<div id="addBill" style="height:calc(45vh - 40vw);display:flex;flex-direction:column;"
+:style="{
+  'justify-content': height/width > 1.5 ? 'space-around' : 'flex-end',
+}">
+  <div style="display:flex;flex-wrap:wrap;justify-content:center;line-height:5vw"
+  :style="{
+    width: height/width > 1.5 ? '90%' : '70%',
+    margin : height/width > 1.5 ? '0 5%': '0 15%',
+  }">
+  <!-- type="radio"时为单选题，type="checkbox"时为多选题 -->
+    <div v-for="(item, index) in typeList" class="item">
+      <input style="font-size:3vw;" type="radio" :id="item.id" :value="item.id" v-model="typeId" />
+      <label style="font-size:3vw;" :for="item.id">{{ item.name }}</label>
+    </div>
   </div>
-    
+
+  <div style="display:flex;justify-content:center;line-height:6vw;"
+  :style="{
+    margin : height/width > 1.5 ? 0: 2 + 'vh ' + 0 ,
+  }">
+    <span>￥</span> 
+    <input style="width:40vw;" type="number" v-model="cost" placeholder="输入金额" />
+    <span @click="addFun" style="width:12vw;border:1px solid #aaa;border-radius:2vw;margin-left:2vw;">花钱</span>
+    <!-- <button @click="dayRollBack">回滚2天</button> -->
+  </div>
+</div>
+
+<!-- 日历 -->
+<van-calendar v-model="calendarShow" @confirm="onConfirm" first-day-of-week="1" :min-date="new Date('2020-01-01')" :default-date="time" :show-confirm="false" />
+
+</div>
 </template>
 
 
@@ -185,12 +188,9 @@
 // iconfont引入用法（2/2)
 import "../assets/font_2356633_61czw08nnlw/iconfont.css";
 import { Component, Vue } from "vue-property-decorator";
-import { Col, Row, Icon, SwipeCell } from 'vant';
+import { Col, Row, Icon, SwipeCell, Calendar } from 'vant';
 
-Vue.use(SwipeCell);
-Vue.use(Icon);
-Vue.use(Col);
-Vue.use(Row);
+Vue.use(SwipeCell);Vue.use(Icon);Vue.use(Col);Vue.use(Row);Vue.use(Calendar);
 
 export default {
   name: "home",
@@ -270,9 +270,19 @@ export default {
       },
       width:0,
       height:0,
+      calendarDate:'',
+      calendarShow:false,
     };
   },
   methods: {
+    // formatDate(date) {
+    //   return `${date.getMonth() + 1}/${date.getDate()}`;
+    // },
+    onConfirm(date) {
+      this.calendarShow = false;
+      // this.calendarDate = this.formatDate(date);
+      this.changeTime(date);
+    },
     addFun: function () {
       if (this.cost) {
         // 建立好数据结构
@@ -543,6 +553,7 @@ export default {
   },
   mounted() {
     console.log("mounted");
+    console.log(new Date('2000-01-01'));
   },
   beforeUpdate() {
     console.log("beforeUpdate");

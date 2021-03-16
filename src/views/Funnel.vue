@@ -8,7 +8,7 @@
     <div style="margin:0 20vw;width:60vw;line-height:15vw;display:flex;justify-content:center;align-items:center">
       <button style="border:none;background-color:unset" @click="changeTime(-1)"><van-icon class="iconfont fontSize7vw" class-prefix='icon' name='left' /></button>
       <div @click="changeTime(0)">{{time.getFullYear()}}-{{time.getMonth()+1}}</div>
-      <van-icon class="iconfont fontSize7vw" class-prefix='icon' name='accountbook' />
+      <van-icon class="iconfont fontSize7vw" class-prefix='icon' name='accountbook' @click="DatetimePickerShow=true"/>
       <button style="border:none;background-color:unset" @click="changeTime(1)"><van-icon class="iconfont fontSize7vw" class-prefix='icon' name='right' /></button>
       <span style="margin-left:5vw">1.00</span>
     </div>
@@ -335,9 +335,6 @@
     
   </van-collapse>
 
-  <br>
-  <div>
-  </div>
 
 
   <!-- 1、添加收入的弹窗 -->
@@ -487,16 +484,30 @@
       <van-field id="temp15" style="line-height:8vw"  v-model="temp15" type="digit" label="期数" placeholder="请输入期数"  :style="{display: temp12 == 'oneTime' || temp13 == 'true'? 'none' : ''}" @blur="switch19=='false' & temp15 != '' ?changeSwitch('switch19'):''" />
 
       <van-field id="temp16" style="line-height:8vw"  v-model="temp16" type="number" label="总金额" placeholder="请输入总金额"  :style="{display: temp12 == 'oneTime' || temp13 == 'true'? 'none' : ''}" @blur="switch20=='false' & temp16 != '' ?changeSwitch('switch20'):''" />
-      
-      
     </div>
 
     <van-button type="primary" round  size="normal" style="width:30vw;margin:0 0 4vh 35vw" @click="addOptionalSpending(temp11,temp12,temp13,temp14,temp15,temp16,time.getFullYear(),time.getMonth())">提交</van-button>
-
-    
   </van-popup>
 
-  </div>
+  <!-- 年月选择器 -->
+  <van-popup v-model="DatetimePickerShow" position="bottom" round >
+    <van-datetime-picker
+      v-model="time"
+      type="year-month"
+      title="选择年月"
+      :min-date="minDate"
+      :max-date="maxDate"
+      :formatter="formatter"
+      swipe-duration="500"
+      @confirm="DatetimePickerShow=false"
+      @change="changeTime('DatetimePicker')"
+      @cancel="DatetimePickerShow=false"
+      />
+  </van-popup>
+  <!-- changeTime('DatetimePicker') -->
+  
+
+</div>
 </div>
   
   
@@ -505,8 +516,9 @@
 <script>
 import { Component, Vue } from "vue-property-decorator";
 import { Collapse, CollapseItem, Popup, Field, Button, Toast, SwipeCell, Form, Radio, RadioGroup, Popover, Grid, GridItem, Divider, Icon } from 'vant';
+import { DatetimePicker } from 'vant';
 
-Vue.use(Radio);Vue.use(RadioGroup);Vue.use(Form);Vue.use(Toast);Vue.use(Button);Vue.use(Field);Vue.use(Popup);Vue.use(Popover);Vue.use(Collapse);Vue.use(CollapseItem);Vue.use(SwipeCell);Vue.use(Grid);Vue.use(GridItem);Vue.use(Divider);Vue.use(Icon);
+Vue.use(Radio);Vue.use(RadioGroup);Vue.use(Form);Vue.use(Toast);Vue.use(Button);Vue.use(Field);Vue.use(Popup);Vue.use(Popover);Vue.use(Collapse);Vue.use(CollapseItem);Vue.use(SwipeCell);Vue.use(Grid);Vue.use(GridItem);Vue.use(Divider);Vue.use(Icon);Vue.use(DatetimePicker);
 
 export default {
   name: "funnel",
@@ -521,7 +533,11 @@ export default {
     return {
       activeNames: [],
       todayTime: 0,
+      minDate: 0,
+      maxDate: 0,
       time:0,
+      DatetimePickerShow:false,
+
 
       fixedSalary:0,
       tempFixedSalary:'',
@@ -589,6 +605,15 @@ export default {
     };
   },
   methods: {
+    formatter(type, val) {
+      // 选项格式化函数
+      if (type === 'year') {
+        return `${val}年`;
+      } else if (type === 'month') {
+        return `${val}月`;
+      }
+      return val;
+    },
     showPopup(item) {
       // this.addIncomeShow = true;
       this[item] = true;
@@ -854,6 +879,7 @@ export default {
       // 通过函数传值好像传不进去
       this.$nextTick(() => {
         document.querySelector(this.temp19).focus();
+        console.log('nextTick');
       })
     },
     cl(i,j,k,l,m){
@@ -894,9 +920,11 @@ export default {
       return (a)
     },
     changeTime (index){
+      // y是time，yy是todayTime
       let y = this.time.getFullYear();
       let m = this.time.getMonth();
       let d = this.time.getDate();
+      
       let yy = this.todayTime.getFullYear();
       let mm = this.todayTime.getMonth();
       let dd = this.todayTime.getDate();
@@ -908,15 +936,18 @@ export default {
         }
       }else if(index == 0){   // 回到现在
         this.time = this.todayTime;
-      }else{    //设置日期，这里还没写
-        this.time = new Date(parseInt(index.setDate(index.getDate())));
+      }else if(index == 'DatetimePicker'){    //设置日期，这里还没写
+        // this.time = new Date(parseInt(index.setDate(index.getDate())));
+        console.log(this.time);
       }
+
       y = this.time.getFullYear();
       m = this.time.getMonth();
       d = this.time.getDate();
+      let ym = formatLongDate(this.time,2);  // ym
 
       let tempInExData = JSON.parse(localStorage.inExData);
-      // 读取月度数据显示出来
+      // 读取InExData monthData 月度数据显示出来
       if(!tempInExData["monthData"][y]){  // 不存在年数据
         this.fixedSalary = 0;
         this.fixedRentIncome = 0;
@@ -939,9 +970,16 @@ export default {
         }
       }
       
+      // 读取必选消费、可选消费列表
       this.necessarySpendingList = tempInExData["necessarySpendingList"];
       this.optionalSpendingList = tempInExData["optionalSpendingList"];
+
       // 读取心愿清单数据显示出来
+      if(localStorage.wishList){
+        let a = JSON.parse(localStorage.wishList);
+        this.wishList = a.filter((val) => {
+          return val.status === 'aim' || val.payList[ym]});
+      }
 
       // 新建必要开支开关/可选开关
       this.necessarySpendingListSwitch = [];
@@ -951,15 +989,19 @@ export default {
       this.optionalSpendingListSwitch = [];
       for (const i in this.optionalSpendingList) {
         this.optionalSpendingListSwitch.push({switch:'false'});
-      }
+      };
+      this.wishListSwitch = [];
+      for (const i in this.wishList) {
+        this.wishListSwitch.push({switch:'false'});
+      };
 
       // 更新必要开支/可选开支
-      let a = formatLongDate(this.time,2);
-      this.necessarySpending = updateNecessarySpending(a,this.necessarySpendingList)
-      this.optionalSpending = updateOptionalSpending(a,this.optionalSpendingList)
+      this.necessarySpending = updateNecessarySpending(ym,this.necessarySpendingList);
+      this.optionalSpending = updateOptionalSpending(ym,this.optionalSpendingList);
+      this.wishListSpending = updateWishListSpending(ym,this.wishList);
 
       let tempBillData = JSON.parse(localStorage.billData);
-      let tempUserData = JSON.parse(localStorage.userData)
+      let tempUserData = JSON.parse(localStorage.userData);
       this.balance = calcBalance(tempBillData,y,m,d);
       // +++++++++++++++++calcBalance只计算到当前的数据，可能会有冲突，要留意
 
@@ -1116,16 +1158,19 @@ export default {
     console.log("beforeCreate");
   },
   created() {
+    // y是time，yy是todayTime
     console.log("created");
     this.todayTime = new Date(parseInt(new Date().getTime()))
-    let y = this.todayTime.getFullYear();
-    let m = this.todayTime.getMonth();
-    let d = this.todayTime.getDate();
+    let yy = this.todayTime.getFullYear();
+    let mm = this.todayTime.getMonth();
+    let dd = this.todayTime.getDate();
+    this.minDate = new Date(2020,0,1),
+    this.maxDate = new Date(this.todayTime.getFullYear()+2,0,0),
 
     this.time = this.todayTime;
-    let yy = this.time.getFullYear();
-    let mm = this.time.getMonth();
-    let dd = this.time.getDate();
+    let y = this.time.getFullYear();
+    let m = this.time.getMonth();
+    let d = this.time.getDate();
     let ym = formatLongDate(this.time,2);  // ym
 
     // 不存在就新建
@@ -1161,22 +1206,24 @@ export default {
     }
 
     let tempInExData = JSON.parse(localStorage.inExData);
-    // 读取月度数据显示出来
+    // 读取InExData monthData 月度数据显示出来
     this.fixedSalary = tempInExData["monthData"][y][m]["fixedSalary"];
     this.fixedRentIncome = tempInExData["monthData"][y][m]["fixedRentIncome"];
     this.otherSalary = tempInExData["monthData"][y][m]["otherSalary"];
     this.otherIncome = tempInExData["monthData"][y][m]["otherIncome"];
     this.otherIncomeList = tempInExData["monthData"][y][m]["otherIncomeList"];
+
+    // 读取必选消费、可选消费列表
     this.necessarySpendingList = tempInExData["necessarySpendingList"];
     this.optionalSpendingList = tempInExData["optionalSpendingList"];
+
     // 读取心愿清单数据显示出来
     if(localStorage.wishList){
-      this.wishList = JSON.parse(localStorage.wishList);
-      this.wishList = this.wishList.filter((val) => {
+      let a = JSON.parse(localStorage.wishList);
+      this.wishList = a.filter((val) => {
         return val.status === 'aim' || val.payList[ym]});
     }
     
-
     // 新建必要开支开关/可选开关
     for (const i in this.necessarySpendingList) {
       this.necessarySpendingListSwitch.push({switch:'false'});
@@ -1192,7 +1239,6 @@ export default {
     this.necessarySpending = updateNecessarySpending(ym,this.necessarySpendingList);
     this.optionalSpending = updateOptionalSpending(ym,this.optionalSpendingList);
     this.wishListSpending = updateWishListSpending(ym,this.wishList);
-    console.log(this.wishListSpending);
 
     let tempBillData = JSON.parse(localStorage.billData);
     let tempUserData = JSON.parse(localStorage.userData);
@@ -1231,7 +1277,7 @@ export default {
     console.log("mounted");
   },
   beforeUpdate() {
-    console.log("beforeUpdate");
+    console.log("beforeUpdate",this.time,this.todayTime);
     this.todayTime = new Date(parseInt(new Date().getTime()));
   },
   updated() {
@@ -1320,13 +1366,13 @@ function updateAddUpAsset(inExData,billData,y,m){
     if(i < y){
       // 老年份的全部遍历计算
       for(const j in inExData.monthData[i]){
-        a += inExData.monthData[i][j]['fixedSalary'] + inExData.monthData[i][j]['fixedRentIncome'] + inExData.monthData[i][j]['otherSalary'] + inExData.monthData[i][j]['otherIncome'];
+        a += Number(inExData.monthData[i][j]['fixedSalary']) + Number(inExData.monthData[i][j]['fixedRentIncome']) + Number(inExData.monthData[i][j]['otherSalary']) + Number(inExData.monthData[i][j]['otherIncome']);
       }
     }else if(i == y){
       // 当年的老月份遍历计算
       for(const j in inExData.monthData[i]){
         if(j <= m){
-          a += inExData.monthData[i][j]['fixedSalary'] + inExData.monthData[i][j]['fixedRentIncome'] + inExData.monthData[i][j]['otherSalary'] + inExData.monthData[i][j]['otherIncome'];
+          a += Number(inExData.monthData[i][j]['fixedSalary']) + Number(inExData.monthData[i][j]['fixedRentIncome']) + Number(inExData.monthData[i][j]['otherSalary']) + Number(inExData.monthData[i][j]['otherIncome']);
         }
       }
     }
@@ -1345,7 +1391,7 @@ function updateAddUpAsset(inExData,billData,y,m){
     for(const j in inExData.necessarySpendingList[i]['payList']){
       // 判定键的时间比本日小
       if(j <= ym){
-        a -= inExData.necessarySpendingList[i]['payList'][j];
+        a -= Number(inExData.necessarySpendingList[i]['payList'][j]);
       }
     }
   }
@@ -1355,13 +1401,13 @@ function updateAddUpAsset(inExData,billData,y,m){
     for(const j in inExData.optionalSpendingList[i]['payList']){
       // 判定键的时间比本日小
       if(j <= ym){
-        a -= inExData.optionalSpendingList[i]['payList'][j];
+        a -= Number(inExData.optionalSpendingList[i]['payList'][j]);
       }
     }
   }
 
   // 遍历日常开支
-  a -= updateAddUpMonthCost(billData,y,m);
+  a -= Number(updateAddUpMonthCost(billData,y,m));
   return a;
 }
 
