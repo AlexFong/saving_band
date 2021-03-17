@@ -327,19 +327,19 @@ export default {
         for (const i in this.wishList) {
           if(this.wishList[i]['id'] == this.tempId){
             this.wishList[i]['name'] = tempName;
-            this.wishList[i]['payment'] = temp3;
-            this.wishList[i]['price'] = temp5;
+            this.wishList[i]['payment'] = Number(temp3);
+            this.wishList[i]['price'] = Number(temp5);
             if(!this.wishList[i]['payList'][ym]){
               if(temp3 == ''){
-                this.wishList[i]['payList'][ym] = temp5;
+                this.wishList[i]['payList'][ym] = Number(temp5);
               }else{
-                this.wishList[i]['payList'][ym] = temp3;
+                this.wishList[i]['payList'][ym] = Number(temp3);
               }
             }else{
               if(temp3 == ''){
-                this.wishList[i]['payList'][ym] += temp5;
+                this.wishList[i]['payList'][ym] += Number(temp5);
               }else{
-                this.wishList[i]['payList'][ym] += temp3;
+                this.wishList[i]['payList'][ym] += Number(temp3);
               }
             };
             this.wishList[i]['status'] = this.temp8;
@@ -401,8 +401,8 @@ export default {
         id:tempUserData.wishId,
         status:"circle",
         name:name,
-        price:price,
-        payment:'',
+        price:Number(price),
+        payment:0,
         payList:{},
         addDate:this.todayTime,
         finishDate:'',
@@ -570,72 +570,6 @@ export default {
     let y = this.todayTime.getFullYear();
     let m = this.todayTime.getMonth();
     let d = this.todayTime.getDate();
-    
-    // let tempUserData = JSON.parse(localStorage.userData)
-    // if(!localStorage.wishList){
-    //   localStorage.wishList = JSON.stringify([
-    //     // {
-    //     //   id:0,
-    //     //   status:"checked",
-    //     //   name:"电脑11111111111111111111",
-    //     //   price:5000,
-    //     //   payment:1000,
-    //     //   payList:{'202103':1000,'202102':2000,'202101':2000},
-    //     //   addDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
-    //     //   finishDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
-    //     //   ps:0,
-    //     //   noWaste:"checked",
-    //     //   saveTime:"checked",
-    //     //   saveMoney:"checked",
-    //     // },
-    //     // {
-    //     //   id:1,
-    //     //   status:"circle",
-    //     //   name:"电脑2",
-    //     //   price:4000,
-    //     //   payment:1000,
-    //     //   payList:{},
-    //     //   addDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
-    //     //   finishDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
-    //     //   ps:0,
-    //     //   noWaste:"circle",
-    //     //   saveTime:"circle",
-    //     //   saveMoney:"circle",
-    //     // },
-    //     // {
-    //     //   id:2,
-    //     //   status:"clear",
-    //     //   name:"电脑333",
-    //     //   price:3000,
-    //     //   payment:1000,
-    //     //   payList:{'202103':100,'202102':2000,'202101':200},
-    //     //   addDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
-    //     //   finishDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
-    //     //   ps:0,
-    //     //   noWaste:"clear",
-    //     //   saveTime:"clear",
-    //     //   saveMoney:"clear",
-    //     // },
-    //     // {
-    //     //   id:3,
-    //     //   status:"aim",
-    //     //   name:"电脑4444444444444444444",
-    //     //   price:2000,
-    //     //   payment:1000,
-    //     //   payList:{'202103':100,'202102':200,'202101':200},
-    //     //   addDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
-    //     //   finishDate:"Thu Mar 11 2021 11:48:06 GMT+0800 (中国标准时间)",
-    //     //   ps:0,
-    //     //   noWaste:"clear",
-    //     //   saveTime:"clear",
-    //     //   saveMoney:"clear",
-    //     // }
-    //   ])
-    // };
-    // if(!tempUserData.wishId){
-    //   tempUserData.wishId = 3;
-    //   localStorage.userData = JSON.stringify(tempUserData);
-    // }
 
     let tempBillData = JSON.parse(localStorage.billData)
     this.wishList = JSON.parse(localStorage.wishList);

@@ -650,12 +650,25 @@ export default {
       if(tempFixedSalary){
         this[item] = tempFixedSalary;
         this['temp'+item.charAt(0).toUpperCase()+item.slice(1)] = '';
+
         let tempInExData = JSON.parse(localStorage.inExData);
+        if(!tempInExData["monthData"][y]){
+          tempInExData["monthData"][y] = {};
+        }
+        if(!tempInExData["monthData"][y][m]){
+          tempInExData["monthData"][y][m] = {
+            fixedRentIncome: 0,
+            fixedSalary: 0,
+            otherIncome: 0,
+            otherIncomeList: [],
+            otherSalary: 0,
+          };
+        }
         tempInExData["monthData"][y][m][item] = tempFixedSalary;
         localStorage.inExData = JSON.stringify(tempInExData);
-      }else(
-        Toast("!!!")
-      )
+      }else{
+        Toast("请输入数值!")
+      };
     },
     addNecessarySpending(temp1,temp2,temp3,temp4,temp5,temp6,temp7,y,m){
       m++;
@@ -681,17 +694,20 @@ export default {
         document.querySelector('#temp6').focus();
       }else{
         let tempInExData = JSON.parse(localStorage.inExData);
+
+        console.log(temp2 == 'year' && Number(temp7) != Number(m),Number(temp7), Number(m),this.time);
+
         tempInExData["necessarySpendingList"].push({
           name:temp1,
           interval:temp2,
           sustainable:temp3,
-          payment:temp4,
-          price:temp6,
-          payMonth:temp7,
-          y:y,m:m,
-          payList: temp2 == 'year' && temp7 != m+1 ? 
-            {} : {[''+y+m]:temp4},
-          status: temp5 == 1 && (temp2 == 'month' || temp2 == 'year' && temp7 != m+1)? 'finish' : 'going',
+          payment:Number(temp4),
+          price:Number(temp6),
+          payMonth:Number(temp7),
+          y:Number(y),m:Number(m),
+          payList: temp2 == 'year' && Number(temp7) != Number(m) ? 
+            {} : {[Number(''+y+m)]:Number(temp4)},
+          status: temp5 == 1 && (temp2 == 'month' || temp2 == 'year' && temp7 != m)? 'finish' : 'going',
         });
 
         Toast("添加成功!");
@@ -780,10 +796,10 @@ export default {
           name:temp11,
           period:temp12,
           sustainable:temp13,
-          payment:temp14,
-          price:temp16,
-          y:y,m:m,
-          payList: {[''+y+m]:temp14},
+          payment:Number(temp14),
+          price:Number(temp16),
+          y:Number(y),m:Number(m),
+          payList: {[Number(''+y+m)]:Number(temp14)},
           status: temp12 == 'oneTime' || temp15 == 1 ? 'finish' : 'going'
         });
         Toast("添加成功!");
@@ -1277,12 +1293,12 @@ export default {
     console.log("mounted");
   },
   beforeUpdate() {
-    console.log("beforeUpdate",this.time,this.todayTime);
+    console.log("beforeUpdate");
     this.todayTime = new Date(parseInt(new Date().getTime()));
   },
   updated() {
     console.log("updated");
-    console.log(document.activeElement);
+    // console.log(document.activeElement);
   },
   beforeDestroy() {
     console.log("beforeDestroy");

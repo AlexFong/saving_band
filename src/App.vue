@@ -30,7 +30,7 @@
         </template>
       </van-tabbar-item>
       <van-tabbar-item badge="99" to="/mine">
-        <span>我的1.00</span>
+        <span>我的1.01</span>
         <template #icon="props">
           <van-icon class="iconfont" class-prefix='icon' name='user' />
         </template>
@@ -98,20 +98,12 @@ export default {
     let ym = formatLongDate(this.time,2);  // ym
 
     // 首次登录新建数据
-    if(!localStorage.userData){
-      // 新建userData
-      localStorage.userData = JSON.stringify({
-        fisrtLoginDate:this.todayTime,
-        name:"default",
-        latestLoginDate:this.todayTime,
-        budjet:300,
-        wishId:0,
-      })
-
-      // 新建wishList
+    // 1、新建wishList
+    if(!localStorage.wishList){
       localStorage.wishList = JSON.stringify([]);
-
-      // 新建inExData
+    };
+    // 2、新建inExData
+    if(!localStorage.inExData){
       localStorage.inExData = JSON.stringify({
         monthData:{[y]:{[m]:{
           fixedSalary:0,
@@ -119,13 +111,13 @@ export default {
           otherSalary:0,
           otherIncome:0,
           otherIncomeList:[],
-          necessarySpending:'',
-          optionalSpending:'',
         }}},
         necessarySpendingList:[],
         optionalSpendingList:[],
       });
-
+    };
+    // 3、新建billData
+    if(!localStorage.billData){
       let billData = initBillData({},y,m,d,300);
       // 计算各层Balance
       billData[y]["list"][m]["list"][d]["data"]["dateBalance"] = calcDateBalance(tempBillData,y,m,d);
@@ -133,8 +125,19 @@ export default {
       billData[y]["data"]["yearBalance"] = calcYearBalance(tempBillData,y);
       // 新建billData
       localStorage.billData = JSON.stringify(billData);
-    }else{
-      // 老用户登录逻辑+++++++++++++++++++++
+    }
+    // 4、新建userData
+    if(!localStorage.userData){
+      localStorage.userData = JSON.stringify({
+        fisrtLoginDate:this.todayTime,
+        name:"default",
+        latestLoginDate:this.todayTime,
+        budjet:300,
+        wishId:0,
+      });
+    }
+    // 老用户登录逻辑+++++++++++++++++++++
+    else{
       let userData = JSON.parse(localStorage.userData);
       let billData = JSON.parse(localStorage.billData);
       let inExData = JSON.parse(localStorage.inExData);
@@ -151,7 +154,7 @@ export default {
       // 2、更新billData
       if (diffValue == 0){  
         // 当天重复登录
-      }else if(diffValue <= 31){ 
+      }else if(diffValue <= 91){ 
         let tempTime = dateStart;
         for (let i = diffValue; i > 0; i--) {
           // 满足条件执行，执行完再对数值进行调整
@@ -160,37 +163,35 @@ export default {
           let mmm = tempTime.getMonth();
           let ddd = tempTime.getDate();
           initBillData(billData,yyy,mmm,ddd,userData.budjet);
+          // 计算各层Balance++++++++++++++++这里可以写个判断年月的逻辑，减少运算量+++++++
+          billData[yyy]["list"][mmm]["data"]["monthBalance"] = calcMonthBalance(billData,yyy,mmm);
+          billData[yyy]["data"]["yearBalance"] = calcYearBalance(billData,yyy);
         };
         localStorage.billData = JSON.stringify(billData);
-      }else if(diffValue > 31){  
+      }else if(diffValue > 91){  
         // 如果大于31天，只新建今天的日表。
         initBillData(billData,y,m,d);
+        // 计算各层Balance
+        billData[y]["list"][m]["data"]["monthBalance"] = calcMonthBalance(billData,y,m);
+        billData[y]["data"]["yearBalance"] = calcYearBalance(billData,y);
+
         localStorage.billData = JSON.stringify(billData);
         alert("太久没登录了，我们没给你更新数据了~");
       }else{
         alert("时间出错了，请重试");
-      }
+      };
     
-      // 逐月更新
       // 3、更新inExData
       // 4、更新wishList
       if(diffValue>0){
-        for(tempTime = dateStart;formatLongDate(dateEnd,2) - formatLongDate(tempTime,2) != 0;){
-          // 遍历每个月
-          // 当月不用，下个月才要
-          let tempTimeStart = tempTime;
-          tempTime = new Date(tempTime.setMonth(tempTime.getMonth()+1));
-          console.log('tempTime',tempTimeStart,tempTime);
+        // 逐月遍历更新
+        for(let tempTime = dateStart;formatLongDate(dateEnd,2) - formatLongDate(tempTime,2) != 0;){
+          // 当月不用，下个月才要；new Date之后才可以是数值，不然会指向tempTime
+          let tempTimeStart = new Date(tempTime);
+          tempTime.setMonth(tempTime.getMonth()+1);
+          console.log('+tempTime',tempTime,tempTimeStart);
           ym = formatLongDate(tempTime,2);
 
-          // going的
-            // 永续的
-              // 年
-              // 月
-
-            // 不是永续的
-              // 年
-              // 月
 
           // 更新necessarySpendingList
           for(const i in inExData['necessarySpendingList']){
@@ -225,7 +226,7 @@ export default {
                   }
                 }else{
                   if(a['payMonth']-1 == tempTime.getMonth()){
-                    if(a['payment'] + sumPayList > a['price']){
+                    if(Number(a['payment']) + sumPayList > a['price']){
                       inExData['necessarySpendingList'][i]['payList'][ym] = a['price'] - sumPayList;
                       inExData['necessarySpendingList'][i]['status'] = 'finish';
                     }else{
@@ -236,25 +237,9 @@ export default {
               }
             }
           }
-          // interval: "month"
-          // m: "03"       
-          // name: "房租"
-          // payList: {202103: "1500"}
-          // payMonth: ""
-          // payment: "1500"
-          // price: ""
-          // status: "going"
-          // sustainable: "true"
-          // y: 2021
 
 
-
-          // status是going的
-            // sustainable是true的
-
-            // sustainable是false的
-
-          // 更新optionalSpendingList +++++++++++++++++++++++++++++
+          // 更新optionalSpendingList 
           for(const i in inExData['optionalSpendingList']){
             let a = inExData['optionalSpendingList'][i];
             // status有going和finish两种状态
@@ -270,8 +255,8 @@ export default {
                 for(const j in a['payList']){
                   sumPayList += Number(a['payList'][j]);
                 };
-                if(a['payment'] + sumPayList > a['price']){
-                  inExData['optionalSpendingList'][i]['payList'][ym] = a['price'] - sumPayList;
+                if(Number(a['payment']) + sumPayList > a['price']){
+                  inExData['optionalSpendingList'][i]['payList'][ym] = Number(a['price']) - sumPayList;
                   inExData['optionalSpendingList'][i]['status'] = 'finish';
                 }else{
                   inExData['optionalSpendingList'][i]['payList'][ym] = a['payment'];
@@ -280,24 +265,11 @@ export default {
             }
           }
 
-          // m: "03"
-          // name: "投资"
-          // payList: {202103: "100"}
-          // payment: "100"
-          // period: "oneTime"
-          // price: ""
-          // status: "finish"
-          // sustainable: "true"
-          // y: 2021
-
-
-
-          // status = aim时，
 
           // 更新wishList
           for(const i in wishList){
             let a = wishList[i];
-            // status有4种状态
+            // status有4种状态aim/checked
             if(a['status'] == 'aim'){
               // 计算payList已支付总额
               let sumPayList = 0;
@@ -306,53 +278,38 @@ export default {
               };
               if(a['payment'] + sumPayList > a['price']){
                 wishList[i]['payList'][ym] = a['price'] - sumPayList;
-                wishList[i]['status'] = 'finish';
+                wishList[i]['status'] = 'checked';
               }else{
                 wishList[i]['payList'][ym] = a['payment'];
               }
             }
           }
-          // addDate: "2021-03-15T11:14:02.627Z"
-          // finishDate: ""
-          // id: 13
-          // name: "IPhone mini12"
-          // noWaste: "circle"
-          // payList: {}
-          // payment: ""
-          // price: "5300"
-          // ps: ""
-          // saveMoney: "circle"
-          // saveTime: "circle"
-          // status: "circle"
 
 
           // 更新monthData
           let a = inExData['monthData'][tempTimeStart.getFullYear()][tempTimeStart.getMonth()];
+          console.log('a++',tempTimeStart,inExData);
           // 新建年
           if(!inExData['monthData'][tempTime.getFullYear()]){
-            inExData['monthData'][tempTime.getFullYear()] = {}
+            inExData['monthData'][tempTime.getFullYear()] = {};
           }
           // 新建月
           inExData['monthData'][tempTime.getFullYear()][tempTime.getMonth()] = {
             fixedRentIncome: a.fixedRentIncome,
             fixedSalary: a.fixedSalary,
-            // necessarySpending: "",
-            // optionalSpending: "",
             otherIncome: 0,
             otherIncomeList: [],
-            otherSalary: "",
+            otherSalary: 0,
           };
-
-
-        }
+        };
       };
       // 遍历完
 
       // 把数据存回localStorage
-      localStorage.userData = JSON.stringify(userData)
-      localStorage.billData = JSON.stringify(billData)
-      localStorage.inExData = JSON.stringify(inExData)
-      localStorage.wishList = JSON.stringify(wishList)
+      localStorage.userData = JSON.stringify(userData);
+      localStorage.billData = JSON.stringify(billData);
+      localStorage.inExData = JSON.stringify(inExData);
+      localStorage.wishList = JSON.stringify(wishList);
     }
     // 通用逻辑还有要补充的吗？？++++++++++++
     
@@ -364,12 +321,12 @@ export default {
     console.log("App mounted");
   },
   beforeUpdate() {
-    console.log("App beforeUpdate",this.time,this.todayTime);
+    console.log("App beforeUpdate");
     this.todayTime = new Date(parseInt(new Date().getTime()));
   },
   updated() {
     console.log("App updated");
-    console.log(document.activeElement);
+    // console.log(document.activeElement);
   },
   beforeDestroy() {
     console.log("App beforeDestroy");

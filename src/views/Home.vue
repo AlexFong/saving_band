@@ -173,7 +173,7 @@
     <span>￥</span> 
     <input style="width:40vw;" type="number" v-model="cost" placeholder="输入金额" />
     <span @click="addFun" style="width:12vw;border:1px solid #aaa;border-radius:2vw;margin-left:2vw;">花钱</span>
-    <!-- <button @click="dayRollBack">回滚2天</button> -->
+    <span @click="dataRollBack(33)" style="width:12vw;border:1px solid #aaa;border-radius:2vw;margin-left:2vw;">回滚</span>
   </div>
 </div>
 
@@ -412,41 +412,90 @@ export default {
         alert("预算不能为负数哦~");
       }
     },
-    // 测试：回滚一天
-    dayRollBack: function(){
-      let tempUserData = JSON.parse(localStorage.userData);
-      let tempBillData = JSON.parse(localStorage.billData);
-
-      // 第二天：new Date(dateTime.setDate(dateTime.getDate()+1))
+    // 测试用：数据回滚清除
+    dataRollBack: function(n){
+      let userData = JSON.parse(localStorage.userData);
+      let billData = JSON.parse(localStorage.billData);
+      let wishList = JSON.parse(localStorage.wishList);
+      let inExData = JSON.parse(localStorage.inExData);
       let dateTime = this.todayTime;
+      // 遍历时y和ym会动态变化，判断条件(当前剩余数据的最新日期)
+      let y = this.todayTime.getFullYear();
+      let ym = formatLongDate(this.todayTime,2);
 
-      let yy = dateTime.getFullYear();
-      let mm = dateTime.getMonth();
-      let dd = dateTime.getDate();
+      // 回滚i天
+      for(let i = 0;i<n;i++){
+        console.log('回滚',i);
+        let yy = dateTime.getFullYear();
+        let mm = dateTime.getMonth();
+        let dd = dateTime.getDate();
+        let yymm = formatLongDate(dateTime,2);
 
-      // 删除对象键值对
-      if(tempBillData[yy]["list"][mm]["list"][dd]){
-        delete tempBillData[yy]["list"][mm]["list"][dd]
-      }
-      
-      dateTime = new Date(dateTime.setDate(dateTime.getDate()-1));
+        // 1、billData回滚  3、遍历inExData-monthData
+        if(y - yy > 0){
+          // 如果跨年了
+          // 删掉上一年
+          delete billData[yy+1];
+          delete billData[yy]["list"][mm]["list"][dd];
 
-      // 回滚第二天
-      yy = dateTime.getFullYear();
-      mm = dateTime.getMonth();
-      dd = dateTime.getDate();
+          delete inExData['monthData'][yy+1];
 
-      // 删除对象键值对
-      if(tempBillData[yy]["list"][mm]["list"][dd]){
-        delete tempBillData[yy]["list"][mm]["list"][dd]
-      }
-      
-      dateTime = new Date(dateTime.setDate(dateTime.getDate()-1));
+          y = yy;
+        }else if(ym - yymm > 0){
+          // 如果跨月了
+          // 删掉上个月
+          delete billData[yy]["list"][mm+1];
+          delete billData[yy]["list"][mm]["list"][dd];
+
+          delete inExData['monthData'][yy][mm+1];
+        }else{
+          delete billData[yy]["list"][mm]["list"][dd];
+        };
+        // 还要更新month/yearBalance，暂时先不加，好像没问题的
 
 
-      tempUserData.latestLoginDate = formatLongDate(dateTime,1);
-      localStorage.userData = JSON.stringify(tempUserData);
-      localStorage.billData = JSON.stringify(tempBillData);
+        // 2、wishlist回滚  3、inExData回滚
+        // 如果跨月了
+        if(ym - yymm > 0) {
+          console.log('跨月了',ym);
+
+          // 遍历wishlist，checked/aim
+          for(const i in wishList){
+            if(wishList[i]['status']=='checked' && Number(wishList[i]['payList'][ym])>0){
+              wishList[i]['status']='aim';
+            };
+            delete wishList[i]['payList'][ym];
+          };
+
+          // 遍历inExData-necessarySpendingList，going/finish
+          for(const i in inExData['necessarySpendingList']){
+            if(inExData['necessarySpendingList'][i]['status']=='finish' && Number(inExData['necessarySpendingList'][i]['payList'][ym])>0){
+              inExData['necessarySpendingList'][i]['status']='going';
+            };
+            delete inExData['necessarySpendingList'][i]['payList'][ym];
+          };
+
+          // 遍历inExData-optionalSpendingList
+          for(const i in inExData['optionalSpendingList']){
+            if(inExData['optionalSpendingList'][i]['status']=='finish' && Number(inExData['optionalSpendingList'][i]['payList'][ym])>0){
+              inExData['optionalSpendingList'][i]['status']='going';
+            };
+            delete inExData['optionalSpendingList'][i]['payList'][ym];
+          };
+          ym = yymm;
+        };
+
+        // 遍历完改变日期再遍历
+        dateTime = new Date(dateTime.setDate(dateTime.getDate()-1));
+      };
+
+      // 4、userData回滚
+      userData.latestLoginDate = formatLongDate(dateTime,1);
+
+      localStorage.userData = JSON.stringify(userData);
+      localStorage.billData = JSON.stringify(billData);
+      localStorage.wishList = JSON.stringify(wishList);
+      localStorage.inExData = JSON.stringify(inExData);
     }
   },
   beforeCreate() {
@@ -456,7 +505,6 @@ export default {
     console.log("created");
     this.width = document.body.clientWidth;
     this.height = document.body.clientHeight;
-    // console.log(this.height,this.width);
 
     this.todayTime = new Date(parseInt(new Date().getTime()));
     this.time = this.todayTime;
@@ -467,72 +515,8 @@ export default {
     let mm = this.todayTime.getMonth();
     let dd = this.todayTime.getDate();
     
-    // if(!localStorage.userData){
-    //   // 新建userData,可以多加逻辑，记录用户首次登录时的信息+++++++++++++++++++++
-    //   localStorage.userData = JSON.stringify({
-    //     // 记录首次登录日期
-    //     fisrtLoginDate:this.todayTime,
-    //     name:"default",
-    //     latestLoginDate:this.todayTime,
-    //     budjet:400,
-    //   })
-
-    //   // 新建billData
-    //   let tempBillData = initBillData({},y,m,d,this.budjet);
-
-    //   // 计算各层Balance
-    //   tempBillData[y]["list"][m]["list"][d]["data"]["dateBalance"] = calcDateBalance(tempBillData,y,m,d);
-    //   tempBillData[y]["list"][m]["data"]["monthBalance"] = calcMonthBalance(tempBillData,y,m);
-    //   tempBillData[y]["data"]["yearBalance"] = calcYearBalance(tempBillData,y);
-    //   this.balance = calcBalance(tempBillData,yy,mm,dd);
-    //   this.todayBalance = tempBillData[y]["list"][m]["list"][d]["data"]["dateBalance"];
-    //   this.todayBudjet = tempBillData[y]["list"][m]["list"][d]["data"]["budjet"];
-
-    //   // stringify再parse会使时间格式发生变化
-    //   localStorage.billData = JSON.stringify(tempBillData);
-    //   // 使时间格式保持一致
-    //   this.bill = JSON.parse(localStorage.billData)[y]["list"][m]["list"][d]["list"];
-    // }
-    
     let tempUserData = JSON.parse(localStorage.userData)
     let tempBillData = JSON.parse(localStorage.billData)
-
-    // // 更新日期
-    // let dateStart = new Date(tempUserData.latestLoginDate);
-    // // 临时先用登录时间来记录最后一次登录时间+++++++++++++++++++++++++++++++
-    // tempUserData.latestLoginDate = formatLongDate(this.todayTime,1);
-    // let dateEnd = new Date(tempUserData.latestLoginDate);
-    // let diffValue = (dateEnd - dateStart) / (1000 * 60 * 60 * 24);
-    // localStorage.userData = JSON.stringify(tempUserData)
-
-
-    // // init好没有建立的日表
-    // if (diffValue == 0){
-    //   // 保险起见+++++++++++++++++++++++这里initBillData不用把数据接回来吗？
-    //   initBillData(tempBillData,y,m,d,tempUserData.budjet);
-    //   // 初始化后更新每日余额 tempBillData[y]["list"][m]["list"][d]["data"]["dateBalance"] = calcDateBalance(tempBillData,y,m,d);
-    //   console.log("diffValue == 0");
-    // }else if(diffValue <= 7){ // 如果天数差大于7天，就不执行逻辑。新建中间空掉的日表。
-    //   for (let i = diffValue; i > 0; i--) {
-    //     // 满足条件执行，执行完再对数值进行调整
-    //     // 第二天：new Date(dateTime.setDate(dateTime.getDate()+1))
-    //     dateStart = new Date(dateStart.setDate(dateStart.getDate()+1))
-    //     let yy = dateStart.getFullYear();
-    //     let mm = dateStart.getMonth();
-    //     let dd = dateStart.getDate();
-    //     initBillData(tempBillData,yy,mm,dd,tempUserData.budjet);
-    //     console.log("----------------测试看出现几次----------------", dateStart);
-    //     console.log("diffValue <= 7 1111111");
-    //   }
-    //   console.log("diffValue <= 7 2222222");
-    // }else if(diffValue > 7){  // 如果大于7天，只新建今天的日表。
-    //   initBillData(tempBillData,y,m,d);
-    //   console.log("太久没登录了，我们没给你更新数据了~");
-    //   alert("太久没登录了，我们没给你更新数据了~")
-    // }else{
-    //   console.log("时间出错了，请重试");
-    //   alert("时间出错了，请重试")
-    // }
 
     // 更新显示的账单、todayBalance、balance、todayBudjet
     this.todayBudjet = tempBillData[y]["list"][m]["list"][d]["data"]["budjet"];
@@ -545,9 +529,6 @@ export default {
     localStorage.billData = JSON.stringify(tempBillData);
     // 使时间格式保持一致
     this.bill = JSON.parse(localStorage.billData)[y]["list"][m]["list"][d]["list"];
-    
-
-
   },
   beforeMount() {
     console.log("beforeMount");
@@ -561,7 +542,6 @@ export default {
     this.todayTime = new Date(parseInt(new Date().getTime()));
     this.width = document.body.clientWidth;
     this.height = document.body.clientHeight;
-    console.log(this.height,this.width);
   },
   updated() {
     console.log("updated");
@@ -602,6 +582,8 @@ function formatLongDate (date,type=0) {
   let a
   if(type==1){
     a = myyear + '-' + mymonth + '-' + myweekday;
+  }else if(type==2){
+    a = myyear + mymonth;
   }else{
     a = myyear + '' + mymonth + '' + myweekday + ' ' + myHour + ':' + myMin + ':' + mySec;
   }
