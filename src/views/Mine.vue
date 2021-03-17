@@ -2,7 +2,7 @@
 <div class="mine">
 <div id="header">
   <div style="height:5vw"></div>
-  <div style="height:15vw;line-height:15vw">我的1.03</div>
+  <div style="height:15vw;line-height:15vw">我的1.04</div>
 </div>
 <br>
 <div>
@@ -30,9 +30,9 @@
 
 <script>
 import { Component, Vue } from "vue-property-decorator";
-import { Dialog } from 'vant';
+import { Dialog, Toast } from 'vant';
 
-Vue.use(Dialog);
+Vue.use(Dialog);Vue.use(Toast);
 
 export default {
   name: "mine",
@@ -49,6 +49,8 @@ export default {
   data() {
     return {
       // 未删 
+      todayTime:"",
+      time:"",
       balance: 0,
       todayBalance: 0,
       cost: "",
@@ -92,8 +94,6 @@ export default {
         q: "其他",
       },
       bill: [],
-      todayTime:"",
-      time:"",
       budjet:400,
       todayBudjet:0,
       showInfo:'',
@@ -103,11 +103,27 @@ export default {
   methods: {
     changeBudjet: function(){
       if(this.budjet >= 0){
-        let tempUserData = JSON.parse(localStorage.userData);
-        tempUserData.budjet = this.budjet;
-        localStorage.userData = JSON.stringify(tempUserData);
+        let userData = JSON.parse(localStorage.userData);
+        userData.budjet = this.budjet;
+        localStorage.userData = JSON.stringify(userData);
+
+        let y = this.todayTime.getFullYear();
+        let m = this.todayTime.getMonth();
+        let d = this.todayTime.getDate();
+
+        // 今天的数值也改了
+        let billData = JSON.parse(localStorage.billData);
+        billData[y]['list'][m]['list'][d]['data']['budjet'] = this.budjet;
+
+        // 计算各层Balance
+        billData[y]["list"][m]["list"][d]["data"]["dateBalance"] = calcDateBalance(billData,y,m,d);
+        billData[y]["list"][m]["data"]["monthBalance"] = calcMonthBalance(billData,y,m);
+        billData[y]["data"]["yearBalance"] = calcYearBalance(billData,y);
+        localStorage.billData = JSON.stringify(billData);
+
+        Toast('预算调整成功！')
       }else{
-        alert("预算不能为负数哦~");
+        Toast("预算不能为负数哦~");
       };
     },
     delLocalStorage(e){
@@ -150,12 +166,12 @@ export default {
     let m = this.todayTime.getMonth();
     let d = this.todayTime.getDate();
     
-    let tempUserData = JSON.parse(localStorage.userData)
-    let tempBillData = JSON.parse(localStorage.billData)
+    let userData = JSON.parse(localStorage.userData)
+    let billData = JSON.parse(localStorage.billData)
 
     // 更新显示balance、budjet
-    this.balance = calcBalance(tempBillData,y,m,d);
-    this.budjet = tempUserData.budjet;
+    this.balance = calcBalance(billData,y,m,d);
+    this.budjet = userData.budjet;
   },
   beforeMount() {
     console.log("beforeMount");
@@ -210,6 +226,43 @@ function calcBalance(tempBillData,y,m,d){
   return(balance)
 }
 
+// 封装日余额数据更新
+function calcDateBalance(tempBillData,y,m,d){
+  let dateBalance = tempBillData[y]["list"][m]["list"][d]["data"]["budjet"];
+  // 直接遍历(正常情况下，初始化后每天都会有数据)
+  for (const i in tempBillData[y]["list"][m]["list"][d]["list"]) {
+    dateBalance -= Number(tempBillData[y]["list"][m]["list"][d]["list"][i]["cost"]);
+  }
+  // 消除浮点影响，取小数后一位
+  if(dateBalance > 0){
+    dateBalance = parseInt(dateBalance * 10 + 0.1)/10;
+  }else if(dateBalance < 0){
+    dateBalance = parseInt(dateBalance * 10 - 0.1)/10;
+  }
+  return(dateBalance);
+}
+
+// 封装月余额数据更新
+function calcMonthBalance(tempBillData,y,m){
+  let monthBalance = 0;
+
+  // 直接遍历每天数据
+  for (const i in tempBillData[y]["list"][m]["list"]) {
+    monthBalance += Number(tempBillData[y]["list"][m]["list"][i]["data"]["dateBalance"]);
+  }
+  return(monthBalance);
+}
+
+// 封装年余额数据更新
+function calcYearBalance(tempBillData,y){
+  let yearBalance = 0;
+
+  // 直接遍历(正常情况下，初始化后每月都会有数据)
+  for (const i in tempBillData[y]["list"]) {
+    yearBalance += Number(tempBillData[y]["list"][i]["data"]["monthBalance"]);
+  }
+  return(yearBalance);
+}
 
 
 </script>
