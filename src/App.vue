@@ -10,7 +10,7 @@
   <router-view/>
 
   <div id="footer">
-    <van-tabbar style="height:16vw;padding-bottom:4vw" v-model="active">
+    <van-tabbar route style="height:16vw;padding-bottom:4vw" v-model="active">
       <van-tabbar-item badge="" to="/">
         <span>日常开支</span>
         <template #icon="props">
