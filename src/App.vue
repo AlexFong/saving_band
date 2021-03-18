@@ -30,7 +30,7 @@
         </template>
       </van-tabbar-item>
       <van-tabbar-item badge="99" to="/mine">
-        <span>我的1.02</span>
+        <span>我的1.03</span>
         <template #icon="props">
           <van-icon class="iconfont" class-prefix='icon' name='user' />
         </template>
@@ -118,7 +118,7 @@ export default {
     };
     // 3、新建billData
     if(!localStorage.billData){
-      let billData = initBillData({},y,m,d,300);
+      let billData = initBillData({},y,m,d,188.8);
       // 计算各层Balance
       billData[y]["list"][m]["list"][d]["data"]["dateBalance"] = calcDateBalance(tempBillData,y,m,d);
       billData[y]["list"][m]["data"]["monthBalance"] = calcMonthBalance(tempBillData,y,m);
@@ -132,7 +132,7 @@ export default {
         fisrtLoginDate:this.todayTime,
         name:"default",
         latestLoginDate:this.todayTime,
-        budjet:300,
+        budjet:188.8,
         wishId:0,
       });
     }
