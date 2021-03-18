@@ -221,10 +221,10 @@ export default {
       tempId:'',
       tempName:'',
       actions: [
-        { name: '想想看',icon: "circle" }, 
-        { name: '分期实现',icon: "aim" }, 
-        { name: '实现心愿',icon: "checked" }, 
-        { name: '暂时取消',icon: "clear" }
+        { name: '先放着想想看',icon: "circle" }, 
+        { name: '分期实现心愿',icon: "aim" }, 
+        { name: '直接实现心愿',icon: "checked" }, 
+        { name: '忍痛放弃',icon: "clear" }
       ],
       show: false,
       value: 'unfinished',

@@ -29,7 +29,7 @@
           <van-icon class="iconfont" class-prefix='icon' name='heart' />
         </template>
       </van-tabbar-item>
-      <van-tabbar-item badge="99" to="/mine">
+      <van-tabbar-item badge="" to="/mine">
         <span>我的1.03</span>
         <template #icon="props">
           <van-icon class="iconfont" class-prefix='icon' name='user' />
