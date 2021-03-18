@@ -2,7 +2,7 @@
 <div class="wishList">
 <div id="header">
   <div style="height:5vw"></div>
-  <div style="height:15vw;line-height:15vw">心愿清单1.05</div>
+  <div style="height:15vw;line-height:15vw">心愿清单1.06</div>
 </div>
 
 <!-- 导航条 -->
@@ -11,7 +11,7 @@
     <!-- 1 -->
     <van-dropdown-item v-model="value" :options="option" @change="activeNames=[]"/>
     <!-- 2 -->
-    <van-dropdown-item title="筛选?" ref="item">
+    <!-- <van-dropdown-item title="筛选?" ref="item">
       <van-cell center title="包邮?" style="text-align:left">
         <template #right-icon>
           <van-switch v-model="switch1" size="24" active-color="#ee0a24"/>
@@ -27,7 +27,7 @@
           确认
         </van-button>
       </div>
-    </van-dropdown-item>
+    </van-dropdown-item> -->
   </van-dropdown-menu>
   <!-- 3 -->
   <div style="display:flex;width:25vw;align-self:center;justify-content:center">
