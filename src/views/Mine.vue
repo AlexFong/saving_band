@@ -6,23 +6,22 @@
 </div>
 <br>
 <div>
-  <div style="display:flex;justify-content:center">
+  <div style="display:flex;justify-content:center;align-items:center">
     <span>设置每日预算:</span>
     <input style="margin:0 2vw;width:30vw" type="number" v-model="budjet" placeholder="设置每日预算" />
-    <span style="margin:0 0.5vw;width:14vw;border:1px solid #aaa;border-radius:2vw;height:4vh" @click="changeBudjet()">调整</span>
+    <span style="padding:0.5vw 0.5vw;width:14vw;border:1px solid #aaa;border-radius:2vw;" @click="changeBudjet()">调整</span>
   </div>
   <br><br>
   <button @click="chosen='inExData';showInfo='清理记账漏斗缓存/inExData';Dialog()">清理记账漏斗缓存<br>inExData</button><br><br>
   <button @click="chosen='billData';showInfo='清理天天记账缓存/billData';Dialog()">清理日常开支缓存<br>billData</button><br><br>
   <button @click="chosen='userData';showInfo='清理用户数据缓存/userData';Dialog()">清理用户数据缓存<br>userData</button><br><br>
   <button @click="chosen='wishList';showInfo='清理心愿清单缓存/wishList';Dialog()">清理心愿清单缓存<br>wishList</button><br><br>
-  <!-- <div>总余额:{{ balance }}</div> -->
+  
+  父组件的<input type="text" v-model="author">
 
-  <!-- <van-dialog v-model="show" title="" show-cancel-button>
-    你正准备{{showInfo}}。
-    <br>
-    请认真确认，再点击下一步。
-  </van-dialog> -->
+  <!-- <br>在父组件绑定一个值传给子组件用props接。<br> -->
+  <child1 :notice='author' @childPastValue="childByValue"></child1>
+  <!-- 被子组件的childValue事件触发父组件的childByValue -->
 </div>
 </div>
 </template>
@@ -31,12 +30,13 @@
 <script>
 import { Component, Vue } from "vue-property-decorator";
 import { Dialog, Toast } from 'vant';
+import child1 from '../components/child1';
 
 Vue.use(Dialog);Vue.use(Toast);
 
 export default {
   name: "mine",
-  // 数据父传子
+  // 数据父传子,子接收的数据
   props: {
     msg: {
       type: String,
@@ -45,6 +45,7 @@ export default {
   },
   components: {
     [Dialog.Component.name]: Dialog.Component,
+    child1  // 这个名字必须与import的名字相同
   },
   data() {
     return {
@@ -98,6 +99,7 @@ export default {
       todayBudjet:0,
       showInfo:'',
       chosen:'',
+      author:''
     };
   },
   methods: {
@@ -152,7 +154,11 @@ export default {
     }).catch(()=>{
      console.log('点击了取消')
     })
-   },
+    },
+    childByValue(val){
+      console.log(2,val);
+      this.author = val;
+    },
     
   },
   beforeCreate() {
@@ -264,6 +270,29 @@ function calcYearBalance(tempBillData,y){
   return(yearBalance);
 }
 
+
+// var getData1 = function(callback){
+//   console.log('getData1');
+//   callback(1)
+//   return 1
+// }
+// var getData2 = function(a,callback){
+//   console.log('getData2');
+//   callback(a+1)
+//   return a+1
+// }
+// var getData3 = function(a,callback){
+//   console.log('getData3');
+//   callback(a+1)
+//   return a+1
+// }
+// getData1(function(alex1){
+//   getData2(alex1,function(alex2){
+//     getData3(alex2,function(alex3){
+//       console.log('getData3',alex3);
+//     })
+//   })
+// })
 
 </script>
 

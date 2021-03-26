@@ -515,8 +515,7 @@
 
 <script>
 import { Component, Vue } from "vue-property-decorator";
-import { Collapse, CollapseItem, Popup, Field, Button, Toast, SwipeCell, Form, Radio, RadioGroup, Popover, Grid, GridItem, Divider, Icon } from 'vant';
-import { DatetimePicker } from 'vant';
+import { DatetimePicker, Collapse, CollapseItem, Popup, Field, Button, Toast, SwipeCell, Form, Radio, RadioGroup, Popover, Grid, GridItem, Divider, Icon } from 'vant';
 
 Vue.use(Radio);Vue.use(RadioGroup);Vue.use(Form);Vue.use(Toast);Vue.use(Button);Vue.use(Field);Vue.use(Popup);Vue.use(Popover);Vue.use(Collapse);Vue.use(CollapseItem);Vue.use(SwipeCell);Vue.use(Grid);Vue.use(GridItem);Vue.use(Divider);Vue.use(Icon);Vue.use(DatetimePicker);
 
@@ -1189,38 +1188,6 @@ export default {
     let d = this.time.getDate();
     let ym = formatLongDate(this.time,2);  // ym
 
-    // 不存在就新建
-    // if(!localStorage.inExData){
-    //   localStorage.inExData = JSON.stringify({
-    //     monthData:{[y]:{[m]:{
-    //       fixedSalary:0,
-    //       fixedRentIncome:0,
-    //       otherSalary:0,
-    //       otherIncome:0,
-    //       otherIncomeList:[
-    //         // {incomeName: "睡觉", incomeNumber: "3000"},
-    //         // {incomeName: "红包", incomeNumber: "1000"}
-    //         ],
-    //       // necessarySpending:'',
-    //       // optionalSpending:'',
-    //       // investSpending:1000,
-    //       // freedomSpending:100,
-    //       // remainAsset:1000,
-    //     }}},
-    //     necessarySpendingList:[
-    //       // {name:"房贷",sustainable:'false',interval:'month',price:7654321,payment:50000,payMonth:'',y:2021,m:1,payList:{'202103':500},status:'finish'},
-    //       // {name:"车贷",sustainable:'false',interval:'year',price:54321,payment:3000,payMonth:3,y:2021,m:1,payList:{'202102':500},status:'going'},
-    //       // {name:"房租",sustainable:'true',interval:'month',price:0,payment:2000,payMonth:'',y:2021,m:1,payList:{'202101':500},status:'pause'},
-    //       // {name:"净水滤芯",sustainable:'true',interval:'year',price:0,payment:500,payMonth:3,y:2021,m:1,payList:{'202003':500},status:'going'},
-    //     ],
-    //     optionalSpendingList:[
-    //       // {name:'投资',period:'month',sustainable:'true',payment:5000,price:50000,payList:{'202103':500},y:2021,m:'03',status:'going'},
-    //       // {name:'投资',period:'month',sustainable:'true',payment:5000,price:50000,payList:{'202101':500},y:2021,m:3,status:'pause'},
-    //     ],
-    //     itemData:{}
-    //   });
-    // }
-
     let tempInExData = JSON.parse(localStorage.inExData);
     // 读取InExData monthData 月度数据显示出来
     this.fixedSalary = tempInExData["monthData"][y][m]["fixedSalary"];
@@ -1285,6 +1252,11 @@ export default {
 
     let dddd = new Date(y,m,0);
     this.addUpAsset = Math.ceil(updateAddUpAsset(tempInExData,tempBillData,dddd.getFullYear(),dddd.getMonth()));
+
+    console.log(444);
+    this.$root.bus.$on("hehe", function (t) {
+      console.log('++++++++++',t);
+    })
   },
   beforeMount() {
     console.log("beforeMount");

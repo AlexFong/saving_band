@@ -1,5 +1,9 @@
+
 <template>
 <div id="app">
+  <!-- bootstrap试玩代码 -->
+  <!-- <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"> -->
+
   <!-- 任意元素中加 v-wechat-title 指令 建议将标题放在 route 对应meta对象的定义中 -->
   <div v-wechat-title="$route.meta.title"></div>
   <!--或者-->
@@ -29,7 +33,7 @@
           <van-icon class="iconfont" class-prefix='icon' name='heart' />
         </template>
       </van-tabbar-item>
-      <van-tabbar-item badge="" to="/mine">
+      <van-tabbar-item badge="99" to="/mine">
         <span>我的1.03</span>
         <template #icon="props">
           <van-icon class="iconfont" class-prefix='icon' name='user' />
@@ -49,33 +53,46 @@
 import "./assets/font_2356633_61czw08nnlw/iconfont.css";
 import Vue from 'vue';
 import { Button, Tabbar, TabbarItem } from 'vant';
+Vue.use(Tabbar);Vue.use(TabbarItem);Vue.use(Button);
 
 // vConsole工作台
 // import Vconsole from 'vconsole';
+// 添加条件，检测url？debug字段的值来启动Vconsole
 // new Vconsole();
 
-Vue.use(Tabbar);
-Vue.use(TabbarItem);
-Vue.use(Button);
+import Vuex from 'vuex';
+Vue.use(Vuex);
+const store = new Vuex.Store({
+  state: {
+    billDataSwitch: false,
+    userDataSwitch: false,
+    inExDataSwitch: false,
+    wishListSwitch: false,
+  },
+  // 注意是通过store.commit('increment')方法来改变状态。
+  mutations: {
+    stateChange (state,change) {
+      state[change.name] = change.status;
+    }
+  }
+})
+
 
 export default {
+  name: "app",
+  store,
   data() {
     return {
       time:0,
       todayTime:0,
-
-
-
       active: 0,
       icon: {
         active: 'https://img01.yzcdn.cn/vant/user-active.png',
         inactive: 'https://img01.yzcdn.cn/vant/user-inactive.png',
       },
-
     };
   },
   methods: {
-    
   },
   watch:{
 
@@ -313,12 +330,96 @@ export default {
     }
     // 通用逻辑还有要补充的吗？？++++++++++++
     
+    // 检测Switch的变化状态
+    this.$root.bus.$on("billDataSwitch",(t)=>{
+      console.log("billDataSwitch触发成功,值为：",t);
+      store.commit('stateChange',{
+        name:"billDataSwitch",
+        status:t,
+      });
+      console.log('验证billDataSwitch',store.state.billDataSwitch)
+    });
+
+    this.$root.bus.$on("userDataSwitch",(t)=>{
+      console.log("userDataSwitch触发成功,值为：",t);
+      store.commit('stateChange',{
+        name:"userDataSwitch",
+        status:t,
+      });
+      console.log('验证userDataSwitch',store.state.userDataSwitch)
+    });
+
+    this.$root.bus.$on("inExDataSwitch",(t)=>{
+      console.log("inExDataSwitch触发成功,值为：",t);
+      store.commit('stateChange',{
+        name:"inExDataSwitch",
+        status:t,
+      });
+      console.log('验证inExDataSwitch',store.state.inExDataSwitch)
+    });
+    this.$root.bus.$on("wishListSwitch",(t)=>{
+      console.log("wishListSwitch触发成功,值为：",t);
+      store.commit('stateChange',{
+        name:"wishListSwitch",
+        status:t,
+      });
+      console.log('验证wishListSwitch',store.state.wishListSwitch)
+    });
+
+    setInterval(()=>{
+      // console.log('验证','billDataSwitch',store.state.billDataSwitch,'验证userDataSwitch',store.state.userDataSwitch,'验证inExDataSwitch',store.state.inExDataSwitch,'验证wishListSwitch',store.state.wishListSwitch);
+
+      if(store.state.billDataSwitch == true){
+        console.log("更新服务器billData");
+
+        // 接受到成功接口后变回false
+        store.commit('stateChange',{
+          name:"billDataSwitch",
+          status:false,
+      });
+      }
+
+      if(store.state.userDataSwitch == true){
+        console.log("更新服务器userData");
+        
+        // 接受到成功接口后变回false
+        store.commit('stateChange',{
+          name:"userDataSwitch",
+          status:false,
+      });
+      }
+
+      if(store.state.inExDataSwitch == true){
+        console.log("更新服务器inExData");
+        
+        // 接受到成功接口后变回false
+        store.commit('stateChange',{
+          name:"inExDataSwitch",
+          status:false,
+      });
+      }
+
+      if(store.state.wishListSwitch == true){
+        console.log("更新服务器wishList");
+        
+        // 接受到成功接口后变回false
+        store.commit('stateChange',{
+          name:"wishListSwitch",
+          status:false,
+      });
+      }
+
+      // console.log('循环结束','billDataSwitch',store.state.billDataSwitch,'验证userDataSwitch',store.state.userDataSwitch,'验证inExDataSwitch',store.state.inExDataSwitch,'验证wishListSwitch',store.state.wishListSwitch);
+
+    },10000)
   },
   beforeMount() {
     console.log("App beforeMount");
   },
   mounted() {
     console.log("App mounted");
+    // 持续监听
+    
   },
   beforeUpdate() {
     console.log("App beforeUpdate");
@@ -453,6 +554,7 @@ function calcYearBalance(tempBillData,y){
 (function rotate(){
   var orientation=window.orientation;
   var pd = null;
+  console.log('调用了ratate函数');
   function createPd(){
     if(document.getElementById('preventTran') === null){
       var imgData = 'data:image/png;base64,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';
@@ -486,12 +588,16 @@ function calcYearBalance(tempBillData,y){
       pd.appendChild(p);
     }
   }
+
   if(orientation==90||orientation==-90){
       if(pd == null && document.getElementById('preventTran') === null) createPd();
       document.getElementById('preventTran').style.display = 'block';
   }
+
+  // 监听状态改变
   window.onorientationchange=function(){
     if(pd == null && document.getElementById('preventTran') == null) createPd();
+    // 还原状态
     document.getElementById('preventTran').style.display='none';
     rotate();
   };

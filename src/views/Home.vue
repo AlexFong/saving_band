@@ -161,8 +161,8 @@
   }">
   <!-- type="radio"时为单选题，type="checkbox"时为多选题 -->
     <div v-for="(item, index) in typeList" class="item">
-      <input style="font-size:3vw;" type="radio" :id="item.id" :value="item.id" v-model="typeId" />
-      <label style="font-size:3vw;" :for="item.id">{{ item.name }}</label>
+      <input style="font-size:3.5vw;" type="radio" :id="item.id" :value="item.id" v-model="typeId" />
+      <label style="font-size:3.5vw;" :for="item.id">{{ item.name }}</label>
     </div>
   </div>
 
@@ -174,6 +174,7 @@
     <input style="width:40vw;" type="number" v-model="cost" placeholder="输入金额" />
     <span @click="addFun" style="width:12vw;border:1px solid #aaa;border-radius:2vw;margin-left:2vw;">花钱</span>
     <!-- <span @click="dataRollBack(33)" style="width:12vw;border:1px solid #aaa;border-radius:2vw;margin-left:2vw;">回滚</span> -->
+    <button @click="sendMsg()">传值</button>
   </div>
 </div>
 
@@ -189,11 +190,28 @@
 import "../assets/font_2356633_61czw08nnlw/iconfont.css";
 import { Component, Vue } from "vue-property-decorator";
 import { Col, Row, Icon, SwipeCell, Calendar } from 'vant';
-
 Vue.use(SwipeCell);Vue.use(Icon);Vue.use(Col);Vue.use(Row);Vue.use(Calendar);
+
+import Vuex from 'vuex';
+Vue.use(Vuex);
+const store = new Vuex.Store({
+  state: {
+    billDataSwitch: true,
+    userDataSwitch: true,
+    inExDataSwitch: true,
+    wishListSwitch: true,
+  },
+  // 注意是通过store.commit('increment')方法来改变状态。
+  mutations: {
+    stateChange (state,name) {
+      state[name] = !state[name];
+    }
+  }
+})
 
 export default {
   name: "home",
+  store,
   // 数据父传子
   props: {
     msg: {
@@ -496,10 +514,20 @@ export default {
       localStorage.billData = JSON.stringify(billData);
       localStorage.wishList = JSON.stringify(wishList);
       localStorage.inExData = JSON.stringify(inExData);
+    },
+    sendMsg: function(){
+      this.$root.bus.$emit("billDataSwitch", store.state.billDataSwitch)
     }
+    
   },
   beforeCreate() {
     console.log("beforeCreate");
+    // console.log('+++++++++++++vuex',store.state.billDataSwitch);
+    // store.commit('stateChange','billDataSwitch');
+    // console.log('-------------vuex',store.state.billDataSwitch);
+    // store.commit('stateChange','billDataSwitch');
+    // console.log('+++++++++++++vuex',store.state.billDataSwitch);
+    // console.log(this.$root.bus,store.state.billDataSwitch);
   },
   created() {
     console.log("created");
@@ -529,6 +557,8 @@ export default {
     localStorage.billData = JSON.stringify(tempBillData);
     // 使时间格式保持一致
     this.bill = JSON.parse(localStorage.billData)[y]["list"][m]["list"][d]["list"];
+
+
   },
   beforeMount() {
     console.log("beforeMount");
@@ -869,7 +899,7 @@ function calcTodayBalanceShow(todayBalance){
 
 .item{
   white-space: nowrap;
-  padding: 0 0.5vw;
+  padding: 0.5vw 1.5vw;
 }
 
 </style>
