@@ -115,12 +115,12 @@ export default {
 
         // 今天的数值也改了
         let billData = JSON.parse(localStorage.billData);
-        billData[y]['list'][m]['list'][d]['data']['budjet'] = this.budjet;
+        billData['list'][y]['list'][m]['list'][d]['data']['budjet'] = this.budjet;
 
         // 计算各层Balance
-        billData[y]["list"][m]["list"][d]["data"]["dateBalance"] = calcDateBalance(billData,y,m,d);
-        billData[y]["list"][m]["data"]["monthBalance"] = calcMonthBalance(billData,y,m);
-        billData[y]["data"]["yearBalance"] = calcYearBalance(billData,y);
+        billData['list'][y]["list"][m]["list"][d]["data"]["dateBalance"] = calcDateBalance(billData,y,m,d);
+        billData['list'][y]["list"][m]["data"]["monthBalance"] = calcMonthBalance(billData,y,m);
+        billData['list'][y]["data"]["yearBalance"] = calcYearBalance(billData,y);
         localStorage.billData = JSON.stringify(billData);
 
         Toast('预算调整成功！')
@@ -201,25 +201,25 @@ export default {
 };
 
 // 总余额计算（截至当天）
-function calcBalance(tempBillData,y,m,d){
+function calcBalance(billData,y,m,d){
   let balance = 0;
 
   // 加总年表
-  for (const i in tempBillData) {
+  for (const i in billData['list']) {
     if(i < y){
-      balance += Number(tempBillData[i]["data"]["yearBalance"]);
+      balance += Number(billData['list'][i]["data"]["yearBalance"]);
     }
   }
   // 加总月表
-  for (const i in tempBillData[y]["list"]) {
+  for (const i in billData['list'][y]["list"]) {
     if(i < m){
-      balance += Number(tempBillData[y]["list"][i]["data"]["monthBalance"]);
+      balance += Number(billData['list'][y]["list"][i]["data"]["monthBalance"]);
     }
   }
   // 加总日表
-  for (const i in tempBillData[y]["list"][m]["list"]) {
+  for (const i in billData['list'][y]["list"][m]["list"]) {
     if(i <= d){
-      balance += Number(tempBillData[y]["list"][m]["list"][i]["data"]["dateBalance"]);
+      balance += Number(billData['list'][y]["list"][m]["list"][i]["data"]["dateBalance"]);
     }
   }
 
@@ -233,11 +233,11 @@ function calcBalance(tempBillData,y,m,d){
 }
 
 // 封装日余额数据更新
-function calcDateBalance(tempBillData,y,m,d){
-  let dateBalance = tempBillData[y]["list"][m]["list"][d]["data"]["budjet"];
+function calcDateBalance(billData,y,m,d){
+  let dateBalance = billData['list'][y]["list"][m]["list"][d]["data"]["budjet"];
   // 直接遍历(正常情况下，初始化后每天都会有数据)
-  for (const i in tempBillData[y]["list"][m]["list"][d]["list"]) {
-    dateBalance -= Number(tempBillData[y]["list"][m]["list"][d]["list"][i]["cost"]);
+  for (const i in billData['list'][y]["list"][m]["list"][d]["list"]) {
+    dateBalance -= Number(billData['list'][y]["list"][m]["list"][d]["list"][i]["cost"]);
   }
   // 消除浮点影响，取小数后一位
   if(dateBalance > 0){
@@ -249,23 +249,23 @@ function calcDateBalance(tempBillData,y,m,d){
 }
 
 // 封装月余额数据更新
-function calcMonthBalance(tempBillData,y,m){
+function calcMonthBalance(billData,y,m){
   let monthBalance = 0;
 
   // 直接遍历每天数据
-  for (const i in tempBillData[y]["list"][m]["list"]) {
-    monthBalance += Number(tempBillData[y]["list"][m]["list"][i]["data"]["dateBalance"]);
+  for (const i in billData['list'][y]["list"][m]["list"]) {
+    monthBalance += Number(billData['list'][y]["list"][m]["list"][i]["data"]["dateBalance"]);
   }
   return(monthBalance);
 }
 
 // 封装年余额数据更新
-function calcYearBalance(tempBillData,y){
+function calcYearBalance(billData,y){
   let yearBalance = 0;
 
   // 直接遍历(正常情况下，初始化后每月都会有数据)
-  for (const i in tempBillData[y]["list"]) {
-    yearBalance += Number(tempBillData[y]["list"][i]["data"]["monthBalance"]);
+  for (const i in billData['list'][y]["list"]) {
+    yearBalance += Number(billData['list'][y]["list"][i]["data"]["monthBalance"]);
   }
   return(yearBalance);
 }
@@ -296,7 +296,12 @@ function calcYearBalance(tempBillData,y){
 
 </script>
 
-<style lang="css">
+<style lang="css" scoped>
+*{
+  margin: 0;
+  padding: 0;
+  font-size: 4vw;
+}
 .mine{
   min-height: calc(100vh - 20vw);
 }

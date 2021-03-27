@@ -1,9 +1,6 @@
 
 <template>
 <div id="app">
-  <!-- bootstrap试玩代码 -->
-  <!-- <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"> -->
-
   <!-- 任意元素中加 v-wechat-title 指令 建议将标题放在 route 对应meta对象的定义中 -->
   <div v-wechat-title="$route.meta.title"></div>
   <!--或者-->
@@ -117,7 +114,10 @@ export default {
     // 首次登录新建数据
     // 1、新建wishList
     if(!localStorage.wishList){
-      localStorage.wishList = JSON.stringify([]);
+      localStorage.wishList = JSON.stringify({
+        data:{},
+        list:[],  
+      });
     };
     // 2、新建inExData
     if(!localStorage.inExData){
@@ -135,13 +135,19 @@ export default {
     };
     // 3、新建billData
     if(!localStorage.billData){
-      let billData = initBillData({},y,m,d,188.8);
+      
+      let billData = initBillData({data:{},list:{}},y,m,d,188.8);
+      console.log(1,JSON.parse(JSON.stringify(billData)));
       // 计算各层Balance
-      billData[y]["list"][m]["list"][d]["data"]["dateBalance"] = calcDateBalance(tempBillData,y,m,d);
-      billData[y]["list"][m]["data"]["monthBalance"] = calcMonthBalance(tempBillData,y,m);
-      billData[y]["data"]["yearBalance"] = calcYearBalance(tempBillData,y);
+      billData['list'][y]["list"][m]["list"][d]["data"]["dateBalance"] = calcDateBalance(billData,y,m,d);
+      console.log(2,JSON.parse(JSON.stringify(billData)));
+      billData['list'][y]["list"][m]["data"]["monthBalance"] = calcMonthBalance(billData,y,m);
+      console.log(3,JSON.parse(JSON.stringify(billData)));
+      billData['list'][y]["data"]["yearBalance"] = calcYearBalance(billData,y);
+      console.log(4,JSON.parse(JSON.stringify(billData)));
       // 新建billData
       localStorage.billData = JSON.stringify(billData);
+      console.log(5,JSON.parse(JSON.stringify(billData)));
     }
     // 4、新建userData
     if(!localStorage.userData){
@@ -181,16 +187,16 @@ export default {
           let ddd = tempTime.getDate();
           initBillData(billData,yyy,mmm,ddd,userData.budjet);
           // 计算各层Balance++++++++++++++++这里可以写个判断年月的逻辑，减少运算量+++++++
-          billData[yyy]["list"][mmm]["data"]["monthBalance"] = calcMonthBalance(billData,yyy,mmm);
-          billData[yyy]["data"]["yearBalance"] = calcYearBalance(billData,yyy);
+          billData['list'][yyy]["list"][mmm]["data"]["monthBalance"] = calcMonthBalance(billData,yyy,mmm);
+          billData['list'][yyy]["data"]["yearBalance"] = calcYearBalance(billData,yyy);
         };
         localStorage.billData = JSON.stringify(billData);
       }else if(diffValue > 91){  
         // 如果大于31天，只新建今天的日表。
         initBillData(billData,y,m,d);
         // 计算各层Balance
-        billData[y]["list"][m]["data"]["monthBalance"] = calcMonthBalance(billData,y,m);
-        billData[y]["data"]["yearBalance"] = calcYearBalance(billData,y);
+        billData['list'][y]["list"][m]["data"]["monthBalance"] = calcMonthBalance(billData,y,m);
+        billData['list'][y]["data"]["yearBalance"] = calcYearBalance(billData,y);
 
         localStorage.billData = JSON.stringify(billData);
         alert("太久没登录了，我们没给你更新数据了~");
@@ -284,8 +290,8 @@ export default {
 
 
           // 更新wishList
-          for(const i in wishList){
-            let a = wishList[i];
+          for(const i in wishList['list']){
+            let a = wishList['list'][i];
             // status有4种状态aim/checked
             if(a['status'] == 'aim'){
               // 计算payList已支付总额
@@ -294,10 +300,10 @@ export default {
                 sumPayList += Number(a['payList'][j]);
               };
               if(a['payment'] + sumPayList > a['price']){
-                wishList[i]['payList'][ym] = a['price'] - sumPayList;
-                wishList[i]['status'] = 'checked';
+                wishList['list'][i]['payList'][ym] = a['price'] - sumPayList;
+                wishList['list'][i]['status'] = 'checked';
               }else{
-                wishList[i]['payList'][ym] = a['payment'];
+                wishList['list'][i]['payList'][ym] = a['payment'];
               }
             }
           }
@@ -305,7 +311,6 @@ export default {
 
           // 更新monthData
           let a = inExData['monthData'][tempTimeStart.getFullYear()][tempTimeStart.getMonth()];
-          console.log('a++',tempTimeStart,inExData);
           // 新建年
           if(!inExData['monthData'][tempTime.getFullYear()]){
             inExData['monthData'][tempTime.getFullYear()] = {};
@@ -330,6 +335,9 @@ export default {
     }
     // 通用逻辑还有要补充的吗？？++++++++++++
     
+
+
+
     // 检测Switch的变化状态
     this.$root.bus.$on("billDataSwitch",(t)=>{
       console.log("billDataSwitch触发成功,值为：",t);
@@ -366,8 +374,11 @@ export default {
       console.log('验证wishListSwitch',store.state.wishListSwitch)
     });
 
+    // 定时服务器更新数据
     setInterval(()=>{
       // console.log('验证','billDataSwitch',store.state.billDataSwitch,'验证userDataSwitch',store.state.userDataSwitch,'验证inExDataSwitch',store.state.inExDataSwitch,'验证wishListSwitch',store.state.wishListSwitch);
+
+      // 先对本地文件生成一个版本唯一码,再往上推送++++++++++++++++++++++++++++++++++++++++
 
       if(store.state.billDataSwitch == true){
         console.log("更新服务器billData");
@@ -472,9 +483,11 @@ function formatLongDate (date,type=0) {
 };
 
 // 建立好数据结构,年月日表新建
-function initBillData(tempData,y,m,d,budjet){
-  if(!tempData[y]){
-    tempData[y] = {
+function initBillData(tempBillData,y,m,d,budjet){
+  // console.log('+1',JSON.parse(JSON.stringify(billData)),y,m,d,budjet);
+  let billData = JSON.parse(JSON.stringify(tempBillData));
+  if(!billData['list'][y]){
+    billData['list'][y] = {
       data : {yearBalance:budjet},
       list : {
         [m] : {
@@ -488,8 +501,9 @@ function initBillData(tempData,y,m,d,budjet){
         },
       }
     };
-  } else if(!tempData[y]["list"][m]){
-    tempData[y]["list"][m] = {
+    console.log('+2',JSON.parse(JSON.stringify(billData)));
+  } else if(!billData['list'][y]["list"][m]){
+    billData['list'][y]["list"][m] = {
       data : {monthBalance:budjet},
       list : {
         [d] : {
@@ -498,22 +512,22 @@ function initBillData(tempData,y,m,d,budjet){
         }
       },
     }
-  } else if(!tempData[y]["list"][m]["list"][d]){
-    tempData[y]["list"][m]["list"][d] = {
+  } else if(!billData['list'][y]["list"][m]["list"][d]){
+    billData['list'][y]["list"][m]["list"][d] = {
       data:{budjet : budjet,dateBalance:budjet},
       list : []
     }
   };
-  
-  return(tempData);
+  // console.log('+3',JSON.parse(JSON.stringify(billData)));
+  return(billData);
 };
 
 // 封装日余额数据更新
-function calcDateBalance(tempBillData,y,m,d){
-  let dateBalance = tempBillData[y]["list"][m]["list"][d]["data"]["budjet"];
+function calcDateBalance(billData,y,m,d){
+  let dateBalance = billData['list'][y]["list"][m]["list"][d]["data"]["budjet"];
   // 直接遍历(正常情况下，初始化后每天都会有数据)
-  for (const i in tempBillData[y]["list"][m]["list"][d]["list"]) {
-    dateBalance -= Number(tempBillData[y]["list"][m]["list"][d]["list"][i]["cost"]);
+  for (const i in billData['list'][y]["list"][m]["list"][d]["list"]) {
+    dateBalance -= Number(billData['list'][y]["list"][m]["list"][d]["list"][i]["cost"]);
   }
   // 消除浮点影响，取小数后一位
   if(dateBalance > 0){
@@ -521,27 +535,28 @@ function calcDateBalance(tempBillData,y,m,d){
   }else if(dateBalance < 0){
     dateBalance = parseInt(dateBalance * 10 - 0.1)/10;
   }
+  console.log('dateBalance',dateBalance);
   return(dateBalance);
 }
 
 // 封装月余额数据更新
-function calcMonthBalance(tempBillData,y,m){
+function calcMonthBalance(billData,y,m){
   let monthBalance = 0;
 
   // 直接遍历每天数据
-  for (const i in tempBillData[y]["list"][m]["list"]) {
-    monthBalance += Number(tempBillData[y]["list"][m]["list"][i]["data"]["dateBalance"]);
+  for (const i in billData['list'][y]["list"][m]["list"]) {
+    monthBalance += Number(billData['list'][y]["list"][m]["list"][i]["data"]["dateBalance"]);
   }
   return(monthBalance);
 }
 
 // 封装年余额数据更新
-function calcYearBalance(tempBillData,y){
+function calcYearBalance(billData,y){
   let yearBalance = 0;
 
   // 直接遍历(正常情况下，初始化后每月都会有数据)
-  for (const i in tempBillData[y]["list"]) {
-    yearBalance += Number(tempBillData[y]["list"][i]["data"]["monthBalance"]);
+  for (const i in billData['list'][y]["list"]) {
+    yearBalance += Number(billData['list'][y]["list"][i]["data"]["monthBalance"]);
   }
   return(yearBalance);
 }
@@ -605,7 +620,7 @@ function calcYearBalance(tempBillData,y){
 
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 *{
   margin: 0;
   padding: 0;
@@ -619,7 +634,6 @@ function calcYearBalance(tempBillData,y){
   text-align: center;
   width: 100vw;
   height: 100vh;
-  // overflow: hidden;
 }
 
 #footer{
@@ -642,13 +656,13 @@ function calcYearBalance(tempBillData,y){
   }
 }
 
-.van-info{
-  margin-top: 2vw;
-  font-size:2vw;
-  line-height:4vw;
-  width: 5vw;
-  height: 5vw;
-  border-radius: 5vw;
-}
+// .van-info{
+//   margin-top: 2vw;
+//   font-size:2vw;
+//   line-height:4vw;
+//   width: 5vw;
+//   height: 5vw;
+//   border-radius: 5vw;
+// }
 
 </style>

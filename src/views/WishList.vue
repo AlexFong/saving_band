@@ -208,7 +208,7 @@ export default {
       // 未删 
       balance: 0,
       todayTime: 0,
-      wishList: [],
+      wishList: {},
       activeNames: [],
       colorStyle:{
         "checked":"green",
@@ -295,11 +295,12 @@ export default {
         this.temp1 = 'oneTime';
         this.temp8 = item.icon;
       }else{
-        for (const i in this.wishList) {
-          if(this.wishList[i]['id'] == this.tempId){
-            this.wishList[i]['status'] = item.icon;
+        for (const i in this.wishList['list']) {
+          if(this.wishList['list'][i]['id'] == this.tempId){
+            this.wishList['list'][i]['status'] = item.icon;
           }
         };
+        // +++++++++++++++++++++++++更新唯一码++++++++++++++++++++
         localStorage.wishList = JSON.stringify(this.wishList);
       };
       this.show = false;
@@ -324,30 +325,31 @@ export default {
         document.querySelector('#temp5').focus();
       }else{
         // 改变状态
-        for (const i in this.wishList) {
-          if(this.wishList[i]['id'] == this.tempId){
-            this.wishList[i]['name'] = tempName;
-            this.wishList[i]['payment'] = Number(temp3);
-            this.wishList[i]['price'] = Number(temp5);
-            if(!this.wishList[i]['payList'][ym]){
+        for (const i in this.wishList['list']) {
+          if(this.wishList['list'][i]['id'] == this.tempId){
+            this.wishList['list'][i]['name'] = tempName;
+            this.wishList['list'][i]['payment'] = Number(temp3);
+            this.wishList['list'][i]['price'] = Number(temp5);
+            if(!this.wishList['list'][i]['payList'][ym]){
               if(temp3 == ''){
-                this.wishList[i]['payList'][ym] = Number(temp5);
+                this.wishList['list'][i]['payList'][ym] = Number(temp5);
               }else{
-                this.wishList[i]['payList'][ym] = Number(temp3);
+                this.wishList['list'][i]['payList'][ym] = Number(temp3);
               }
             }else{
               if(temp3 == ''){
-                this.wishList[i]['payList'][ym] += Number(temp5);
+                this.wishList['list'][i]['payList'][ym] += Number(temp5);
               }else{
-                this.wishList[i]['payList'][ym] += Number(temp3);
+                this.wishList['list'][i]['payList'][ym] += Number(temp3);
               }
             };
-            this.wishList[i]['status'] = this.temp8;
+            this.wishList['list'][i]['status'] = this.temp8;
             if(this.temp8 == 'checked'){
-              this.wishList[i]['finishDate'] = this.todayTime;
+              this.wishList['list'][i]['finishDate'] = this.todayTime;
             }
           }
         };
+        // 唯一码+++++++++++++++++++++++++++++++++++++++++
         localStorage.wishList = JSON.stringify(this.wishList);
         Toast("添加成功!");
         
@@ -369,19 +371,20 @@ export default {
     },
     changeIcon: function(status,key,id){
       // console.log("-----------");
-      for (const i in this.wishList) {
-        if(this.wishList[i]['id'] == id){
+      for (const i in this.wishList['list']) {
+        if(this.wishList['list'][i]['id'] == id){
           if(status == "circle"){
-            this.wishList[i][key] = "checked";
+            this.wishList['list'][i][key] = "checked";
           }else if(status == "checked"){
-            this.wishList[i][key] = "clear";
+            this.wishList['list'][i][key] = "clear";
           }else if(status == "clear"){
-            this.wishList[i][key] = "circle";
+            this.wishList['list'][i][key] = "circle";
           }else{
-            this.wishList[i][key] = "circle";
+            this.wishList['list'][i][key] = "circle";
           }
         }
       }
+      // 唯一码？？？？？？？？？？？
       localStorage.wishList = JSON.stringify(this.wishList);
     },
     onCancel() {
@@ -394,11 +397,12 @@ export default {
       this.$refs.item.toggle();
     },
     addWish(name,price){
-      let tempWishList = JSON.parse(localStorage.wishList);
-      let tempUserData = JSON.parse(localStorage.userData);
-      tempUserData.wishId += 1;
-      tempWishList.push({
-        id:tempUserData.wishId,
+      let wishList = JSON.parse(localStorage.wishList);
+      // wishID可以改到wishList里了++++++++++++++++++++++++++++++
+      let userData = JSON.parse(localStorage.userData);
+      userData.wishId += 1;
+      wishList['list'].push({
+        id:userData.wishId,
         status:"circle",
         name:name,
         price:Number(price),
@@ -415,8 +419,8 @@ export default {
       this.wishName = '';
       this.wishPrice = '';
 
-      localStorage.userData = JSON.stringify(tempUserData);
-      localStorage.wishList = JSON.stringify(tempWishList);
+      localStorage.userData = JSON.stringify(userData);
+      localStorage.wishList = JSON.stringify(wishList);
       this.wishList = JSON.parse(localStorage.wishList);
       Toast('添加成功！')
     },
@@ -543,17 +547,17 @@ export default {
   computed: {
     evenWishList(){
       if(this.value == 'all'){
-        let a = this.wishList.filter((val) => {return val.status === 'aim'});
-        a = a.concat(this.wishList.filter((val) => {return val.status === 'circle'}));
-        a = a.concat(this.wishList.filter((val) => {return val.status === 'checked'}));
-        a = a.concat(this.wishList.filter((val) => {return val.status === 'clear'}));
+        let a = this.wishList['list'].filter((val) => {return val.status === 'aim'});
+        a = a.concat(this.wishList['list'].filter((val) => {return val.status === 'circle'}));
+        a = a.concat(this.wishList['list'].filter((val) => {return val.status === 'checked'}));
+        a = a.concat(this.wishList['list'].filter((val) => {return val.status === 'clear'}));
         return a;
       }else if(this.value == 'unfinished'){
-        let a = this.wishList.filter((val) => {return val.status === 'aim'});
-        a = a.concat(this.wishList.filter((val) => {return val.status === 'circle'}));
+        let a = this.wishList['list'].filter((val) => {return val.status === 'aim'});
+        a = a.concat(this.wishList['list'].filter((val) => {return val.status === 'circle'}));
         return a;
       }else{
-        return this.wishList.filter((val) => {
+        return this.wishList['list'].filter((val) => {
           return val.status === this.value
         })
       }
@@ -571,9 +575,9 @@ export default {
     let m = this.todayTime.getMonth();
     let d = this.todayTime.getDate();
 
-    let tempBillData = JSON.parse(localStorage.billData)
+    let billData = JSON.parse(localStorage.billData)
     this.wishList = JSON.parse(localStorage.wishList);
-    this.balance = calcBalance(tempBillData,y,m,d);
+    this.balance = calcBalance(billData,y,m,d);
   },
   beforeMount() {
     console.log("beforeMount");
@@ -631,25 +635,25 @@ function formatLongDate (date,type=0) {
 };
 
 // 总余额计算（截至当天）
-function calcBalance(tempBillData,y,m,d){
+function calcBalance(billData,y,m,d){
   let balance = 0;
 
   // 加总年表
-  for (const i in tempBillData) {
+  for (const i in billData['list']) {
     if(i < y){
-      balance += Number(tempBillData[i]["data"]["yearBalance"]);
+      balance += Number(billData['list'][i]["data"]["yearBalance"]);
     }
   }
   // 加总月表
-  for (const i in tempBillData[y]["list"]) {
+  for (const i in billData['list'][y]["list"]) {
     if(i < m){
-      balance += Number(tempBillData[y]["list"][i]["data"]["monthBalance"]);
+      balance += Number(billData['list'][y]["list"][i]["data"]["monthBalance"]);
     }
   }
   // 加总日表
-  for (const i in tempBillData[y]["list"][m]["list"]) {
+  for (const i in billData['list'][y]["list"][m]["list"]) {
     if(i <= d){
-      balance += Number(tempBillData[y]["list"][m]["list"][i]["data"]["dateBalance"]);
+      balance += Number(billData['list'][y]["list"][m]["list"][i]["data"]["dateBalance"]);
     }
   }
 
@@ -665,7 +669,12 @@ function calcBalance(tempBillData,y,m,d){
 
 </script>
 
-<style lang="css">
+<style lang="css" scoped>
+*{
+  margin: 0;
+  padding: 0;
+  font-size: 4vw;
+}
 .wishList{
   min-height: calc(100vh - 20vw);
 }

@@ -38,6 +38,15 @@ const routes: Array<RouteConfig> = [
     meta:{index:4,title: '天天记账-心愿清单'},
     component: () => import(/* webpackChunkName: "about" */ '../views/WishList.vue')
   },
+  {
+    path: '/login',
+    name: 'Login',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    meta:{index:5,title: '天天记账-登录'},
+    component: () => import(/* webpackChunkName: "about" */ '../views/Login.vue')
+  },
 ]
 
 const router = new VueRouter({

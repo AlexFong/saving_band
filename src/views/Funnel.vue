@@ -119,11 +119,11 @@
           <div style="width:30%"></div>
           <div style="width:20%">-{{necessarySpending}}</div>
         </div>
-        <div style="display:flex">
+        <!-- <div style="display:flex">
           <div style="width:40%"></div>
           <div style="width:30%"></div>
           <div style="width:20%">={{Number(fixedSalary)+Number(fixedRentIncome)+Number(otherSalary)+Number(otherIncome)-Number(necessarySpending)}}</div>
-        </div>
+        </div> -->
       </template>
 
       <div v-for="item,index in necessarySpendingList">
@@ -167,19 +167,19 @@
     <van-collapse-item name="3">
       <template #title>
         <div style="display:flex">
-          <div style="width:40%">可选开支</div>
+          <div style="width:40%">可选开支/心愿</div>
           <div style="width:30%"></div>
           <div style="width:20%">-{{optionalSpending + Number(wishListSpending)}}</div>
         </div>
-        <div id="" style="display:flex">
-          <div style="width:40%">(心愿清单)</div>
+        <!-- <div id="" style="display:flex">
+          <div style="width:40%">（心愿清单）</div>
           <div style="width:20%"></div>
           <div style="width:40%">={{Number(fixedSalary)+Number(fixedRentIncome)+Number(otherSalary)+Number(otherIncome)-Number(necessarySpending)-optionalSpending -Number(wishListSpending)}}</div>
-        </div>
+        </div> -->
       </template>
 
       <!-- 可选开支里的愿望清单 -->
-      <div v-for="item,index in wishList">
+      <div v-for="item,index in wishList['list']">
         <van-swipe-cell>
           <div :id="'wishList'+index" style="display:flex">
             <div style="width:40%;overflow:hidden;text-overflow: ellipsis;white-space: nowrap;">{{item.name}}</div>
@@ -313,7 +313,7 @@
           <div style="width:40%;color:black"></div>
         </div> -->
         <div id="" style="display:flex">
-          <div style="width:40%;color:black">总资产合计</div>
+          <div style="width:40%;color:black">本月总资产合计</div>
           <div style="width:20%;color:black"></div>
           <div style="width:40%;color:black">
             ={{Number(addUpAsset)+Number(fixedSalary)+Number(fixedRentIncome)+Number(otherSalary)+Number(otherIncome)-Number(necessarySpending)-Number(optionalSpending)-Number(wishListSpending)-Number(monthCost)}}
@@ -758,14 +758,15 @@ export default {
     },
     changeWishPay(id,temp,ym){
       if(temp){
-        for(const i in this.wishList){
-          if(this.wishList[i].id == id){
+        for(const i in this.wishList['list']){
+          if(this.wishList['list'][i].id == id){
             // 要补逻辑，status和payList之类的情况要处理好
-            this.wishList[i].payList[ym] = temp;
+            this.wishList['list'][i].payList[ym] = temp;
+            // this.wishList['data']++++++++++++++++++++++++++++++++++++
             localStorage.wishList = JSON.stringify(this.wishList);
             
             this.temp18 = '';
-            this.wishListSpending = updateWishListSpending(ym,this.wishList);
+            this.wishListSpending = updateWishListSpending(ym,this.wishList['list']);
           }
         }
       }
@@ -990,9 +991,9 @@ export default {
       this.optionalSpendingList = tempInExData["optionalSpendingList"];
 
       // 读取心愿清单数据显示出来
-      if(localStorage.wishList){
-        let a = JSON.parse(localStorage.wishList);
-        this.wishList = a.filter((val) => {
+      if(localStorage.wishList['list']){
+        let a = JSON.parse(localStorage.wishList['list']);
+        this.wishList['list'] = a.filter((val) => {
           return val.status === 'aim' || val.payList[ym]});
       }
 
@@ -1006,29 +1007,29 @@ export default {
         this.optionalSpendingListSwitch.push({switch:'false'});
       };
       this.wishListSwitch = [];
-      for (const i in this.wishList) {
+      for (const i in this.wishList['list']) {
         this.wishListSwitch.push({switch:'false'});
       };
 
       // 更新必要开支/可选开支
       this.necessarySpending = updateNecessarySpending(ym,this.necessarySpendingList);
       this.optionalSpending = updateOptionalSpending(ym,this.optionalSpendingList);
-      this.wishListSpending = updateWishListSpending(ym,this.wishList);
+      this.wishListSpending = updateWishListSpending(ym,this.wishList['list']);
 
-      let tempBillData = JSON.parse(localStorage.billData);
+      let billData = JSON.parse(localStorage.billData);
       let tempUserData = JSON.parse(localStorage.userData);
-      this.balance = calcBalance(tempBillData,y,m,d);
+      this.balance = calcBalance(billData,y,m,d);
       // +++++++++++++++++calcBalance只计算到当前的数据，可能会有冲突，要留意
 
       let b = 0;
       let c = 0;
-      if(tempBillData[y]){
-        if(tempBillData[y]['list'][m]){
-          for(const k in tempBillData[y]['list'][m]['list']){
-            for(const l in tempBillData[y]['list'][m]['list'][k]['list']){
-              b += Number(tempBillData[y]['list'][m]['list'][k]['list'][l]['cost']);
+      if(billData['list'][y]){
+        if(billData['list'][y]['list'][m]){
+          for(const k in billData['list'][y]['list'][m]['list']){
+            for(const l in billData['list'][y]['list'][m]['list'][k]['list']){
+              b += Number(billData['list'][y]['list'][m]['list'][k]['list'][l]['cost']);
             }
-            c += Number(tempBillData[y]['list'][m]['list'][k]['data']['budjet']);
+            c += Number(billData['list'][y]['list'][m]['list'][k]['data']['budjet']);
           }
         }
       }
@@ -1044,7 +1045,7 @@ export default {
       };
 
       let dddd = new Date(y,m,0);
-      this.addUpAsset = Math.ceil(updateAddUpAsset(tempInExData,tempBillData,dddd.getFullYear(),dddd.getMonth()));
+      this.addUpAsset = Math.ceil(updateAddUpAsset(tempInExData,billData,dddd.getFullYear(),dddd.getMonth()));
     },
   },
   
@@ -1201,9 +1202,9 @@ export default {
     this.optionalSpendingList = tempInExData["optionalSpendingList"];
 
     // 读取心愿清单数据显示出来
-    if(localStorage.wishList){
-      let a = JSON.parse(localStorage.wishList);
-      this.wishList = a.filter((val) => {
+    if(localStorage.wishList['list']){
+      let a = JSON.parse(localStorage.wishList['list']);
+      this.wishList['list'] = a.filter((val) => {
         return val.status === 'aim' || val.payList[ym]});
     }
     
@@ -1214,28 +1215,28 @@ export default {
     for (const i in this.optionalSpendingList) {
       this.optionalSpendingListSwitch.push({switch:'false'});
     };
-    for (const i in this.wishList) {
+    for (const i in this.wishList['list']) {
       this.wishListSwitch.push({switch:'false'});
     }
     
     // 更新必要开支/可选开支
     this.necessarySpending = updateNecessarySpending(ym,this.necessarySpendingList);
     this.optionalSpending = updateOptionalSpending(ym,this.optionalSpendingList);
-    this.wishListSpending = updateWishListSpending(ym,this.wishList);
+    this.wishListSpending = updateWishListSpending(ym,this.wishList['list']);
 
-    let tempBillData = JSON.parse(localStorage.billData);
+    let billData = JSON.parse(localStorage.billData);
     let tempUserData = JSON.parse(localStorage.userData);
-    this.balance = calcBalance(tempBillData,y,m,d);
+    this.balance = calcBalance(billData,y,m,d);
     
     let b = 0;
     let c = 0;
-    if(tempBillData[y]){
-      if(tempBillData[y]['list'][m]){
-        for(const k in tempBillData[y]['list'][m]['list']){
-          for(const l in tempBillData[y]['list'][m]['list'][k]['list']){
-            b += Number(tempBillData[y]['list'][m]['list'][k]['list'][l]['cost']);
+    if(billData['list'][y]){
+      if(billData['list'][y]['list'][m]){
+        for(const k in billData['list'][y]['list'][m]['list']){
+          for(const l in billData['list'][y]['list'][m]['list'][k]['list']){
+            b += Number(billData['list'][y]['list'][m]['list'][k]['list'][l]['cost']);
           }
-          c += Number(tempBillData[y]['list'][m]['list'][k]['data']['budjet']);
+          c += Number(billData['list'][y]['list'][m]['list'][k]['data']['budjet']);
         }
       }
     }
@@ -1251,7 +1252,7 @@ export default {
     };
 
     let dddd = new Date(y,m,0);
-    this.addUpAsset = Math.ceil(updateAddUpAsset(tempInExData,tempBillData,dddd.getFullYear(),dddd.getMonth()));
+    this.addUpAsset = Math.ceil(updateAddUpAsset(tempInExData,billData,dddd.getFullYear(),dddd.getMonth()));
 
     console.log(444);
     this.$root.bus.$on("hehe", function (t) {
@@ -1401,21 +1402,21 @@ function updateAddUpAsset(inExData,billData,y,m){
 
 function updateAddUpMonthCost(billData,y,m){
   let a = 0;
-  for (const i in billData) {
+  for (const i in billData['list']) {
     if(i < y){
-      for (const j in billData[i]['list']){
-        for(const k in billData[i]['list'][j]['list']){
-          for(const l in billData[i]['list'][j]['list'][k]['list']){
-            a += Number(billData[i]['list'][j]['list'][k]['list'][l]['cost']);
+      for (const j in billData['list'][i]['list']){
+        for(const k in billData['list'][i]['list'][j]['list']){
+          for(const l in billData['list'][i]['list'][j]['list'][k]['list']){
+            a += Number(billData['list'][i]['list'][j]['list'][k]['list'][l]['cost']);
           }
         }
       }
     }else if(i == y){
-      for (const j in billData[y]['list']){
+      for (const j in billData['list'][y]['list']){
         if(j <= m){
-          for(const k in billData[i]['list'][j]['list']){
-            for(const l in billData[i]['list'][j]['list'][k]['list']){
-              a += Number(billData[i]['list'][j]['list'][k]['list'][l]['cost']);
+          for(const k in billData['list'][i]['list'][j]['list']){
+            for(const l in billData['list'][i]['list'][j]['list'][k]['list']){
+              a += Number(billData['list'][i]['list'][j]['list'][k]['list'][l]['cost']);
             }
           }
         }
@@ -1426,28 +1427,28 @@ function updateAddUpMonthCost(billData,y,m){
 }
 
 // 总余额计算（截至当天）
-function calcBalance(tempBillData,y,m,d){
+function calcBalance(billData,y,m,d){
   let balance = 0;
 
   // 加总年表
-  for (const i in tempBillData) {
+  for (const i in billData['list']) {
     if(i < y){
-      balance += Number(tempBillData[i]["data"]["yearBalance"]);
+      balance += Number(billData['list'][i]["data"]["yearBalance"]);
     }
   }
 
   // 加总月表
-  if(tempBillData[y]){
-    for (const i in tempBillData[y]["list"]) {
+  if(billData['list'][y]){
+    for (const i in billData['list'][y]["list"]) {
       if(i < m){
-        balance += Number(tempBillData[y]["list"][i]["data"]["monthBalance"]);
+        balance += Number(billData['list'][y]["list"][i]["data"]["monthBalance"]);
       }
     }
-    if(tempBillData[y]["list"][m]){
+    if(billData['list'][y]["list"][m]){
       // 加总日表
-      for (const i in tempBillData[y]["list"][m]["list"]) {
+      for (const i in billData['list'][y]["list"][m]["list"]) {
         if(i <= d){
-          balance += Number(tempBillData[y]["list"][m]["list"][i]["data"]["dateBalance"]);
+          balance += Number(billData['list'][y]["list"][m]["list"][i]["data"]["dateBalance"]);
         }
       }
     }
@@ -1464,7 +1465,12 @@ function calcBalance(tempBillData,y,m,d){
 
 </script>
 
-<style lang="css">
+<style lang="css" scoped>
+*{
+  margin: 0;
+  padding: 0;
+  font-size: 4vw;
+}
 #funnel{
   min-height: calc(100vh - 20vw);
 }
