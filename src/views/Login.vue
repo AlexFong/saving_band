@@ -27,7 +27,7 @@
           :rules="[{ required: true, message: '请填写密码' }]"
         />
         <div style="margin: 16px;">
-          <van-button round block type="info" native-type="submit">登录</van-button>
+          <van-button round block type="info" native-type="submit" @click="login">登录</van-button>
         </div>
       </van-form>
     </van-tab>
@@ -71,6 +71,7 @@
       </van-form>
     </van-tab>
   </van-tabs>
+  <button @click="getUrlVar('debug')">get Url</button>
 </div>
 </div>
 </template>
@@ -101,26 +102,30 @@ export default {
       pattern: /\d{6}/,
     };
   },
-  watch:{
-    password2(val, oldVal){//普通的watch监听
-      console.log("a: "+val, oldVal);
-      if(this.password3 == ''){
-        this.passwordIcon = 'checked';
-      }else if(val == this.password3){
-        // this
-      }else{
-
-      }
-    },
-    password3(val, oldVal){//普通的watch监听
-      console.log("a: "+val, oldVal);
-    },
-
-  },
   methods: {
     login:function(){
       console.log('login function');
+      axios.post('http://simbas.work:7001/login', {
+        password: this.password,
+        mobile: this.phoneNumber,
+      })
+      .then(function (response) {
+        console.log('then',response);
+        if(response.data.code == 200){
+          console.log('请求成功，成功登录');
+          // 成功登录
+          // 页面重定向
+          // 请求都绑定token
+          console.log('token:',response.data.data.token);
+        }else{
+          console.log('then请求错误',response.data.code,response.data.errMsg)
+        }
+      })
+      .catch(function (error) {
+        console.log('catch',error);
+      });
     },
+
     signup:function(){
       console.log('signup function');
       axios.post('http://simbas.work:7001/signup', {
@@ -129,10 +134,16 @@ export default {
         mobile: this.phoneNumber,
       })
       .then(function (response) {
-        console.log(response);
+        console.log('then',response);
+        if(response.data.code == 200){
+          console.log('请求成功');
+          // 发送登录请求
+        }else{
+          console.log('请求失败',response.data.code,response.data.errMsg)
+        }
       })
       .catch(function (error) {
-        console.log(error);
+        console.log('catch',error);
       });
     },
     // 点击事件
@@ -159,6 +170,38 @@ export default {
       Toast("表单验证失败")
     },
     
+    getUrlVar(v){
+      // location.search获取属性（?后面，#前面）
+      let data = {};
+      let src = window.location.href;
+      let index = src.indexOf("?");
+      if (index === -1) {
+        return data;
+      }
+      let dataStr = src.substring(src.indexOf("?") + 1);
+      let dataArray = dataStr.split("&");
+
+      for (let i = 0; i < dataArray.length; i++) {
+        let param = dataArray[i].split("=");
+        if(param[0] == v) console.log(param[1]); return param[1];
+      }
+    }
+  },
+  watch:{
+    password2(val, oldVal){//普通的watch监听
+      console.log("a: "+val, oldVal);
+      if(this.password3 == ''){
+        this.passwordIcon = 'checked';
+      }else if(val == this.password3){
+        // this
+      }else{
+
+      }
+    },
+    password3(val, oldVal){//普通的watch监听
+      console.log("a: ",val, oldVal);
+    },
+
   },
   beforeCreate() {
     console.log("beforeCreate");

@@ -173,7 +173,7 @@
     <span>￥</span> 
     <input style="width:40vw;" type="number" v-model="cost" placeholder="输入金额" />
     <span @click="addFun" style="width:12vw;border:1px solid #aaa;border-radius:2vw;margin-left:2vw;">花钱</span>
-    <!-- <span @click="dataRollBack(33)" style="width:12vw;border:1px solid #aaa;border-radius:2vw;margin-left:2vw;">回滚</span> -->
+    <span @click="dataRollBack(1)" style="width:12vw;border:1px solid #aaa;border-radius:2vw;margin-left:2vw;">回滚</span>
     <!-- <button @click="sendMsg()">传值</button> -->
   </div>
 </div>

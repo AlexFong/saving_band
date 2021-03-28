@@ -53,9 +53,7 @@ import { Button, Tabbar, TabbarItem } from 'vant';
 Vue.use(Tabbar);Vue.use(TabbarItem);Vue.use(Button);
 
 // vConsole工作台
-// import Vconsole from 'vconsole';
-// 添加条件，检测url？debug字段的值来启动Vconsole
-// new Vconsole();
+import Vconsole from 'vconsole';
 
 import Vuex from 'vuex';
 Vue.use(Vuex);
@@ -193,7 +191,7 @@ export default {
         localStorage.billData = JSON.stringify(billData);
       }else if(diffValue > 91){  
         // 如果大于31天，只新建今天的日表。
-        initBillData(billData,y,m,d);
+        initBillData(billData,y,m,d,userData.budjet);
         // 计算各层Balance
         billData['list'][y]["list"][m]["data"]["monthBalance"] = calcMonthBalance(billData,y,m);
         billData['list'][y]["data"]["yearBalance"] = calcYearBalance(billData,y);
@@ -336,6 +334,10 @@ export default {
     // 通用逻辑还有要补充的吗？？++++++++++++
     
 
+
+
+    // 添加条件，检测url？debug字段的值来启动Vconsole
+    if(getUrlVar('debug')=="true") new Vconsole();
 
 
     // 检测Switch的变化状态
@@ -483,9 +485,7 @@ function formatLongDate (date,type=0) {
 };
 
 // 建立好数据结构,年月日表新建
-function initBillData(tempBillData,y,m,d,budjet){
-  // console.log('+1',JSON.parse(JSON.stringify(billData)),y,m,d,budjet);
-  let billData = JSON.parse(JSON.stringify(tempBillData));
+function initBillData(billData,y,m,d,budjet){
   if(!billData['list'][y]){
     billData['list'][y] = {
       data : {yearBalance:budjet},
@@ -501,7 +501,6 @@ function initBillData(tempBillData,y,m,d,budjet){
         },
       }
     };
-    console.log('+2',JSON.parse(JSON.stringify(billData)));
   } else if(!billData['list'][y]["list"][m]){
     billData['list'][y]["list"][m] = {
       data : {monthBalance:budjet},
@@ -518,7 +517,6 @@ function initBillData(tempBillData,y,m,d,budjet){
       list : []
     }
   };
-  // console.log('+3',JSON.parse(JSON.stringify(billData)));
   return(billData);
 };
 
@@ -561,6 +559,20 @@ function calcYearBalance(billData,y){
   return(yearBalance);
 }
 
+function getUrlVar(v){
+  let src = window.location.href;
+  let index = src.indexOf("?");
+  if (index === -1) {
+    return ;
+  }
+  let dataStr = src.substring(src.indexOf("?") + 1);
+  let dataArray = dataStr.split("&");
+
+  for (let i = 0; i < dataArray.length; i++) {
+    let param = dataArray[i].split("=");
+    if(param[0] == v) console.log('getUrlVar属性值',param[1]); return param[1];
+  }
+}
 
 // created : 2017.8.21
 // author  : Guozhi_Han 
