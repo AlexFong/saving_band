@@ -10,7 +10,7 @@
       <div @click="changeTime(0)">{{time.getFullYear()}}-{{time.getMonth()+1}}</div>
       <van-icon class="iconfont fontSize7vw" class-prefix='icon' name='accountbook' @click="DatetimePickerShow=true"/>
       <button style="border:none;background-color:unset" @click="changeTime(1)"><van-icon class="iconfont fontSize7vw" class-prefix='icon' name='right' /></button>
-      <span style="margin-left:5vw">1.01</span>
+      <span style="margin-left:5vw"></span>
     </div>
     <!-- <div style="width:20vw;"></div> -->
   </div>
@@ -40,13 +40,13 @@
           <!-- 原始样式 -->
           <div :style="{display: switch11 == 'true' ? 'none' : 'flex'}">
             <div style="width:90%">{{fixedSalary}}</div>
-            <van-icon style="align-self:center" @click="switch11 = 'true';temp19='#fixedSalaryInput';getInputFocus()" name="edit" />
+            <van-icon style="align-self:center" @click="switch11 = 'true';getInputFocus('#fixedSalaryInput')" name="edit" />
           </div>
           <!-- 改数值样式 -->
           <div style="justify-content:space-around;align-items:center;" :style="{display: switch11 == 'true'  ? 'flex' : 'none'}">
-            <van-button style="height:100%" size="small" type="danger" @click="switch11 = 'false';tempFixedSalary = ''">x</van-button>
+            <van-button style="height:100%;width:6vw" size="small" type="danger" @click="switch11 = 'false';tempFixedSalary = ''">x</van-button>
             <input style="width:50%;height:100%" type="number" name="" id="fixedSalaryInput" :placeholder='fixedSalary' v-model="tempFixedSalary">
-            <van-button style="height:100%" size="small" type="primary" @click="switch11 = 'false';changeIncome('fixedSalary',tempFixedSalary,time.getFullYear(),time.getMonth())">√</van-button>
+            <van-button style="height:100%;width:6vw" size="small" type="primary" @click="switch11 = 'false';changeIncome('fixedSalary',tempFixedSalary,time.getFullYear(),time.getMonth())">√</van-button>
           </div>
         </div>
       </div>
@@ -59,13 +59,13 @@
           <!-- 原始样式 -->
           <div :style="{display: switch12 == 'true' ? 'none' : 'flex'}">
             <div style="width:90%">{{fixedRentIncome}}</div>
-            <van-icon style="align-self:center" @click="switch12 = 'true';temp19='#fixedRentIncomeInput';getInputFocus()" name="edit" />
+            <van-icon style="align-self:center" @click="switch12 = 'true';getInputFocus('#fixedRentIncomeInput')" name="edit" />
           </div>
           <!-- 改数值样式 -->
           <div style="justify-content:space-around;align-items:center;" :style="{display: switch12 == 'true'  ? 'flex' : 'none'}">
-            <van-button style="height:100%" size="small" type="danger" @click="switch12 = 'false';tempFixedRentIncome = ''">x</van-button>
+            <van-button style="height:100%;width:6vw" size="small" type="danger" @click="switch12 = 'false';tempFixedRentIncome = ''">x</van-button>
             <input style="width:50%;height:100%" type="number" name="" id="fixedRentIncomeInput" :placeholder='fixedRentIncome' v-model="tempFixedRentIncome">
-            <van-button style="height:100%" size="small" type="primary" @click="switch12 = 'false';changeIncome('fixedRentIncome',tempFixedRentIncome,time.getFullYear(),time.getMonth())">√</van-button>
+            <van-button style="height:100%;width:6vw" size="small" type="primary" @click="switch12 = 'false';changeIncome('fixedRentIncome',tempFixedRentIncome,time.getFullYear(),time.getMonth())">√</van-button>
           </div>
         </div>
       </div>
@@ -78,13 +78,13 @@
           <!-- 原始样式 -->
           <div :style="{display: switch13 == 'true' ? 'none' : 'flex'}">
             <div style="width:90%">{{otherSalary}}</div>
-            <van-icon style="align-self:center" @click="switch13 = 'true';temp19='#otherSalaryInput';getInputFocus()" name="edit" />
+            <van-icon style="align-self:center" @click="switch13 = 'true';getInputFocus('#otherSalaryInput')" name="edit" />
           </div>
           <!-- 改数值样式 -->
           <div style="justify-content:space-around;align-items:center;" :style="{display: switch13 == 'true'  ? 'flex' : 'none'}">
-            <van-button style="height:100%" size="small" type="danger" @click="switch13 = 'false';tempOtherSalary = ''">x</van-button>
+            <van-button style="height:100%;width:6vw" size="small" type="danger" @click="switch13 = 'false';tempOtherSalary = ''">x</van-button>
             <input style="width:50%;height:100%" type="number" name="" id="otherSalaryInput" :placeholder='otherSalary' v-model="tempOtherSalary">
-            <van-button style="height:100%" size="small" type="primary" @click="switch13 = 'false';changeIncome('otherSalary',tempOtherSalary,time.getFullYear(),time.getMonth())">√</van-button>
+            <van-button style="height:100%;width:6vw" size="small" type="primary" @click="switch13 = 'false';changeIncome('otherSalary',tempOtherSalary,time.getFullYear(),time.getMonth())">√</van-button>
           </div>
         </div>
       </div>
@@ -106,8 +106,8 @@
 
       <!-- 添加按钮 -->
       <div style="display:flex">
-        <div style="width:35%"></div>
-        <van-button style="width:30%" @click="showPopup('addIncomeShow')">+添加</van-button>
+        <div style="width:38%"></div>
+        <van-button style="width:24%" size="small" @click="showPopup('addIncomeShow')">+添加</van-button>
       </div>
     </van-collapse-item>
 
@@ -134,7 +134,7 @@
             <div style="width:40%">
               <!-- 原始样式 -->
               <div :style="{display: necessarySpendingListSwitch[index].switch == 'true' ? 'none' : 'flex'}">
-                <div style="width:90%" @click="necessarySpendingListSwitch[index].switch = 'true';temp19='#necessarySpendingListInput'+index;getInputFocus()">
+                <div style="width:90%" @click="necessarySpendingListSwitch[index].switch = 'true';getInputFocus('#necessarySpendingListInput'+index)">
                   {{ item.payList[formatLongDate(time,2)] ? item.payList[formatLongDate(time,2)] : 0 }}
                 </div>
                 <van-icon id="billList" style="width:10%" class="iconfont" class-prefix='icon' name='left' />
@@ -156,8 +156,8 @@
       </div>
 
       <div style="display:flex">
-        <div style="width:35%"></div>
-        <van-button style="width:30%" @click="showPopup('addNecessarySpendingShow')">+添加</van-button>
+        <div style="width:38%"></div>
+        <van-button style="width:24%" size="small" @click="showPopup('addNecessarySpendingShow')">+添加</van-button>
         <!-- <van-button style="width:30%" @click="showPopup('addNecessarySpendingShow')">*明细*</van-button> -->
       </div>
       <!-- <p>还要写：编辑改动</p> -->
@@ -187,7 +187,7 @@
             <div style="width:40%">
               <!-- 原始样式 -->
               <div :style="{display: wishListSwitch[index].switch == 'true' ? 'none' : 'flex'}">
-                <div style="width:90%" @click="wishListSwitch[index].switch = 'true';temp19='#wishListInput'+index;getInputFocus()">
+                <div style="width:90%" @click="wishListSwitch[index].switch = 'true';getInputFocus('#wishListInput'+index)">
                   {{item.payList[formatLongDate(time,2)] ? item.payList[formatLongDate(time,2)] : 0}}
                 </div>
                 <van-icon id="billList" style="width:10%" class="iconfont" class-prefix='icon' name='left' />
@@ -218,7 +218,7 @@
             <div style="width:40%">
               <!-- 原始样式 -->
               <div :style="{display: optionalSpendingListSwitch[index].switch == 'true' ? 'none' : 'flex'}">
-                <div style="width:90%" @click="optionalSpendingListSwitch[index].switch = 'true';temp19='#optionalSpendingListInput'+index;getInputFocus()">
+                <div style="width:90%" @click="optionalSpendingListSwitch[index].switch = 'true';getInputFocus('#optionalSpendingListInput'+index)">
                   {{item.payList[formatLongDate(time,2)] ? item.payList[formatLongDate(time,2)] : 0}}
                 </div>
                 <van-icon id="billList" style="width:10%" class="iconfont" class-prefix='icon' name='left' />
@@ -240,8 +240,8 @@
       </div>
 
       <div style="display:flex">
-        <div style="width:35%"></div>
-        <van-button style="width:30%"  @click="showPopup('addOptionalSpendingShow')">+添加</van-button>
+        <div style="width:38%"></div>
+        <van-button style="width:24%" size="small"  @click="showPopup('addOptionalSpendingShow')">+添加</van-button>
       </div>
     </van-collapse-item>
 
@@ -514,11 +514,6 @@
 </template>
 
 <script>
-import { Component, Vue } from "vue-property-decorator";
-import { DatetimePicker, Collapse, CollapseItem, Popup, Field, Button, Toast, SwipeCell, Form, Radio, RadioGroup, Popover, Grid, GridItem, Divider, Icon } from 'vant';
-
-Vue.use(Radio);Vue.use(RadioGroup);Vue.use(Form);Vue.use(Toast);Vue.use(Button);Vue.use(Field);Vue.use(Popup);Vue.use(Popover);Vue.use(Collapse);Vue.use(CollapseItem);Vue.use(SwipeCell);Vue.use(Grid);Vue.use(GridItem);Vue.use(Divider);Vue.use(Icon);Vue.use(DatetimePicker);
-
 export default {
   name: "funnel",
   // 数据父传子
@@ -537,7 +532,6 @@ export default {
       time:0,
       DatetimePickerShow:false,
 
-
       fixedSalary:0,
       tempFixedSalary:'',
       fixedRentIncome:0,
@@ -552,7 +546,6 @@ export default {
       switch11:'false',
       switch12:'false',
       switch13:'false',
-
       
       temp1:'',
       temp2:'month',
@@ -592,8 +585,7 @@ export default {
       wishList:[],
       wishListSwitch:[],
       temp18:'',
-      // 为了传值给nextTick
-      temp19:'',
+
       temp20:'',
 
       balance:0,
@@ -626,14 +618,18 @@ export default {
       }else{
         let tempInExData = JSON.parse(localStorage.inExData);
         tempInExData["monthData"][y][m]["otherIncomeList"].push({incomeName:name,incomeNumber:number});
-
         tempInExData["monthData"][y][m]["otherIncome"] += Number(number);
         this.otherIncome = tempInExData["monthData"][y][m]["otherIncome"];
         this.otherIncomeList = tempInExData["monthData"][y][m]["otherIncomeList"];
+
+        tempInExData.data.updateDate = new Date(parseInt(new Date().getTime()));
         localStorage.inExData = JSON.stringify(tempInExData);
+
         this.addIncomeShow = false;
         this.incomeName = '';
         this.incomeNumber = '';
+        
+        this.$root.bus.$emit("inExDataSwitch", true);
       };
     },
     delIncome(index,y,m){
@@ -642,7 +638,11 @@ export default {
       tempInExData["monthData"][y][m]["otherIncomeList"].splice(index,1);
       this.otherIncome = tempInExData["monthData"][y][m]["otherIncome"];
       this.otherIncomeList = tempInExData["monthData"][y][m]["otherIncomeList"];
-      localStorage.inExData = JSON.stringify(tempInExData)
+
+      tempInExData.data.updateDate = new Date(parseInt(new Date().getTime()));
+      localStorage.inExData = JSON.stringify(tempInExData);
+
+      this.$root.bus.$emit("inExDataSwitch", true);
     },
     // changeIncome针对写死的几个部分
     changeIncome(item,tempFixedSalary,y,m){
@@ -664,7 +664,10 @@ export default {
           };
         }
         tempInExData["monthData"][y][m][item] = tempFixedSalary;
+
+        tempInExData.data.updateDate = new Date(parseInt(new Date().getTime()));
         localStorage.inExData = JSON.stringify(tempInExData);
+        this.$root.bus.$emit("inExDataSwitch", true);
       }else{
         Toast("请输入数值!")
       };
@@ -694,8 +697,6 @@ export default {
       }else{
         let tempInExData = JSON.parse(localStorage.inExData);
 
-        console.log(temp2 == 'year' && Number(temp7) != Number(m),Number(temp7), Number(m),this.time);
-
         tempInExData["necessarySpendingList"].push({
           name:temp1,
           interval:temp2,
@@ -713,6 +714,8 @@ export default {
         this.necessarySpendingList = tempInExData["necessarySpendingList"];
         this.necessarySpending = updateNecessarySpending(ym,this.necessarySpendingList);
         this.necessarySpendingListSwitch.push({switch: "false"});
+
+        tempInExData.data.updateDate = new Date(parseInt(new Date().getTime()));
         localStorage.inExData = JSON.stringify(tempInExData);
         this.temp1='';
         this.temp2='month';
@@ -725,6 +728,8 @@ export default {
         this.switch15 = 'false';
         this.switch16 = 'false';
         this.switch17 = 'false';
+
+        this.$root.bus.$emit("inExDataSwitch", true);
       };
     },
     delNecessarySpending(index,ym){
@@ -732,17 +737,25 @@ export default {
       tempInExData["necessarySpendingList"].splice(index,1);
       this.necessarySpendingList = tempInExData["necessarySpendingList"];
       this.necessarySpending = updateNecessarySpending(ym,this.necessarySpendingList);
-      localStorage.inExData = JSON.stringify(tempInExData)
+
+      tempInExData.data.updateDate = new Date(parseInt(new Date().getTime()));
+      localStorage.inExData = JSON.stringify(tempInExData);
+
+      this.$root.bus.$emit("inExDataSwitch", true);
     },
     changeNecessarySpendingPay(index,temp,ym){
       if(temp){
         this.necessarySpendingList[index].payList[ym] = temp;
         let tempInExData = JSON.parse(localStorage.inExData);
         tempInExData["necessarySpendingList"][index].payList[ym] = temp;
+
+        tempInExData.data.updateDate = new Date(parseInt(new Date().getTime()));
         localStorage.inExData = JSON.stringify(tempInExData);
         
         this.temp8 = '';
         this.necessarySpending = updateNecessarySpending(ym,this.necessarySpendingList);
+        
+        this.$root.bus.$emit("inExDataSwitch", true);
       }
     },
     changeOptionalSpendingPay(index,temp,ym){
@@ -750,10 +763,14 @@ export default {
         this.optionalSpendingList[index].payList[ym] = temp;
         let tempInExData = JSON.parse(localStorage.inExData);
         tempInExData["optionalSpendingList"][index].payList[ym] = temp;
+
+        tempInExData.data.updateDate = new Date(parseInt(new Date().getTime()));
         localStorage.inExData = JSON.stringify(tempInExData);
         
         this.temp17 = '';
         this.optionalSpending = updateOptionalSpending(ym,this.optionalSpendingList);
+        
+        this.$root.bus.$emit("inExDataSwitch", true);
       }
     },
     changeWishPay(id,temp,ym){
@@ -762,11 +779,14 @@ export default {
           if(this.wishList['list'][i].id == id){
             // 要补逻辑，status和payList之类的情况要处理好
             this.wishList['list'][i].payList[ym] = temp;
-            // this.wishList['data']++++++++++++++++++++++++++++++++++++
+
+            this.wishList.data.updateDate = new Date(parseInt(new Date().getTime()));
             localStorage.wishList = JSON.stringify(this.wishList);
             
             this.temp18 = '';
             this.wishListSpending = updateWishListSpending(ym,this.wishList['list']);
+            
+            this.$root.bus.$emit("wishListSwitch", true);
           }
         }
       }
@@ -806,6 +826,8 @@ export default {
         this.optionalSpendingList = tempInExData["optionalSpendingList"];
         this.optionalSpending = updateOptionalSpending(ym,this.optionalSpendingList);
         this.optionalSpendingListSwitch.push({switch: "false"});
+
+        tempInExData.data.updateDate = new Date(parseInt(new Date().getTime()));
         localStorage.inExData = JSON.stringify(tempInExData);
         this.temp11='';
         this.temp12='oneTime';
@@ -817,6 +839,8 @@ export default {
         this.switch18 = 'false';
         this.switch19 = 'false';
         this.switch20 = 'false';
+
+        this.$root.bus.$emit("inExDataSwitch", true);
       };
     },
     delOptionalSpending(index,ym){
@@ -824,7 +848,11 @@ export default {
       tempInExData["optionalSpendingList"].splice(index,1);
       this.optionalSpendingList = tempInExData["optionalSpendingList"];
       this.noptionalSpending = updateOptionalSpending(ym,this.optionalSpendingList);
-      localStorage.inExData = JSON.stringify(tempInExData)
+
+      tempInExData.data.updateDate = new Date(parseInt(new Date().getTime()));
+      localStorage.inExData = JSON.stringify(tempInExData);
+
+      this.$root.bus.$emit("inExDataSwitch", true);
     },
     // 点击其他地方，关闭临时窗口
     closePopup(event){
@@ -891,11 +919,11 @@ export default {
         this[tempSwitch] = 'false';
       }
     },
-    getInputFocus(){
+    getInputFocus(id){
       // 通过函数传值好像传不进去
       this.$nextTick(() => {
-        document.querySelector(this.temp19).focus();
-        console.log('nextTick');
+        document.querySelector(id).focus();
+        console.log(this,'nextTick');
       })
     },
     cl(i,j,k,l,m){
@@ -939,11 +967,6 @@ export default {
       // y是time，yy是todayTime
       let y = this.time.getFullYear();
       let m = this.time.getMonth();
-      let d = this.time.getDate();
-      
-      let yy = this.todayTime.getFullYear();
-      let mm = this.todayTime.getMonth();
-      let dd = this.todayTime.getDate();
 
       if(index == 1 || index == -1){   // 加减月份
         this.time=new Date(parseInt(new Date(y,m+1+index,0,'23','59','59').getTime()));
@@ -957,10 +980,17 @@ export default {
         console.log(this.time);
       }
 
-      y = this.time.getFullYear();
-      m = this.time.getMonth();
-      d = this.time.getDate();
+      this.UIUpdate();
+    },
+    UIUpdate(){
+      let y = this.time.getFullYear();
+      let m = this.time.getMonth();
+      let d = this.time.getDate();
       let ym = formatLongDate(this.time,2);  // ym
+
+      let yy = this.todayTime.getFullYear();
+      let mm = this.todayTime.getMonth();
+      let dd = this.todayTime.getDate();
 
       let tempInExData = JSON.parse(localStorage.inExData);
       // 读取InExData monthData 月度数据显示出来
@@ -985,23 +1015,22 @@ export default {
           this.otherIncomeList = tempInExData["monthData"][y][m]["otherIncomeList"];
         }
       }
-      
+
       // 读取必选消费、可选消费列表
       this.necessarySpendingList = tempInExData["necessarySpendingList"];
       this.optionalSpendingList = tempInExData["optionalSpendingList"];
 
       // 读取心愿清单数据显示出来
-      if(localStorage.wishList['list']){
-        let a = JSON.parse(localStorage.wishList['list']);
-        this.wishList['list'] = a.filter((val) => {
-          return val.status === 'aim' || val.payList[ym]});
-      }
-
+      let wishList = JSON.parse(localStorage.wishList);
+      this.wishList['list'] = wishList['list'].filter((val) => {
+        return val.status === 'aim' || val.payList[ym]
+      });
+      
       // 新建必要开支开关/可选开关
       this.necessarySpendingListSwitch = [];
       for (const i in this.necessarySpendingList) {
         this.necessarySpendingListSwitch.push({switch:'false'});
-      }
+      };
       this.optionalSpendingListSwitch = [];
       for (const i in this.optionalSpendingList) {
         this.optionalSpendingListSwitch.push({switch:'false'});
@@ -1009,18 +1038,17 @@ export default {
       this.wishListSwitch = [];
       for (const i in this.wishList['list']) {
         this.wishListSwitch.push({switch:'false'});
-      };
-
+      }
+      
       // 更新必要开支/可选开支
       this.necessarySpending = updateNecessarySpending(ym,this.necessarySpendingList);
       this.optionalSpending = updateOptionalSpending(ym,this.optionalSpendingList);
       this.wishListSpending = updateWishListSpending(ym,this.wishList['list']);
 
       let billData = JSON.parse(localStorage.billData);
-      let tempUserData = JSON.parse(localStorage.userData);
+      let userData = JSON.parse(localStorage.userData);
       this.balance = calcBalance(billData,y,m,d);
-      // +++++++++++++++++calcBalance只计算到当前的数据，可能会有冲突，要留意
-
+      
       let b = 0;
       let c = 0;
       if(billData['list'][y]){
@@ -1039,14 +1067,14 @@ export default {
       let ddd = new Date(y,m+1,0);
       // 只有在当月才执行此预算计算逻辑
       if(y==yy & m==mm){
-        this.monthBudjet = Math.ceil(c + (ddd.getDate() - d) * tempUserData['budjet']);
+        this.monthBudjet = Math.ceil(c + (ddd.getDate() - d) * billData.data['budjet']);
       }else{
         this.monthBudjet = c;
       };
 
       let dddd = new Date(y,m,0);
       this.addUpAsset = Math.ceil(updateAddUpAsset(tempInExData,billData,dddd.getFullYear(),dddd.getMonth()));
-    },
+    }
   },
   
   watch:{
@@ -1176,88 +1204,29 @@ export default {
   created() {
     // y是time，yy是todayTime
     console.log("created");
-    this.todayTime = new Date(parseInt(new Date().getTime()))
-    let yy = this.todayTime.getFullYear();
-    let mm = this.todayTime.getMonth();
-    let dd = this.todayTime.getDate();
+    this.todayTime = new Date(parseInt(new Date().getTime()));
+    this.time = this.todayTime;
     this.minDate = new Date(2020,0,1),
     this.maxDate = new Date(this.todayTime.getFullYear()+2,0,0),
 
-    this.time = this.todayTime;
-    let y = this.time.getFullYear();
-    let m = this.time.getMonth();
-    let d = this.time.getDate();
-    let ym = formatLongDate(this.time,2);  // ym
-
-    let tempInExData = JSON.parse(localStorage.inExData);
-    // 读取InExData monthData 月度数据显示出来
-    this.fixedSalary = tempInExData["monthData"][y][m]["fixedSalary"];
-    this.fixedRentIncome = tempInExData["monthData"][y][m]["fixedRentIncome"];
-    this.otherSalary = tempInExData["monthData"][y][m]["otherSalary"];
-    this.otherIncome = tempInExData["monthData"][y][m]["otherIncome"];
-    this.otherIncomeList = tempInExData["monthData"][y][m]["otherIncomeList"];
-
-    // 读取必选消费、可选消费列表
-    this.necessarySpendingList = tempInExData["necessarySpendingList"];
-    this.optionalSpendingList = tempInExData["optionalSpendingList"];
-
-    // 读取心愿清单数据显示出来
-    if(localStorage.wishList['list']){
-      let a = JSON.parse(localStorage.wishList['list']);
-      this.wishList['list'] = a.filter((val) => {
-        return val.status === 'aim' || val.payList[ym]});
-    }
-    
-    // 新建必要开支开关/可选开关
-    for (const i in this.necessarySpendingList) {
-      this.necessarySpendingListSwitch.push({switch:'false'});
-    };
-    for (const i in this.optionalSpendingList) {
-      this.optionalSpendingListSwitch.push({switch:'false'});
-    };
-    for (const i in this.wishList['list']) {
-      this.wishListSwitch.push({switch:'false'});
-    }
-    
-    // 更新必要开支/可选开支
-    this.necessarySpending = updateNecessarySpending(ym,this.necessarySpendingList);
-    this.optionalSpending = updateOptionalSpending(ym,this.optionalSpendingList);
-    this.wishListSpending = updateWishListSpending(ym,this.wishList['list']);
-
-    let billData = JSON.parse(localStorage.billData);
-    let tempUserData = JSON.parse(localStorage.userData);
-    this.balance = calcBalance(billData,y,m,d);
-    
-    let b = 0;
-    let c = 0;
-    if(billData['list'][y]){
-      if(billData['list'][y]['list'][m]){
-        for(const k in billData['list'][y]['list'][m]['list']){
-          for(const l in billData['list'][y]['list'][m]['list'][k]['list']){
-            b += Number(billData['list'][y]['list'][m]['list'][k]['list'][l]['cost']);
-          }
-          c += Number(billData['list'][y]['list'][m]['list'][k]['data']['budjet']);
-        }
-      }
-    }
-    this.monthCost = Math.ceil(b);
-
-    // 获得当前月份天数的方法,date写0可以获取上月最后一天
-    let ddd = new Date(y,m+1,0);
-    // 只有在当月才执行此预算计算逻辑
-    if(y==yy & m==mm){
-      this.monthBudjet = Math.ceil(c + (ddd.getDate() - d) * tempUserData['budjet']);
-    }else{
-      this.monthBudjet = c;
-    };
-
-    let dddd = new Date(y,m,0);
-    this.addUpAsset = Math.ceil(updateAddUpAsset(tempInExData,billData,dddd.getFullYear(),dddd.getMonth()));
-
-    console.log(444);
-    this.$root.bus.$on("hehe", function (t) {
-      console.log('++++++++++',t);
-    })
+    this.UIUpdate();
+    // 为4个表单设置监听
+    this.$root.bus.$on("billDataDownload",(t)=>{
+      console.log("billDataDownload触发成功,值为：",t);
+      this.UIUpdate();
+    });
+    this.$root.bus.$on("inExDataDownload",(t)=>{
+      console.log("inExDataDownload触发成功,值为：",t);
+      this.UIUpdate();
+    });
+    this.$root.bus.$on("userDataDownload",(t)=>{
+      console.log("userDataDownload触发成功,值为：",t);
+      this.UIUpdate();
+    });
+    this.$root.bus.$on("wishListDownload",(t)=>{
+      console.log("wishListDownload触发成功,值为：",t);
+      this.UIUpdate();
+    });
   },
   beforeMount() {
     console.log("beforeMount");
@@ -1398,7 +1367,7 @@ function updateAddUpAsset(inExData,billData,y,m){
   // 遍历日常开支
   a -= Number(updateAddUpMonthCost(billData,y,m));
   return a;
-}
+};
 
 function updateAddUpMonthCost(billData,y,m){
   let a = 0;
@@ -1424,7 +1393,7 @@ function updateAddUpMonthCost(billData,y,m){
     }
   };
   return a;
-}
+};
 
 // 总余额计算（截至当天）
 function calcBalance(billData,y,m,d){

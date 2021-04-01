@@ -1,6 +1,18 @@
 
 <template>
 <div id="app">
+  <!-- updateData -->
+  <!-- downloadData -->
+  <!-- <button @click="updateData('wishList')">上传w</button>
+  <button @click="updateData('billData')">上传b</button>
+  <button @click="updateData('inExData')">上传i</button>
+  <button @click="updateData('userData')">上传u</button>
+  <button @click="downloadData('wishList')">下载w</button>
+  <button @click="downloadData('billData')">下载b</button>
+  <button @click="downloadData('inExData')">下载i</button>
+  <button @click="downloadData('userData')">下载u</button> -->
+
+
   <!-- 任意元素中加 v-wechat-title 指令 建议将标题放在 route 对应meta对象的定义中 -->
   <div v-wechat-title="$route.meta.title"></div>
   <!--或者-->
@@ -10,7 +22,7 @@
   <!-- 显示路由路径下的内容 -->
   <router-view/>
 
-  <div id="footer">
+  <div id="footer" v-if="footerShow">
     <van-tabbar route style="height:16vw;padding-bottom:4vw" v-model="active">
       <van-tabbar-item badge="" to="/">
         <span>日常开支</span>
@@ -30,8 +42,8 @@
           <van-icon class="iconfont" class-prefix='icon' name='heart' />
         </template>
       </van-tabbar-item>
-      <van-tabbar-item badge="99" to="/mine">
-        <span>我的1.03</span>
+      <van-tabbar-item badge="" to="/mine">
+        <span>我的</span>
         <template #icon="props">
           <van-icon class="iconfont" class-prefix='icon' name='user' />
         </template>
@@ -51,9 +63,12 @@ import "./assets/font_2356633_61czw08nnlw/iconfont.css";
 import Vue from 'vue';
 import { Button, Tabbar, TabbarItem } from 'vant';
 Vue.use(Tabbar);Vue.use(TabbarItem);Vue.use(Button);
+import axios from 'axios';
+import commonjs from './store/common';
 
 // vConsole工作台
 import Vconsole from 'vconsole';
+
 
 import Vuex from 'vuex';
 Vue.use(Vuex);
@@ -85,261 +100,166 @@ export default {
         active: 'https://img01.yzcdn.cn/vant/user-active.png',
         inactive: 'https://img01.yzcdn.cn/vant/user-inactive.png',
       },
+      footerShow:false,
     };
   },
   methods: {
+    // 把新建的表单推上云
+    updateData(list){
+      return new Promise(function(resolve,reject){
+        axios.post('/' + list, JSON.parse(localStorage[list]))
+        .then(function (response) {
+          console.log('then resolve',response);
+          resolve(response)
+        })
+        .catch(function (error) {
+          console.log('catch reject',error);
+          reject(response)
+        });
+      })
+    },
+    downloadData(list){
+      let that = this;
+      return new Promise(function(resolve,reject){
+        axios.get('/' + list)
+        .then(function (response) {
+          console.log('then',response);
+          // 如果服务器发回了原始数据，本地赋值
+          let todayTime = new Date(parseInt(new Date().getTime()));
+          let y = todayTime.getFullYear();
+          let m = todayTime.getMonth();
+          let d = todayTime.getDate();
+          let tempData = response.data.data;
+          
+          if(JSON.stringify(tempData) == '{}'){
+            that.$root.bus.$emit(list + "Switch", true);
+            if(list == 'wishList'){
+              tempData = {
+                data:{
+                  updateDate:todayTime,
+                  wishId:0,
+                },
+                list:[],  
+              }
+            }else if(list == 'inExData'){
+              tempData = {
+                monthData:{[y]:{[m]:{
+                  fixedSalary:0,
+                  fixedRentIncome:0,
+                  otherSalary:0,
+                  otherIncome:0,
+                  otherIncomeList:[],
+                }}},
+                necessarySpendingList:[],
+                optionalSpendingList:[],
+                data:{
+                  updateDate:todayTime
+                },
+              }
+            }else if(list == 'billData'){
+              let billData = commonjs.initBillData({
+                data:{
+                  updateDate:todayTime,
+                  budjet:188.8,
+                },
+                list:{}
+              },y,m,d,188.8);
+              // 计算各层Balance
+              billData['list'][y]["list"][m]["list"][d]["data"]["dateBalance"] = commonjs.calcDateBalance(billData,y,m,d);
+              billData['list'][y]["list"][m]["data"]["monthBalance"] = commonjs.calcMonthBalance(billData,y,m);
+              billData['list'][y]["data"]["yearBalance"] = commonjs.calcYearBalance(billData,y);
+              tempData = billData;
+            }else if(list == 'userData'){
+              tempData = {
+                fisrtLoginDate:todayTime,
+                // name:"default",
+                latestLoginDate:todayTime,
+                updateDate:todayTime,
+                username:window.userInfo?window.userInfo.username:'unknown',
+                mobile:window.userInfo?window.userInfo.mobile:'unknown',
+              }
+            }
+          }
+          localStorage[list] = JSON.stringify(tempData);
+          that.$root.bus.$emit(list + "Download", Math.random());
+          resolve(response)
+        })
+        .catch(function (error) {
+          console.log('catch reject',error);
+          reject(error);
+        });
+      })
+    },
   },
   watch:{
-
+    $route(to,from){
+      // 路由变化时
+      this.footerShow = Boolean(window.location.hash != '#/login');
+    },
   },
   beforeCreate() {
     console.log("App beforeCreate");
+    if(localStorage.token) {
+      window.token = localStorage.token;
+      window.loginStatus = true;
+    }
+    else {
+      window.token = false;
+      window.loginStatus = false;
+    }
   },
   created() {
     // y是time，yy是todayTime
     console.log("App created");
     this.todayTime = new Date(parseInt(new Date().getTime()))
-    let yy = this.todayTime.getFullYear();
-    let mm = this.todayTime.getMonth();
-    let dd = this.todayTime.getDate();
-
     this.time = this.todayTime;
-    let y = this.time.getFullYear();
-    let m = this.time.getMonth();
-    let d = this.time.getDate();
-    let ym = formatLongDate(this.time,2);  // ym
 
-    // 首次登录新建数据
-    // 1、新建wishList
-    if(!localStorage.wishList){
-      localStorage.wishList = JSON.stringify({
-        data:{},
-        list:[],  
-      });
-    };
-    // 2、新建inExData
-    if(!localStorage.inExData){
-      localStorage.inExData = JSON.stringify({
-        monthData:{[y]:{[m]:{
-          fixedSalary:0,
-          fixedRentIncome:0,
-          otherSalary:0,
-          otherIncome:0,
-          otherIncomeList:[],
-        }}},
-        necessarySpendingList:[],
-        optionalSpendingList:[],
-      });
-    };
-    // 3、新建billData
-    if(!localStorage.billData){
-      
-      let billData = initBillData({data:{},list:{}},y,m,d,188.8);
-      console.log(1,JSON.parse(JSON.stringify(billData)));
-      // 计算各层Balance
-      billData['list'][y]["list"][m]["list"][d]["data"]["dateBalance"] = calcDateBalance(billData,y,m,d);
-      console.log(2,JSON.parse(JSON.stringify(billData)));
-      billData['list'][y]["list"][m]["data"]["monthBalance"] = calcMonthBalance(billData,y,m);
-      console.log(3,JSON.parse(JSON.stringify(billData)));
-      billData['list'][y]["data"]["yearBalance"] = calcYearBalance(billData,y);
-      console.log(4,JSON.parse(JSON.stringify(billData)));
-      // 新建billData
-      localStorage.billData = JSON.stringify(billData);
-      console.log(5,JSON.parse(JSON.stringify(billData)));
-    }
-    // 4、新建userData
-    if(!localStorage.userData){
-      localStorage.userData = JSON.stringify({
-        fisrtLoginDate:this.todayTime,
-        name:"default",
-        latestLoginDate:this.todayTime,
-        budjet:188.8,
-        wishId:0,
-      });
-    }
-    // 老用户登录逻辑+++++++++++++++++++++
-    else{
-      let userData = JSON.parse(localStorage.userData);
-      let billData = JSON.parse(localStorage.billData);
-      let inExData = JSON.parse(localStorage.inExData);
-      let wishList = JSON.parse(localStorage.wishList);
-
-      // 计算日期差
-      let dateStart = new Date(userData.latestLoginDate);
-      userData.latestLoginDate = formatLongDate(this.todayTime,1);
-      let dateEnd = new Date(userData.latestLoginDate);
-      let diffValue = (dateEnd - dateStart) / (1000 * 60 * 60 * 24);
-      // 1、更新userData
-      localStorage.userData = JSON.stringify(userData);
-
-      // 2、更新billData
-      if (diffValue == 0){  
-        // 当天重复登录
-      }else if(diffValue <= 91){ 
-        let tempTime = dateStart;
-        for (let i = diffValue; i > 0; i--) {
-          // 满足条件执行，执行完再对数值进行调整
-          tempTime = new Date(tempTime.setDate(tempTime.getDate()+1));
-          let yyy = tempTime.getFullYear();
-          let mmm = tempTime.getMonth();
-          let ddd = tempTime.getDate();
-          initBillData(billData,yyy,mmm,ddd,userData.budjet);
-          // 计算各层Balance++++++++++++++++这里可以写个判断年月的逻辑，减少运算量+++++++
-          billData['list'][yyy]["list"][mmm]["data"]["monthBalance"] = calcMonthBalance(billData,yyy,mmm);
-          billData['list'][yyy]["data"]["yearBalance"] = calcYearBalance(billData,yyy);
-        };
-        localStorage.billData = JSON.stringify(billData);
-      }else if(diffValue > 91){  
-        // 如果大于31天，只新建今天的日表。
-        initBillData(billData,y,m,d,userData.budjet);
-        // 计算各层Balance
-        billData['list'][y]["list"][m]["data"]["monthBalance"] = calcMonthBalance(billData,y,m);
-        billData['list'][y]["data"]["yearBalance"] = calcYearBalance(billData,y);
-
-        localStorage.billData = JSON.stringify(billData);
-        alert("太久没登录了，我们没给你更新数据了~");
-      }else{
-        alert("时间出错了，请重试");
-      };
+    axios.defaults.baseURL = 'http://simbas.work:7001';
+    axios.defaults.headers.token = localStorage.token;
     
-      // 3、更新inExData
-      // 4、更新wishList
-      if(diffValue>0){
-        // 逐月遍历更新
-        for(let tempTime = dateStart;formatLongDate(dateEnd,2) - formatLongDate(tempTime,2) != 0;){
-          // 当月不用，下个月才要；new Date之后才可以是数值，不然会指向tempTime
-          let tempTimeStart = new Date(tempTime);
-          tempTime.setMonth(tempTime.getMonth()+1);
-          console.log('+tempTime',tempTime,tempTimeStart);
-          ym = formatLongDate(tempTime,2);
-
-
-          // 更新necessarySpendingList
-          for(const i in inExData['necessarySpendingList']){
-            let a = inExData['necessarySpendingList'][i];
-            // status有going和finish两种状态
-            if(a['status'] == 'going'){
-              // 1.如果是永续的
-              if(a['sustainable'] == 'true'){
-                // 2.如果是月缴的
-                if(a['interval'] == 'month'){
-                  inExData['necessarySpendingList'][i]['payList'][ym] = a['payment'];
-                }else{
-                  if(a['payMonth']-1 == tempTime.getMonth()){
-                    inExData['necessarySpendingList'][i]['payList'][ym] = a['payment'];
-                  }
-                }
-              }
-              // 1.如果不是永续的
-              else{
-                // 计算payList已支付总额
-                let sumPayList = 0;
-                for(const j in a['payList']){
-                  sumPayList += Number(a['payList'][j]);
-                };
-                // 2.如果是月缴的
-                if(a['interval'] == 'month'){
-                  if(a['payment'] + sumPayList > a['price']){
-                    inExData['necessarySpendingList'][i]['payList'][ym] = a['price'] - sumPayList;
-                    inExData['necessarySpendingList'][i]['status'] = 'finish';
-                  }else{
-                    inExData['necessarySpendingList'][i]['payList'][ym] = a['payment'];
-                  }
-                }else{
-                  if(a['payMonth']-1 == tempTime.getMonth()){
-                    if(Number(a['payment']) + sumPayList > a['price']){
-                      inExData['necessarySpendingList'][i]['payList'][ym] = a['price'] - sumPayList;
-                      inExData['necessarySpendingList'][i]['status'] = 'finish';
-                    }else{
-                      inExData['necessarySpendingList'][i]['payList'][ym] = a['payment'];
-                    }
-                  }
-                }
-              }
-            }
-          }
-
-
-          // 更新optionalSpendingList 
-          for(const i in inExData['optionalSpendingList']){
-            let a = inExData['optionalSpendingList'][i];
-            // status有going和finish两种状态
-            if(a['status'] == 'going'){
-              // 如果是永续的
-              if(a['sustainable'] == 'true'){
-                inExData['optionalSpendingList'][i]['payList'][ym] = a['payment'];
-              }
-              // 如果不是永续的
-              else{
-                // 计算payList已支付总额
-                let sumPayList = 0;
-                for(const j in a['payList']){
-                  sumPayList += Number(a['payList'][j]);
-                };
-                if(Number(a['payment']) + sumPayList > a['price']){
-                  inExData['optionalSpendingList'][i]['payList'][ym] = Number(a['price']) - sumPayList;
-                  inExData['optionalSpendingList'][i]['status'] = 'finish';
-                }else{
-                  inExData['optionalSpendingList'][i]['payList'][ym] = a['payment'];
-                }
-              }
-            }
-          }
-
-
-          // 更新wishList
-          for(const i in wishList['list']){
-            let a = wishList['list'][i];
-            // status有4种状态aim/checked
-            if(a['status'] == 'aim'){
-              // 计算payList已支付总额
-              let sumPayList = 0;
-              for(const j in a['payList']){
-                sumPayList += Number(a['payList'][j]);
-              };
-              if(a['payment'] + sumPayList > a['price']){
-                wishList['list'][i]['payList'][ym] = a['price'] - sumPayList;
-                wishList['list'][i]['status'] = 'checked';
-              }else{
-                wishList['list'][i]['payList'][ym] = a['payment'];
-              }
-            }
-          }
-
-
-          // 更新monthData
-          let a = inExData['monthData'][tempTimeStart.getFullYear()][tempTimeStart.getMonth()];
-          // 新建年
-          if(!inExData['monthData'][tempTime.getFullYear()]){
-            inExData['monthData'][tempTime.getFullYear()] = {};
-          }
-          // 新建月
-          inExData['monthData'][tempTime.getFullYear()][tempTime.getMonth()] = {
-            fixedRentIncome: a.fixedRentIncome,
-            fixedSalary: a.fixedSalary,
-            otherIncome: 0,
-            otherIncomeList: [],
-            otherSalary: 0,
-          };
-        };
-      };
-      // 遍历完
-
-      // 把数据存回localStorage
-      localStorage.userData = JSON.stringify(userData);
-      localStorage.billData = JSON.stringify(billData);
-      localStorage.inExData = JSON.stringify(inExData);
-      localStorage.wishList = JSON.stringify(wishList);
+    // 如果已登录，发送获取数据的请求
+    if(window.loginStatus == true){
+      console.log("自动登录，无需登录，确实可以一个个来~");
+      let that = this;
+      that.downloadData('wishList').then(function(){
+        // 对正在登陆中的界面进行更新
+        that.$root.bus.$emit("wishListDownload", Math.random());
+        return that.downloadData('userData');
+      }).then(function(){
+        that.$root.bus.$emit("userDataDownload", Math.random());
+        return that.downloadData('inExData');
+      }).then(function(){
+        that.$root.bus.$emit("inExDataDownload", Math.random());
+        return that.downloadData('billData');
+      }).then(function(){
+        that.$root.bus.$emit("billDataDownload", Math.random());
+        console.log('自动登录download请求已依次完成') 
+      })
+    }else{
+      let that = this;
+      // 监听login状态的改变
+      this.$root.bus.$on("loginStatus",(t)=>{
+        console.log("成功登录",this);
+        // let that = this;
+        that.downloadData('wishList').then(function(){
+          return that.downloadData('userData');
+        }).then(function(){
+          return that.downloadData('inExData');
+        }).then(function(){
+          return that.downloadData('billData');
+        }).then(function(){
+          console.log('登录download已完成，转跳至home.that:',that);
+          that.$router.push({ path: 'home' });
+        })
+      });
     }
-    // 通用逻辑还有要补充的吗？？++++++++++++
     
-
-
-
     // 添加条件，检测url？debug字段的值来启动Vconsole
-    if(getUrlVar('debug')=="true") new Vconsole();
+    if(commonjs.getUrlVar('debug')=="true") new Vconsole();
 
-
+    // 判断footer要不要显示
+    this.footerShow = Boolean(window.location.hash != '#/login');
+    
     // 检测Switch的变化状态
     this.$root.bus.$on("billDataSwitch",(t)=>{
       console.log("billDataSwitch触发成功,值为：",t);
@@ -349,7 +269,6 @@ export default {
       });
       console.log('验证billDataSwitch',store.state.billDataSwitch)
     });
-
     this.$root.bus.$on("userDataSwitch",(t)=>{
       console.log("userDataSwitch触发成功,值为：",t);
       store.commit('stateChange',{
@@ -358,7 +277,6 @@ export default {
       });
       console.log('验证userDataSwitch',store.state.userDataSwitch)
     });
-
     this.$root.bus.$on("inExDataSwitch",(t)=>{
       console.log("inExDataSwitch触发成功,值为：",t);
       store.commit('stateChange',{
@@ -378,53 +296,57 @@ export default {
 
     // 定时服务器更新数据
     setInterval(()=>{
-      // console.log('验证','billDataSwitch',store.state.billDataSwitch,'验证userDataSwitch',store.state.userDataSwitch,'验证inExDataSwitch',store.state.inExDataSwitch,'验证wishListSwitch',store.state.wishListSwitch);
-
-      // 先对本地文件生成一个版本唯一码,再往上推送++++++++++++++++++++++++++++++++++++++++
-
+      console.log('上传检测触发');
+      let that = this;
       if(store.state.billDataSwitch == true){
-        console.log("更新服务器billData");
-
-        // 接受到成功接口后变回false
-        store.commit('stateChange',{
-          name:"billDataSwitch",
-          status:false,
-      });
+        console.log("更新服务器的billData");
+        that.updateData('billData').then(function(){
+          // 接受到成功接口后变回false
+          store.commit('stateChange',{
+            name:"billDataSwitch",
+            status:false,
+          });
+          console.log('服务器成功接收到billData');
+        })
       }
 
       if(store.state.userDataSwitch == true){
-        console.log("更新服务器userData");
-        
-        // 接受到成功接口后变回false
-        store.commit('stateChange',{
-          name:"userDataSwitch",
-          status:false,
-      });
+        console.log("更新服务器的userData");
+        that.updateData('userData').then(function(){
+          // 接受到成功接口后变回false
+          store.commit('stateChange',{
+            name:"userDataSwitch",
+            status:false,
+          });
+          console.log('服务器成功接收到userData');
+        })
       }
 
       if(store.state.inExDataSwitch == true){
-        console.log("更新服务器inExData");
-        
+        console.log("更新服务器的inExData");
+        that.updateData('inExData').then(function(){
         // 接受到成功接口后变回false
-        store.commit('stateChange',{
-          name:"inExDataSwitch",
-          status:false,
-      });
+          store.commit('stateChange',{
+            name:"inExDataSwitch",
+            status:false,
+          });
+          console.log('服务器成功接收到inExData');
+        })
       }
 
       if(store.state.wishListSwitch == true){
-        console.log("更新服务器wishList");
-        
+        console.log("更新服务器的wishList");
+        that.updateData('wishList').then(function(){
         // 接受到成功接口后变回false
-        store.commit('stateChange',{
-          name:"wishListSwitch",
-          status:false,
-      });
+          store.commit('stateChange',{
+            name:"wishListSwitch",
+            status:false,
+          });
+          console.log('服务器成功接收到wishList');
+        })
       }
 
-      // console.log('循环结束','billDataSwitch',store.state.billDataSwitch,'验证userDataSwitch',store.state.userDataSwitch,'验证inExDataSwitch',store.state.inExDataSwitch,'验证wishListSwitch',store.state.wishListSwitch);
-
-    },10000)
+    },3000)
   },
   beforeMount() {
     console.log("App beforeMount");
@@ -450,129 +372,10 @@ export default {
   },
 };
 
-function formatLongDate (date,type=0) {
-  let myyear = date.getFullYear();
-  let mymonth = date.getMonth() + 1;
-  let myweekday = date.getDate();
-  let myHour = date.getHours();
-  let myMin = date.getMinutes();
-  let mySec = date.getSeconds();
-  if (mymonth < 10) {
-      mymonth = '0' + mymonth;
-  }
-  if (myweekday < 10) {
-      myweekday = '0' + myweekday;
-  }
-  if (myHour < 10) {
-      myHour = '0' + myHour;
-  }
-  if (myMin < 10) {
-      myMin = '0' + myMin;
-  }
-  if (mySec < 10) {
-      mySec = '0' + mySec;
-  }
-  
-  let a = '';
-  if(type==1){
-    a = myyear + '-' + mymonth + '-' + myweekday;
-  }else if(type==2){
-    a = myyear + mymonth;
-  }else{
-    a = myyear + '' + mymonth + '' + myweekday + ' ' + myHour + ':' + myMin + ':' + mySec;
-  }
-  return (a)
-};
 
-// 建立好数据结构,年月日表新建
-function initBillData(billData,y,m,d,budjet){
-  if(!billData['list'][y]){
-    billData['list'][y] = {
-      data : {yearBalance:budjet},
-      list : {
-        [m] : {
-          data : {monthBalance:budjet},
-          list : {
-            [d] : {
-              data:{budjet : budjet,dateBalance:budjet},
-              list : []
-            }
-          },
-        },
-      }
-    };
-  } else if(!billData['list'][y]["list"][m]){
-    billData['list'][y]["list"][m] = {
-      data : {monthBalance:budjet},
-      list : {
-        [d] : {
-          data:{budjet : budjet,dateBalance:budjet},
-          list : []
-        }
-      },
-    }
-  } else if(!billData['list'][y]["list"][m]["list"][d]){
-    billData['list'][y]["list"][m]["list"][d] = {
-      data:{budjet : budjet,dateBalance:budjet},
-      list : []
-    }
-  };
-  return(billData);
-};
 
-// 封装日余额数据更新
-function calcDateBalance(billData,y,m,d){
-  let dateBalance = billData['list'][y]["list"][m]["list"][d]["data"]["budjet"];
-  // 直接遍历(正常情况下，初始化后每天都会有数据)
-  for (const i in billData['list'][y]["list"][m]["list"][d]["list"]) {
-    dateBalance -= Number(billData['list'][y]["list"][m]["list"][d]["list"][i]["cost"]);
-  }
-  // 消除浮点影响，取小数后一位
-  if(dateBalance > 0){
-    dateBalance = parseInt(dateBalance * 10 + 0.1)/10;
-  }else if(dateBalance < 0){
-    dateBalance = parseInt(dateBalance * 10 - 0.1)/10;
-  }
-  console.log('dateBalance',dateBalance);
-  return(dateBalance);
-}
 
-// 封装月余额数据更新
-function calcMonthBalance(billData,y,m){
-  let monthBalance = 0;
 
-  // 直接遍历每天数据
-  for (const i in billData['list'][y]["list"][m]["list"]) {
-    monthBalance += Number(billData['list'][y]["list"][m]["list"][i]["data"]["dateBalance"]);
-  }
-  return(monthBalance);
-}
-
-// 封装年余额数据更新
-function calcYearBalance(billData,y){
-  let yearBalance = 0;
-
-  // 直接遍历(正常情况下，初始化后每月都会有数据)
-  for (const i in billData['list'][y]["list"]) {
-    yearBalance += Number(billData['list'][y]["list"][i]["data"]["monthBalance"]);
-  }
-  return(yearBalance);
-}
-
-function getUrlVar(v){
-  let src = window.location.href;
-  let index = src.indexOf("?");
-  if (index === -1) {
-    return ;
-  }
-  let dataStr = src.substring(src.indexOf("?") + 1);
-  let dataArray = dataStr.split("&");
-
-  for (let i = 0; i < dataArray.length; i++) {
-    let param = dataArray[i].split("=");
-    if(param[0] == v) console.log('getUrlVar属性值',param[1]); return param[1];
-  }
-}
 
 // created : 2017.8.21
 // author  : Guozhi_Han 
@@ -667,14 +470,5 @@ function getUrlVar(v){
     }
   }
 }
-
-// .van-info{
-//   margin-top: 2vw;
-//   font-size:2vw;
-//   line-height:4vw;
-//   width: 5vw;
-//   height: 5vw;
-//   border-radius: 5vw;
-// }
 
 </style>

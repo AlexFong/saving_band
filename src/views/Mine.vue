@@ -2,25 +2,29 @@
 <div class="mine">
 <div id="header">
   <div style="height:5vw"></div>
-  <div style="height:15vw;line-height:15vw">我的1.04</div>
+  <div style="height:15vw;line-height:15vw">我的</div>
 </div>
-<br>
 <div>
-  <div style="display:flex;justify-content:center;align-items:center">
-    <span>设置每日预算:</span>
-    <input style="margin:0 2vw;width:30vw" type="number" v-model="budjet" placeholder="设置每日预算" />
-    <span style="padding:0.5vw 0.5vw;width:14vw;border:1px solid #aaa;border-radius:2vw;" @click="changeBudjet()">调整</span>
+  <van-cell-group>
+    <van-cell title="用户昵称" :value="username" />
+    <van-cell title="用户账号" :value="mobile" />
+  </van-cell-group>
+  <div style="display:flex;align-items:center;height:14vw;border-bottom:1px solid black;color:#444">
+    <div style="width:5vw"></div>
+    <span>每日预算</span>
+    <div style="width:38vw"></div>
+    <input style="margin:0 2vw;width:20vw" type="number" v-model="budjet" placeholder="设置每日预算" />
+    <span style="padding:0.5vw 0vw;width:12vw;border:1px solid #aaa;border-radius:2vw;" @click="changeBudjet()">调整</span>
   </div>
-  <br><br>
-  <button @click="chosen='inExData';showInfo='清理记账漏斗缓存/inExData';Dialog()">清理记账漏斗缓存<br>inExData</button><br><br>
-  <button @click="chosen='billData';showInfo='清理天天记账缓存/billData';Dialog()">清理日常开支缓存<br>billData</button><br><br>
-  <button @click="chosen='userData';showInfo='清理用户数据缓存/userData';Dialog()">清理用户数据缓存<br>userData</button><br><br>
-  <button @click="chosen='wishList';showInfo='清理心愿清单缓存/wishList';Dialog()">清理心愿清单缓存<br>wishList</button><br><br>
+  <div style="height:10vh"></div>
+  <van-button type="danger" style="padding:5vw 0vw;width:40vw;border:1px solid #aaa;border-radius:5vw;" @click="chosen='inExData';showInfo='清理记账漏斗缓存/inExData';Dialog()">清除记账漏斗</van-button><br><br>
+  <van-button type="danger" style="padding:5vw 0vw;width:40vw;border:1px solid #aaa;border-radius:5vw;" @click="chosen='billData';showInfo='清理天天记账缓存/billData';Dialog()">清除日常开支</van-button><br><br>
+  <van-button type="danger" style="padding:5vw 0vw;width:40vw;border:1px solid #aaa;border-radius:5vw;" @click="chosen='userData';showInfo='清理用户数据缓存/userData';Dialog()">清除用户数据</van-button><br><br>
+  <van-button type="danger" style="padding:5vw 0vw;width:40vw;border:1px solid #aaa;border-radius:5vw;" @click="chosen='wishList';showInfo='清理心愿清单缓存/wishList';Dialog()">清除心愿清单</van-button><br><br>
   
-  父组件的<input type="text" v-model="author">
-
+  <!-- 父组件的<input type="text" v-model="author"> -->
   <!-- <br>在父组件绑定一个值传给子组件用props接。<br> -->
-  <child1 :notice='author' @childPastValue="childByValue"></child1>
+  <!-- <child1 :notice='author' @childPastValue="childByValue"></child1> -->
   <!-- 被子组件的childValue事件触发父组件的childByValue -->
 </div>
 </div>
@@ -29,10 +33,11 @@
 
 <script>
 import { Component, Vue } from "vue-property-decorator";
-import { Dialog, Toast } from 'vant';
+import { Button, Cell, CellGroup, Dialog, Toast } from 'vant';
 import child1 from '../components/child1';
+import commonjs from '../store/common';
 
-Vue.use(Dialog);Vue.use(Toast);
+Vue.use(Dialog);Vue.use(Toast);Vue.use(Cell);Vue.use(CellGroup);Vue.use(Button);
 
 export default {
   name: "mine",
@@ -52,8 +57,6 @@ export default {
       // 未删 
       todayTime:"",
       time:"",
-      balance: 0,
-      todayBalance: 0,
       cost: "",
       typeId: "a",
       typeList: [
@@ -99,31 +102,32 @@ export default {
       todayBudjet:0,
       showInfo:'',
       chosen:'',
-      author:''
+      author:'',
+      username:'',
+      mobile:'',
     };
   },
   methods: {
     changeBudjet: function(){
       if(this.budjet >= 0){
-        let userData = JSON.parse(localStorage.userData);
-        userData.budjet = this.budjet;
-        localStorage.userData = JSON.stringify(userData);
-
         let y = this.todayTime.getFullYear();
         let m = this.todayTime.getMonth();
         let d = this.todayTime.getDate();
 
-        // 今天的数值也改了
         let billData = JSON.parse(localStorage.billData);
+        billData.data.budjet = this.budjet;
         billData['list'][y]['list'][m]['list'][d]['data']['budjet'] = this.budjet;
 
         // 计算各层Balance
-        billData['list'][y]["list"][m]["list"][d]["data"]["dateBalance"] = calcDateBalance(billData,y,m,d);
-        billData['list'][y]["list"][m]["data"]["monthBalance"] = calcMonthBalance(billData,y,m);
-        billData['list'][y]["data"]["yearBalance"] = calcYearBalance(billData,y);
+        billData['list'][y]["list"][m]["list"][d]["data"]["dateBalance"] = commonjs.calcDateBalance(billData,y,m,d);
+        billData['list'][y]["list"][m]["data"]["monthBalance"] = commonjs.calcMonthBalance(billData,y,m);
+        billData['list'][y]["data"]["yearBalance"] = commonjs.calcYearBalance(billData,y);
+
+        billData.data.updateDate = new Date(parseInt(new Date().getTime()));
         localStorage.billData = JSON.stringify(billData);
 
-        Toast('预算调整成功！')
+        this.$root.bus.$emit("billDataSwitch", true);
+        Toast('预算调整请求已发送！')
       }else{
         Toast("预算不能为负数哦~");
       };
@@ -166,18 +170,27 @@ export default {
   },
   created() {
     console.log("created");
-
     this.todayTime = new Date(parseInt(new Date().getTime()));
-    let y = this.todayTime.getFullYear();
-    let m = this.todayTime.getMonth();
-    let d = this.todayTime.getDate();
     
-    let userData = JSON.parse(localStorage.userData)
-    let billData = JSON.parse(localStorage.billData)
+    let billData = JSON.parse(localStorage.billData);
+    this.budjet = billData.data.budjet;
 
-    // 更新显示balance、budjet
-    this.balance = calcBalance(billData,y,m,d);
-    this.budjet = userData.budjet;
+    let userData = JSON.parse(localStorage.userData);
+    this.username = userData.username;
+    this.mobile = userData.mobile;
+
+    // 检测billDataDownload的变化状态
+    this.$root.bus.$on("billDataDownload",(t)=>{
+      console.log("billDataDownload触发成功,值为：",t);
+      let billData = JSON.parse(localStorage.billData);
+      this.budjet = billData.data.budjet;
+    });
+    // 检测userDataDownload的变化状态
+    this.$root.bus.$on("userDataDownload",(t)=>{
+      console.log("userDataDownload触发成功,值为：",t);
+      let userData = JSON.parse(localStorage.userData);
+
+    });
   },
   beforeMount() {
     console.log("beforeMount");
@@ -200,109 +213,40 @@ export default {
   },
 };
 
-// 总余额计算（截至当天）
-function calcBalance(billData,y,m,d){
-  let balance = 0;
-
-  // 加总年表
-  for (const i in billData['list']) {
-    if(i < y){
-      balance += Number(billData['list'][i]["data"]["yearBalance"]);
-    }
-  }
-  // 加总月表
-  for (const i in billData['list'][y]["list"]) {
-    if(i < m){
-      balance += Number(billData['list'][y]["list"][i]["data"]["monthBalance"]);
-    }
-  }
-  // 加总日表
-  for (const i in billData['list'][y]["list"][m]["list"]) {
-    if(i <= d){
-      balance += Number(billData['list'][y]["list"][m]["list"][i]["data"]["dateBalance"]);
-    }
-  }
-
-  // 消除浮点影响，取小数后一位
-  if(balance > 0){
-    balance = parseInt(balance * 10 + 0.1)/10;
-  }else if(balance < 0){
-    balance = parseInt(balance * 10 - 0.1)/10;
-  }
-  return(balance)
-}
-
-// 封装日余额数据更新
-function calcDateBalance(billData,y,m,d){
-  let dateBalance = billData['list'][y]["list"][m]["list"][d]["data"]["budjet"];
-  // 直接遍历(正常情况下，初始化后每天都会有数据)
-  for (const i in billData['list'][y]["list"][m]["list"][d]["list"]) {
-    dateBalance -= Number(billData['list'][y]["list"][m]["list"][d]["list"][i]["cost"]);
-  }
-  // 消除浮点影响，取小数后一位
-  if(dateBalance > 0){
-    dateBalance = parseInt(dateBalance * 10 + 0.1)/10;
-  }else if(dateBalance < 0){
-    dateBalance = parseInt(dateBalance * 10 - 0.1)/10;
-  }
-  return(dateBalance);
-}
-
-// 封装月余额数据更新
-function calcMonthBalance(billData,y,m){
-  let monthBalance = 0;
-
-  // 直接遍历每天数据
-  for (const i in billData['list'][y]["list"][m]["list"]) {
-    monthBalance += Number(billData['list'][y]["list"][m]["list"][i]["data"]["dateBalance"]);
-  }
-  return(monthBalance);
-}
-
-// 封装年余额数据更新
-function calcYearBalance(billData,y){
-  let yearBalance = 0;
-
-  // 直接遍历(正常情况下，初始化后每月都会有数据)
-  for (const i in billData['list'][y]["list"]) {
-    yearBalance += Number(billData['list'][y]["list"][i]["data"]["monthBalance"]);
-  }
-  return(yearBalance);
-}
-
-
-// var getData1 = function(callback){
-//   console.log('getData1');
-//   callback(1)
-//   return 1
-// }
-// var getData2 = function(a,callback){
-//   console.log('getData2');
-//   callback(a+1)
-//   return a+1
-// }
-// var getData3 = function(a,callback){
-//   console.log('getData3');
-//   callback(a+1)
-//   return a+1
-// }
-// getData1(function(alex1){
-//   getData2(alex1,function(alex2){
-//     getData3(alex2,function(alex3){
-//       console.log('getData3',alex3);
-//     })
-//   })
-// })
 
 </script>
 
-<style lang="css" scoped>
+<style lang="scss" scoped>
+
+#header {
+  width: 100%;
+  height: 20vw;
+  background-color: bisque;
+}
+
 *{
   margin: 0;
   padding: 0;
   font-size: 4vw;
+  line-height: 5vw;
 }
+
 .mine{
   min-height: calc(100vh - 20vw);
+}
+
+.van-cell{
+  border-bottom: 1px solid black;
+  padding: 3vw 5vw;
+  // margin: 0 0 3vw 0;
+
+  .van-cell__title{
+    line-height: 8vw;
+    text-align: left;
+  }
+  .van-cell__value{
+    line-height: 8vw;
+    text-align: center;
+  }
 }
 </style>

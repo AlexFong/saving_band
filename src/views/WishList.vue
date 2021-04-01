@@ -2,7 +2,7 @@
 <div class="wishList">
 <div id="header">
   <div style="height:5vw"></div>
-  <div style="height:15vw;line-height:15vw">心愿清单1.06</div>
+  <div style="height:15vw;line-height:15vw">心愿清单</div>
 </div>
 
 <!-- 导航条 -->
@@ -132,7 +132,8 @@
 />
 
 <!-- 1、添加心愿的弹窗 -->
-<van-popup v-model="addWishShow" position="bottom" style="height:40vh;justify-content:space-between;flex-direction:column;" :style="{ 
+<van-popup v-model="addWishShow" position="bottom" style="height:40vh;justify-content:space-between;flex-direction:column;" 
+:style="{ 
   display: addWishShow ? 'flex' : 'none',
 }">
   <div style="background-color:#f1f1f1;padding:1.5vh">添加愿望</div>
@@ -187,9 +188,8 @@
 
 
 <script>
-// iconfont引入用法（2/2)
-import "../assets/font_2356633_61czw08nnlw/iconfont.css";
 import { Component, Vue } from "vue-property-decorator";
+import commonjs from '../store/common';
 import { Switch,Cell,Collapse, CollapseItem, Icon, Progress, ActionSheet, Toast, Popup,DropdownItem,DropdownMenu, Field, Button, RadioGroup, Radio } from 'vant';
 
 Vue.use(Button);Vue.use(Field);Vue.use(Switch);Vue.use(Cell);Vue.use(Collapse);Vue.use(CollapseItem);Vue.use(Icon);Vue.use(Progress);Vue.use(ActionSheet);Vue.use(Popup);Vue.use(DropdownMenu);Vue.use(DropdownItem);Vue.use(RadioGroup);Vue.use(Radio);
@@ -206,7 +206,6 @@ export default {
   data() {
     return {
       // 未删 
-      balance: 0,
       todayTime: 0,
       wishList: {},
       activeNames: [],
@@ -300,8 +299,9 @@ export default {
             this.wishList['list'][i]['status'] = item.icon;
           }
         };
-        // +++++++++++++++++++++++++更新唯一码++++++++++++++++++++
+        this.wishList.data.updateDate = new Date(parseInt(new Date().getTime()));
         localStorage.wishList = JSON.stringify(this.wishList);
+        this.$root.bus.$emit("wishListSwitch", true);
       };
       this.show = false;
     },
@@ -349,9 +349,11 @@ export default {
             }
           }
         };
-        // 唯一码+++++++++++++++++++++++++++++++++++++++++
+        this.wishList.data.updateDate = new Date(parseInt(new Date().getTime()));
         localStorage.wishList = JSON.stringify(this.wishList);
-        Toast("添加成功!");
+        this.$root.bus.$emit("wishListSwitch", true);
+
+        Toast("添加请求发送成功!");
         
         this.achieveWishShow = false;
         this.switch3 = 'false';
@@ -383,9 +385,10 @@ export default {
             this.wishList['list'][i][key] = "circle";
           }
         }
-      }
-      // 唯一码？？？？？？？？？？？
+      };
+      this.wishList.data.updateDate = new Date(parseInt(new Date().getTime()));
       localStorage.wishList = JSON.stringify(this.wishList);
+      this.$root.bus.$emit("wishListSwitch", true);
     },
     onCancel() {
       Toast('取消');
@@ -398,11 +401,10 @@ export default {
     },
     addWish(name,price){
       let wishList = JSON.parse(localStorage.wishList);
-      // wishID可以改到wishList里了++++++++++++++++++++++++++++++
-      let userData = JSON.parse(localStorage.userData);
-      userData.wishId += 1;
+      // 后面可改用uuid来设置独立id+++++++++++++++++
+      wishList.data.wishId += 1;
       wishList['list'].push({
-        id:userData.wishId,
+        id:wishList.data.wishId,
         status:"circle",
         name:name,
         price:Number(price),
@@ -419,10 +421,11 @@ export default {
       this.wishName = '';
       this.wishPrice = '';
 
-      localStorage.userData = JSON.stringify(userData);
+      wishList.data.updateDate = new Date(parseInt(new Date().getTime()));
       localStorage.wishList = JSON.stringify(wishList);
-      this.wishList = JSON.parse(localStorage.wishList);
-      Toast('添加成功！')
+      this.wishList = wishList;
+      this.$root.bus.$emit("wishListSwitch", true);
+      Toast('添加请求发送成功！')
     },
     // 这里的脚本可以在html render时调用
     formatLongDate (date,type=0) {
@@ -571,13 +574,16 @@ export default {
     console.log("created");
 
     this.todayTime = new Date(parseInt(new Date().getTime()));
-    let y = this.todayTime.getFullYear();
-    let m = this.todayTime.getMonth();
-    let d = this.todayTime.getDate();
-
-    let billData = JSON.parse(localStorage.billData)
+    // let y = this.todayTime.getFullYear();
+    // let m = this.todayTime.getMonth();
+    // let d = this.todayTime.getDate();
     this.wishList = JSON.parse(localStorage.wishList);
-    this.balance = calcBalance(billData,y,m,d);
+
+    // 检测wishListDownload的变化状态
+    this.$root.bus.$on("wishListDownload",(t)=>{
+      console.log("wishListDownload触发成功,值为：",t);
+      this.wishList = JSON.parse(localStorage.wishList);
+    });
   },
   beforeMount() {
     console.log("beforeMount");
@@ -599,73 +605,6 @@ export default {
     console.log("destroyed");
   },
 };
-
-function formatLongDate (date,type=0) {
-  let myyear = date.getFullYear();
-  let mymonth = date.getMonth() + 1;
-  let myweekday = date.getDate();
-  let myHour = date.getHours();
-  let myMin = date.getMinutes();
-  let mySec = date.getSeconds();
-  if (mymonth < 10) {
-      mymonth = '0' + mymonth;
-  }
-  if (myweekday < 10) {
-      myweekday = '0' + myweekday;
-  }
-  if (myHour < 10) {
-      myHour = '0' + myHour;
-  }
-  if (myMin < 10) {
-      myMin = '0' + myMin;
-  }
-  if (mySec < 10) {
-      mySec = '0' + mySec;
-  }
-  
-  let a = '';
-  if(type==1){
-    a = myyear + '-' + mymonth + '-' + myweekday;
-  }else if(type==2){
-    a = myyear + mymonth;
-  }else{
-    a = myyear + '' + mymonth + '' + myweekday + ' ' + myHour + ':' + myMin + ':' + mySec;
-  }
-  return (a)
-};
-
-// 总余额计算（截至当天）
-function calcBalance(billData,y,m,d){
-  let balance = 0;
-
-  // 加总年表
-  for (const i in billData['list']) {
-    if(i < y){
-      balance += Number(billData['list'][i]["data"]["yearBalance"]);
-    }
-  }
-  // 加总月表
-  for (const i in billData['list'][y]["list"]) {
-    if(i < m){
-      balance += Number(billData['list'][y]["list"][i]["data"]["monthBalance"]);
-    }
-  }
-  // 加总日表
-  for (const i in billData['list'][y]["list"][m]["list"]) {
-    if(i <= d){
-      balance += Number(billData['list'][y]["list"][m]["list"][i]["data"]["dateBalance"]);
-    }
-  }
-
-  // 消除浮点影响，取小数后一位
-  if(balance > 0){
-    balance = parseInt(balance * 10 + 0.1)/10;
-  }else if(balance < 0){
-    balance = parseInt(balance * 10 - 0.1)/10;
-  }
-  return(balance)
-}
-
 
 </script>
 
@@ -698,5 +637,9 @@ function calcBalance(billData,y,m,d){
 
 .van-switch__node{
   font-size: unset;
+}
+
+.van-field__label{
+  text-align: center;
 }
 </style>

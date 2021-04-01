@@ -7,7 +7,7 @@
       <div style="line-height:15vw;font-size:3vw;padding-left:2vw">余额:{{ balance }}</div> 
       <!-- <div style="background-color:#fff;font-size:4vw;border:1px solid #ccc;width:30vw;border-radius:1vw;margin-left:-0.5vw"></div> -->
     </div>
-    <div style="width:32vw;line-height:15vw;">天天记账1.22</div>
+    <div style="width:32vw;line-height:15vw;">天天记账</div>
     <div style="width:34vw;"></div>
   </div>
 </div>
@@ -173,8 +173,8 @@
     <span>￥</span> 
     <input style="width:40vw;" type="number" v-model="cost" placeholder="输入金额" />
     <span @click="addFun" style="width:12vw;border:1px solid #aaa;border-radius:2vw;margin-left:2vw;">花钱</span>
-    <span @click="dataRollBack(1)" style="width:12vw;border:1px solid #aaa;border-radius:2vw;margin-left:2vw;">回滚</span>
-    <!-- <button @click="sendMsg()">传值</button> -->
+    <!-- <span @click="dataRollBack(1)" style="width:12vw;border:1px solid #aaa;border-radius:2vw;margin-left:2vw;">回滚</span> -->
+    <!-- <button @click="sendMsg()">传值准备上传</button> -->
   </div>
 </div>
 
@@ -186,14 +186,12 @@
 
 
 <script>
-// iconfont引入用法（2/2)
-import "../assets/font_2356633_61czw08nnlw/iconfont.css";
 import { Component, Vue } from "vue-property-decorator";
-import { Col, Row, Icon, SwipeCell, Calendar } from 'vant';
-Vue.use(SwipeCell);Vue.use(Icon);Vue.use(Col);Vue.use(Row);Vue.use(Calendar);
+import commonjs from '../store/common';
 
 import Vuex from 'vuex';
 Vue.use(Vuex);
+
 const store = new Vuex.Store({
   state: {
     billDataSwitch: true,
@@ -262,7 +260,7 @@ export default {
       bill: [],
       todayTime:"",
       time:"",
-      budjet:400,
+      budjet:0,
       todayBudjet:0,
       todayBalanceShow:{
         100:0,
@@ -312,7 +310,7 @@ export default {
         let mm = this.todayTime.getMonth();
         let dd = this.todayTime.getDate();
         // 如果当天数据不存在，则会新建档案
-        billData = initBillData(billData,y,m,d,this.budjet);
+        billData = commonjs.initBillData(billData,y,m,d,this.budjet);
         // 因为新增消费条款时，会init当前数据，budjet可能从无到有，要读取一下。
         this.todayBudjet = billData['list'][y]["list"][m]["list"][d]["data"]["budjet"];
         
@@ -325,18 +323,20 @@ export default {
         this.cost = "";
 
         // 计算各层Balance
-        billData['list'][y]["list"][m]["list"][d]["data"]["dateBalance"] = calcDateBalance(billData,y,m,d);
-        billData['list'][y]["list"][m]["data"]["monthBalance"] = calcMonthBalance(billData,y,m);
-        billData['list'][y]["data"]["yearBalance"] = calcYearBalance(billData,y);
-        // 如果改变的是未来的数据，calcBalance可不执行-------------优化方向，不一定有好处--------------
-        this.balance = calcBalance(billData,yy,mm,dd);
+        billData['list'][y]["list"][m]["list"][d]["data"]["dateBalance"] = commonjs.calcDateBalance(billData,y,m,d);
+        billData['list'][y]["list"][m]["data"]["monthBalance"] = commonjs.calcMonthBalance(billData,y,m);
+        billData['list'][y]["data"]["yearBalance"] = commonjs.calcYearBalance(billData,y);
+        
+        this.balance = commonjs.calcBalance(billData,yy,mm,dd);
         this.todayBalance = billData['list'][y]["list"][m]["list"][d]["data"]["dateBalance"];
-        this.todayBalanceShow = calcTodayBalanceShow(this.todayBalance);
+        this.todayBalanceShow = commonjs.calcTodayBalanceShow(this.todayBalance);
 
+        billData.data.updateDate = new Date(parseInt(new Date().getTime()));
         // stringify再parse会使时间格式发生变化
         localStorage.billData = JSON.stringify(billData);
         // 使时间格式保持一致
         this.bill = JSON.parse(localStorage.billData)['list'][y]["list"][m]["list"][d]["list"];
+        this.$root.bus.$emit("billDataSwitch", true);
       } else {
         alert("请输入金额");
       }
@@ -353,18 +353,21 @@ export default {
       billData['list'][y]["list"][m]["list"][d]["list"].splice(index,1);
 
       // 计算各层Balance
-      billData['list'][y]["list"][m]["list"][d]["data"]["dateBalance"] = calcDateBalance(billData,y,m,d);
-      billData['list'][y]["list"][m]["data"]["monthBalance"] = calcMonthBalance(billData,y,m);
-      billData['list'][y]["data"]["yearBalance"] = calcYearBalance(billData,y);
-      // 如果改变的是未来的数据，calcBalance可不执行-------------优化方向，不一定有好处--------------
-      this.balance = calcBalance(billData,yy,mm,dd);
-      this.todayBalance = calcDateBalance(billData,y,m,d);
-      this.todayBalanceShow = calcTodayBalanceShow(this.todayBalance);
+      billData['list'][y]["list"][m]["list"][d]["data"]["dateBalance"] = commonjs.calcDateBalance(billData,y,m,d);
+      billData['list'][y]["list"][m]["data"]["monthBalance"] = commonjs.calcMonthBalance(billData,y,m);
+      billData['list'][y]["data"]["yearBalance"] = commonjs.calcYearBalance(billData,y);
       
+      this.balance = commonjs.calcBalance(billData,yy,mm,dd);
+      this.todayBalance = commonjs.calcDateBalance(billData,y,m,d);
+      this.todayBalanceShow = commonjs.calcTodayBalanceShow(this.todayBalance);
+      
+      billData.data.updateDate = new Date(parseInt(new Date().getTime()));
+
       // stringify再parse会使时间格式发生变化
       localStorage.billData = JSON.stringify(billData);
       // 使时间格式保持一致
       this.bill = JSON.parse(localStorage.billData)['list'][y]["list"][m]["list"][d]["list"];
+      this.$root.bus.$emit("billDataSwitch", true);
     },
     changeTime: function(index){
       // 输出的时间格式new Date(parseInt(new Date().getTime()))
@@ -377,7 +380,7 @@ export default {
       }
 
       // 如果不是本日，把时间设为最后一秒
-      if(formatLongDate(this.time,1) != formatLongDate(this.todayTime,1)){
+      if(commonjs.formatLongDate(this.time,1) != commonjs.formatLongDate(this.todayTime,1)){
         let y=(new Date(this.time)).getFullYear();
         let m=(new Date(this.time)).getMonth();
         let d=(new Date(this.time)).getDate();
@@ -398,12 +401,12 @@ export default {
         this.bill = [];
         this.todayBudjet = 0;
         this.todayBalance = 0;
-        this.todayBalanceShow = calcTodayBalanceShow(this.todayBalance);
+        this.todayBalanceShow = commonjs.calcTodayBalanceShow(this.todayBalance);
       }else{
         this.bill = billData['list'][y]["list"][m]["list"][d]["list"];
         this.todayBudjet = billData['list'][y]["list"][m]["list"][d]["data"]["budjet"];
-        this.todayBalance = calcDateBalance(billData,y,m,d);
-        this.todayBalanceShow = calcTodayBalanceShow(this.todayBalance);
+        this.todayBalance = commonjs.calcDateBalance(billData,y,m,d);
+        this.todayBalanceShow = commonjs.calcTodayBalanceShow(this.todayBalance);
       }
     },
     changeTodayBudjet: function(){
@@ -418,14 +421,17 @@ export default {
         billData['list'][y]["list"][m]["list"][d]["data"]["budjet"] = this.todayBudjet;
 
         // 计算各层Balance
-        billData['list'][y]["list"][m]["list"][d]["data"]["dateBalance"] = calcDateBalance(billData,y,m,d);
-        billData['list'][y]["list"][m]["data"]["monthBalance"] = calcMonthBalance(billData,y,m);
-        billData['list'][y]["data"]["yearBalance"] = calcYearBalance(billData,y);
-        this.balance = calcBalance(billData,yy,mm,dd);
-        this.todayBalance = calcDateBalance(billData,y,m,d);
-        this.todayBalanceShow = calcTodayBalanceShow(this.todayBalance);
+        billData['list'][y]["list"][m]["list"][d]["data"]["dateBalance"] = commonjs.calcDateBalance(billData,y,m,d);
+        billData['list'][y]["list"][m]["data"]["monthBalance"] = commonjs.calcMonthBalance(billData,y,m);
+        billData['list'][y]["data"]["yearBalance"] = commonjs.calcYearBalance(billData,y);
+        this.balance = commonjs.calcBalance(billData,yy,mm,dd);
+        this.todayBalance = commonjs.calcDateBalance(billData,y,m,d);
+        this.todayBalanceShow = commonjs.calcTodayBalanceShow(this.todayBalance);
+        
+        billData.data.updateDate = new Date(parseInt(new Date().getTime()));
 
         localStorage.billData = JSON.stringify(billData);
+        this.$root.bus.$emit("billDataSwitch", true);
       }else{
         alert("预算不能为负数哦~");
       }
@@ -439,7 +445,7 @@ export default {
       let dateTime = this.todayTime;
       // 遍历时y和ym会动态变化，判断条件(当前剩余数据的最新日期)
       let y = this.todayTime.getFullYear();
-      let ym = formatLongDate(this.todayTime,2);
+      let ym = commonjs.formatLongDate(this.todayTime,2);
 
       // 回滚i天
       for(let i = 0;i<n;i++){
@@ -447,7 +453,7 @@ export default {
         let yy = dateTime.getFullYear();
         let mm = dateTime.getMonth();
         let dd = dateTime.getDate();
-        let yymm = formatLongDate(dateTime,2);
+        let yymm = commonjs.formatLongDate(dateTime,2);
 
         // 1、billData回滚  3、遍历inExData-monthData
         if(y - yy > 0){
@@ -508,59 +514,72 @@ export default {
       };
 
       // 4、userData回滚
-      userData.latestLoginDate = formatLongDate(dateTime,1);
+      userData.latestLoginDate = dateTime;
 
+      billData.data.updateDate = new Date(parseInt(new Date().getTime()));
+      inExData.data.updateDate = new Date(parseInt(new Date().getTime()));
+      userData.data.updateDate = new Date(parseInt(new Date().getTime()));
+      wishList.data.updateDate = new Date(parseInt(new Date().getTime()));
+      
       localStorage.userData = JSON.stringify(userData);
       localStorage.billData = JSON.stringify(billData);
       localStorage.wishList = JSON.stringify(wishList);
       localStorage.inExData = JSON.stringify(inExData);
+
+      this.$root.bus.$emit("billDataSwitch", true);
+      this.$root.bus.$emit("inExDataSwitch", true);
+      this.$root.bus.$emit("userDataSwitch", true);
+      this.$root.bus.$emit("wishListSwitch", true);
     },
     sendMsg: function(){
-      this.$root.bus.$emit("billDataSwitch", store.state.billDataSwitch)
+      // this.$root.bus.$emit("billDataSwitch", store.state.billDataSwitch);
+      this.$root.bus.$emit("billDataSwitch", true);
+      this.$root.bus.$emit("userDataSwitch", true);
+      this.$root.bus.$emit("inExDataSwitch", true);
+      this.$root.bus.$emit("wishListSwitch", true);
+      console.log("已改变开关！");
+    },
+    billDataUIUpdate(){
+      let billData = JSON.parse(localStorage.billData);
+      let y = this.time.getFullYear();
+      let m = this.time.getMonth();
+      let d = this.time.getDate();
+      let yy = this.todayTime.getFullYear();
+      let mm = this.todayTime.getMonth();
+      let dd = this.todayTime.getDate();
+      // 更新显示的账单、todayBalance、balance、todayBudjet
+      this.todayBudjet = billData['list'][y]["list"][m]["list"][d]["data"]["budjet"];
+      this.todayBalance = billData['list'][y]["list"][m]["list"][d]["data"]["dateBalance"];
+      this.balance = commonjs.calcBalance(billData,yy,mm,dd);
+      this.budjet = billData.data.budjet;
+      this.todayBalanceShow = commonjs.calcTodayBalanceShow(this.todayBalance);
+      this.bill = billData["list"][y]["list"][m]["list"][d]["list"];
     }
     
   },
   beforeCreate() {
     console.log("beforeCreate");
-    console.log('++',JSON.parse(localStorage.billData));
   },
   created() {
     console.log("created");
     this.width = document.body.clientWidth;
     this.height = document.body.clientHeight;
-
     this.todayTime = new Date(parseInt(new Date().getTime()));
     this.time = this.todayTime;
-    let y = this.todayTime.getFullYear();
-    let m = this.todayTime.getMonth();
-    let d = this.todayTime.getDate();
-    let yy = this.todayTime.getFullYear();
-    let mm = this.todayTime.getMonth();
-    let dd = this.todayTime.getDate();
     
-    let tempUserData = JSON.parse(localStorage.userData)
-    let billData = JSON.parse(localStorage.billData)
+    this.billDataUIUpdate();
 
-    // 更新显示的账单、todayBalance、balance、todayBudjet
-    this.todayBudjet = billData['list'][y]["list"][m]["list"][d]["data"]["budjet"];
-    this.todayBalance = billData['list'][y]["list"][m]["list"][d]["data"]["dateBalance"];
-    this.balance = calcBalance(billData,yy,mm,dd);
-    this.budjet = tempUserData.budjet;
-    this.todayBalanceShow = calcTodayBalanceShow(this.todayBalance);
-
-    // stringify再parse会使时间格式发生变化
-    localStorage.billData = JSON.stringify(billData);
-    // 使时间格式保持一致
-    this.bill = JSON.parse(localStorage.billData)["list"][y]["list"][m]["list"][d]["list"];
-
-
+    // 检测billDataDownload的变化状态
+    this.$root.bus.$on("billDataDownload",(t)=>{
+      console.log("billDataDownload触发成功,值为：",t);
+      this.billDataUIUpdate();
+    });
   },
   beforeMount() {
     console.log("beforeMount");
   },
   mounted() {
     console.log("mounted");
-    console.log(new Date('2000-01-01'));
   },
   beforeUpdate() {
     console.log("beforeUpdate");
@@ -579,233 +598,8 @@ export default {
   },
 };
 
-// 脚本，让时间格式化
-function formatLongDate (date,type=0) {
-  let myyear = date.getFullYear();
-  let mymonth = date.getMonth() + 1;
-  let myweekday = date.getDate();
-  let myHour = date.getHours();
-  let myMin = date.getMinutes();
-  let mySec = date.getSeconds();
+          
 
-  if (mymonth < 10) {
-      mymonth = '0' + mymonth;
-  }
-  if (myweekday < 10) {
-      myweekday = '0' + myweekday;
-  }
-  if (myHour < 10) {
-      myHour = '0' + myHour;
-  }
-  if (myMin < 10) {
-      myMin = '0' + myMin;
-  }
-  if (mySec < 10) {
-      mySec = '0' + mySec;
-  }
-  
-  let a
-  if(type==1){
-    a = myyear + '-' + mymonth + '-' + myweekday;
-  }else if(type==2){
-    a = myyear + mymonth;
-  }else{
-    a = myyear + '' + mymonth + '' + myweekday + ' ' + myHour + ':' + myMin + ':' + mySec;
-  }
-  return (a)
-};
-
-// 建立好数据结构,年月日表新建(每天都要保存数据，不然日预算一调整，就没法计算一个正确的值了)
-function initBillData(billData,y,m,d,budjet){
-  if(!billData['list'][y]){
-    billData['list'][y] = {
-      data : {yearBalance:budjet},
-      list : {
-        [m] : {
-          data : {monthBalance:budjet},
-          list : {
-            [d] : {
-              data:{budjet : budjet,dateBalance:budjet},
-              list : []
-            }
-          },
-        },
-      }
-    };
-  } else if(!billData['list'][y]["list"][m]){
-    billData['list'][y]["list"][m] = {
-      data : {monthBalance:budjet},
-      list : {
-        [d] : {
-          data:{budjet : budjet,dateBalance:budjet},
-          list : []
-        }
-      },
-    }
-  } else if(!billData['list'][y]["list"][m]["list"][d]){
-    billData['list'][y]["list"][m]["list"][d] = {
-      data:{budjet : budjet,dateBalance:budjet},
-      list : []
-    }
-  };
-  
-  return(billData);
-};
-
-// 封装日余额数据更新
-function calcDateBalance(billData,y,m,d){
-  let dateBalance = billData['list'][y]["list"][m]["list"][d]["data"]["budjet"];
-  // 直接遍历(正常情况下，初始化后每天都会有数据)
-  for (const i in billData['list'][y]["list"][m]["list"][d]["list"]) {
-    dateBalance -= Number(billData['list'][y]["list"][m]["list"][d]["list"][i]["cost"]);
-  }
-  // 消除浮点影响，取小数后一位
-  if(dateBalance > 0){
-    dateBalance = parseInt(dateBalance * 10 + 0.1)/10;
-  }else if(dateBalance < 0){
-    dateBalance = parseInt(dateBalance * 10 - 0.1)/10;
-  }
-  return(dateBalance);
-}
-
-// 封装月余额数据更新
-function calcMonthBalance(billData,y,m){
-  let monthBalance = 0;
-
-  // 直接遍历每天数据
-  for (const i in billData['list'][y]["list"][m]["list"]) {
-    monthBalance += Number(billData['list'][y]["list"][m]["list"][i]["data"]["dateBalance"]);
-  }
-  return(monthBalance);
-}
-
-// 封装年余额数据更新
-function calcYearBalance(billData,y){
-  let yearBalance = 0;
-
-  // 直接遍历(正常情况下，初始化后每月都会有数据)
-  for (const i in billData['list'][y]["list"]) {
-    yearBalance += Number(billData['list'][y]["list"][i]["data"]["monthBalance"]);
-  }
-  return(yearBalance);
-}
-
-// 总余额计算（会计算未来）
-function calcBalanceFuture(billData){
-  let balance = 0;
-  
-  // 直接加总年表的总值
-  for (const i in billData['list']) {
-    balance += billData['list'][i]["data"]["yearBalance"]
-  }
-  return(balance)
-}
-
-// 总余额计算（截至当天）
-function calcBalance(billData,y,m,d){
-  let balance = 0;
-
-  // 加总年表
-  for (const i in billData['list']) {
-    if(i < y){
-      balance += Number(billData['list'][i]["data"]["yearBalance"]);
-    }
-  }
-  // 加总月表
-  for (const i in billData['list'][y]["list"]) {
-    if(i < m){
-      balance += Number(billData['list'][y]["list"][i]["data"]["monthBalance"]);
-    }
-  }
-  // 加总日表
-  for (const i in billData['list'][y]["list"][m]["list"]) {
-    if(i <= d){
-      balance += Number(billData['list'][y]["list"][m]["list"][i]["data"]["dateBalance"]);
-    }
-  }
-
-  // 消除浮点影响，取小数后一位
-  if(balance > 0){
-    balance = parseInt(balance * 10 + 0.1)/10;
-  }else if(balance < 0){
-    balance = parseInt(balance * 10 - 0.1)/10;
-  }
-  return(balance)
-}
-
-// 计算要显示的货币数量
-function calcTodayBalanceShow(todayBalance){
-  let todayBalanceShow = {
-    100:0,
-    paper:[],
-    1:0,
-    coin:[]
-  };
-
-  if(todayBalance < 0){
-    return todayBalance;
-  }
-
-  // 取整，有多少设置多少
-  todayBalanceShow[100] = parseInt(todayBalance/100);
-  // 余数
-  let a = todayBalance - parseInt(todayBalance/100)*100;
-  if(a == 0){
-    return todayBalanceShow;
-  }
-
-  if(parseInt(a/50)){
-    todayBalanceShow.paper.push(50);
-    a = a%50;
-    if(a == 0){
-      return todayBalanceShow;
-    }
-  }
-
-  for (let i = parseInt(a/20); i > 0; i--) {
-    todayBalanceShow.paper.push(20);
-  }
-  a = a%20;
-  if(a == 0){
-    return todayBalanceShow;
-  }
-
-  if(parseInt(a/10)){
-    todayBalanceShow.paper.push(10);
-    a = a%10;
-    if(a == 0){
-      return todayBalanceShow;
-    }
-  }
-
-  if(parseInt(a/5)){
-    todayBalanceShow.paper.push(5);
-    a = a%5;
-    if(a == 0){
-      return todayBalanceShow;
-    }
-  }
-
-  todayBalanceShow[1] = parseInt(a/1);
-  a = a%1;
-  if(a == 0){
-    return todayBalanceShow;
-  }
-
-  if(parseInt(a/0.5)){
-    todayBalanceShow.coin.push(0.5);
-    a = a%0.5;
-    if(a == 0){
-      return todayBalanceShow;
-    }
-  }
-  
-  // +0.1是为了消除浮点的影响。先进到循环,再减
-  for (let i = parseInt(a/0.1+0.1); i > 0; i--) {
-    todayBalanceShow.coin.push(0.1);
-  }
-  return todayBalanceShow;
-}
 
 </script>
 

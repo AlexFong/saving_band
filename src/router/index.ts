@@ -1,8 +1,11 @@
 import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
+Vue.use(VueRouter)
+
 import Home from '../views/Home.vue'
 
-Vue.use(VueRouter)
+import { Toast } from 'vant';
+Vue.use(Toast);
 
 const routes: Array<RouteConfig> = [
   {
@@ -47,10 +50,47 @@ const routes: Array<RouteConfig> = [
     meta:{index:5,title: '天天记账-登录'},
     component: () => import(/* webpackChunkName: "about" */ '../views/Login.vue')
   },
+  {
+    path: '*',
+    name: 'Other',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    // meta:{index:5,title: '天天记账-登录'},
+    // component: () => import(/* webpackChunkName: "about" */ '../views/Login.vue')
+    redirect: '/',
+  },
 ]
 
-const router = new VueRouter({
+let router = new VueRouter({
   routes
+})
+
+// let token = false;
+// if(localStorage.token) {
+//   token = localStorage.token;
+//   // token更新可能会导致拦截失效
+//   window.token = localStorage.token;
+//   window.loginStatus = true;
+// }
+// else {
+//   window.token = false;
+//   window.loginStatus = false;
+// }
+// console.log('router index.ts',window.token,window.loginStatus);
+
+
+console.log('设置全局前置守卫');
+
+// 设置全局前置守卫
+router.beforeEach((to, from, next) => {
+  console.log('设置全局前置守卫to',to);
+  console.log('from',from);
+  if(!localStorage.token && to.fullPath != '/login') {
+    next('/login');
+  }else{
+    next();
+  }
 })
 
 export default router

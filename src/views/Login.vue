@@ -71,17 +71,17 @@
       </van-form>
     </van-tab>
   </van-tabs>
-  <button @click="getUrlVar('debug')">get Url</button>
+  <!-- <button @click="getUrlVar('debug')">get Url</button> -->
 </div>
 </div>
 </template>
-
 
 <script>
 import { Component, Vue } from "vue-property-decorator";
 import axios from 'axios';
 import { Button, Cell, CellGroup, Field, Form, Tab, Tabs, Toast } from 'vant';
 Vue.use(Toast);Vue.use(Field);Vue.use(Cell);Vue.use(CellGroup);Vue.use(Button);Vue.use(Tab);Vue.use(Tabs);Vue.use(Form);
+import commonjs from '../store/common';
 
 export default {
   name: "mine",
@@ -103,9 +103,10 @@ export default {
     };
   },
   methods: {
-    login:function(){
+    login(){
       console.log('login function');
-      axios.post('http://simbas.work:7001/login', {
+      let that = this;
+      axios.post('/login', {
         password: this.password,
         mobile: this.phoneNumber,
       })
@@ -113,12 +114,21 @@ export default {
         console.log('then',response);
         if(response.data.code == 200){
           console.log('请求成功，成功登录');
-          // 成功登录
-          // 页面重定向
           // 请求都绑定token
-          console.log('token:',response.data.data.token);
+          localStorage.token = response.data.data.token;
+          window.token = response.data.data.token;
+          axios.defaults.headers.token = response.data.data.token;
+          window.loginStatus = true;
+          // 通知App.vue下载数据
+          // console.log('登录成功！',that.$root.bus);
+          that.$root.bus.$emit("loginStatus", that.username);
+          that.phoneNumber = '';
+          that.password = '';
+          that.passwordVerify = '';
+          that.username = '';
+          that.passwordIcon = '';
         }else{
-          console.log('then请求错误',response.data.code,response.data.errMsg)
+          console.log('then请求错误',response.data.code,response.data.errMsg);
         }
       })
       .catch(function (error) {
@@ -126,9 +136,10 @@ export default {
       });
     },
 
-    signup:function(){
+    signup(){
       console.log('signup function');
-      axios.post('http://simbas.work:7001/signup', {
+      let that = this;
+      axios.post('/signup', {
         username: this.username,
         password: this.password,
         mobile: this.phoneNumber,
@@ -136,8 +147,13 @@ export default {
       .then(function (response) {
         console.log('then',response);
         if(response.data.code == 200){
-          console.log('请求成功');
-          // 发送登录请求
+          Toast('注册成功！');
+          window.userInfo = {
+            username:that.username,
+            mobile:that.phoneNumber
+          };
+          console.log(window.userInfo);
+          that.login();
         }else{
           console.log('请求失败',response.data.code,response.data.errMsg)
         }
@@ -146,6 +162,8 @@ export default {
         console.log('catch',error);
       });
     },
+
+
     // 点击事件
     onSubmit(values) {
       console.log('submit', values);
@@ -171,12 +189,10 @@ export default {
     },
     
     getUrlVar(v){
-      // location.search获取属性（?后面，#前面）
-      let data = {};
       let src = window.location.href;
       let index = src.indexOf("?");
       if (index === -1) {
-        return data;
+        return ;
       }
       let dataStr = src.substring(src.indexOf("?") + 1);
       let dataArray = dataStr.split("&");
@@ -185,6 +201,10 @@ export default {
         let param = dataArray[i].split("=");
         if(param[0] == v) console.log(param[1]); return param[1];
       }
+    },
+    
+    urlGO(url){
+      this.$router.push(url);
     }
   },
   watch:{
@@ -209,16 +229,14 @@ export default {
   created() {
     console.log("created");
 
-    this.todayTime = new Date(parseInt(new Date().getTime()));
-    let y = this.todayTime.getFullYear();
-    let m = this.todayTime.getMonth();
-    let d = this.todayTime.getDate();
+    // this.todayTime = new Date(parseInt(new Date().getTime()));
+    // let y = this.todayTime.getFullYear();
+    // let m = this.todayTime.getMonth();
+    // let d = this.todayTime.getDate();
+    axios.defaults.baseURL = 'http://simbas.work:7001';
+    axios.defaults.headers.token = localStorage.token;
     
-    let userData = JSON.parse(localStorage.userData)
-    let billData = JSON.parse(localStorage.billData)
 
-    // 更新显示balance、budjet
-    this.budjet = userData.budjet;
   },
   beforeMount() {
     console.log("beforeMount");
@@ -250,7 +268,8 @@ export default {
   font-size: 4vw;
 }
 .login{
-  min-height: calc(100vh - 20vw);
+  min-height: 100vh;
+  /* min-height: calc(100vh - 20vw); */
   background-color: #f5f5f5;
 }
 
