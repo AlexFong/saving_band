@@ -412,7 +412,7 @@ export default {
       let that = this;
       // 监听login状态的改变
       this.$root.bus.$on("loginStatus",(t)=>{
-        console.log("成功登录",this);
+        console.log("成功登录",this,t);
         // let that = this;
         that.downloadData('wishList').then(function(){
           return that.downloadData('userData');

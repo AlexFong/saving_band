@@ -121,14 +121,14 @@ export default {
           window.loginStatus = true;
 
           // 通知App.vue下载数据
-          that.$root.bus.$emit("loginStatus", that.username);
+          that.$root.bus.$emit("loginStatus", Math.random());
           that.phoneNumber = '';
           that.password = '';
           that.passwordVerify = '';
           that.username = '';
           that.passwordIcon = '';
 
-          // 如果有日期差，更新数据
+          // 如果有日期差，更新数据，逻辑在App.vue实现
 
         }else{
           console.log('then请求错误',response.data.code,response.data.errMsg);

@@ -12,12 +12,14 @@
   <div style="display:flex;align-items:center;height:14vw;border-bottom:1px solid black;color:#444">
     <div style="width:5vw"></div>
     <span>每日预算</span>
-    <div style="width:38vw"></div>
+    <div style="width:32vw"></div>
     <input style="margin:0 2vw;width:20vw" type="number" v-model="budjet" placeholder="设置每日预算" />
     <span style="padding:0.5vw 0vw;width:12vw;border:1px solid #aaa;border-radius:2vw;" @click="changeBudjet()">调整</span>
   </div>
-  <div style="height:10vh"></div>
-  <!-- <van-button type="danger" style="padding:5vw 0vw;width:40vw;border:1px solid #aaa;border-radius:5vw;" @click="chosen='inExData';showInfo='清理记账漏斗缓存/inExData';Dialog()">清除记账漏斗</van-button><br><br>
+  <!-- <div style="height:10vh"></div> -->
+  <div style="margin:5vw">
+    <van-button type="primary" round size="large" @click="loadOut">退出登录</van-button>
+  </div><!-- <van-button type="danger" style="padding:5vw 0vw;width:40vw;border:1px solid #aaa;border-radius:5vw;" @click="chosen='inExData';showInfo='清理记账漏斗缓存/inExData';Dialog()">清除记账漏斗</van-button><br><br>
   <van-button type="danger" style="padding:5vw 0vw;width:40vw;border:1px solid #aaa;border-radius:5vw;" @click="chosen='billData';showInfo='清理天天记账缓存/billData';Dialog()">清除日常开支</van-button><br><br>
   <van-button type="danger" style="padding:5vw 0vw;width:40vw;border:1px solid #aaa;border-radius:5vw;" @click="chosen='userData';showInfo='清理用户数据缓存/userData';Dialog()">清除用户数据</van-button><br><br>
   <van-button type="danger" style="padding:5vw 0vw;width:40vw;border:1px solid #aaa;border-radius:5vw;" @click="chosen='wishList';showInfo='清理心愿清单缓存/wishList';Dialog()">清除心愿清单</van-button><br><br> -->
@@ -163,6 +165,14 @@ export default {
       console.log(2,val);
       this.author = val;
     },
+    loadOut(){
+      localStorage.clear();
+      window.loginStatus = false;
+      // window.token = '';
+      // axios.defaults.headers.token = '';
+      Toast("成功退出登录。")
+      this.$router.push('/login');
+    },
     
   },
   beforeCreate() {
@@ -232,7 +242,7 @@ export default {
 }
 
 .mine{
-  min-height: calc(100vh - 20vw);
+  height: calc(100vh - 20vw);
 }
 
 .van-cell{
