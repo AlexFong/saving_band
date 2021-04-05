@@ -168,8 +168,8 @@ export default {
     loadOut(){
       localStorage.clear();
       window.loginStatus = false;
-      // window.token = '';
-      // axios.defaults.headers.token = '';
+      window.token = '';
+      axios.defaults.headers.token = '';
       Toast("成功退出登录。")
       this.$router.push('/login');
     },
