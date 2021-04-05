@@ -88,6 +88,9 @@ router.beforeEach((to, from, next) => {
   console.log('from',from);
   if(!localStorage.token && to.fullPath != '/login') {
     next('/login');
+  }else if(localStorage.token && to.fullPath == '/login'){
+    Toast("用户已登录")
+    next('/home');
   }else{
     next();
   }

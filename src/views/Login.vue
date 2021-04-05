@@ -2,7 +2,7 @@
 <div class="login">
 <div id="header">
   <div style="height:5vw"></div>
-  <div style="height:15vw;line-height:15vw">登录天天记账1.00</div>
+  <div style="height:15vw;line-height:15vw">登录天天记账</div>
 </div>
 <br>
 <div>
