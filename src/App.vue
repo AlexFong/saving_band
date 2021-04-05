@@ -1,12 +1,12 @@
 
 <template>
 <div id="app">
-  <!-- updateData -->
+  <!-- postData -->
   <!-- downloadData -->
-  <!-- <button @click="updateData('wishList')">上传w</button>
-  <button @click="updateData('billData')">上传b</button>
-  <button @click="updateData('inExData')">上传i</button>
-  <button @click="updateData('userData')">上传u</button>
+  <!-- <button @click="postData('wishList')">上传w</button>
+  <button @click="postData('billData')">上传b</button>
+  <button @click="postData('inExData')">上传i</button>
+  <button @click="postData('userData')">上传u</button>
   <button @click="downloadData('wishList')">下载w</button>
   <button @click="downloadData('billData')">下载b</button>
   <button @click="downloadData('inExData')">下载i</button>
@@ -105,7 +105,7 @@ export default {
   },
   methods: {
     // 把新建的表单推上云
-    updateData(list){
+    postData(list){
       return new Promise(function(resolve,reject){
         axios.post('/' + list, JSON.parse(localStorage[list]))
         .then(function (response) {
@@ -168,6 +168,7 @@ export default {
               billData['list'][y]["list"][m]["list"][d]["data"]["dateBalance"] = commonjs.calcDateBalance(billData,y,m,d);
               billData['list'][y]["list"][m]["data"]["monthBalance"] = commonjs.calcMonthBalance(billData,y,m);
               billData['list'][y]["data"]["yearBalance"] = commonjs.calcYearBalance(billData,y);
+
               tempData = billData;
             }else if(list == 'userData'){
               tempData = {
@@ -190,6 +191,176 @@ export default {
         });
       })
     },
+    // 更新4个表单的方法
+    updateData(){
+      let userData = JSON.parse(localStorage.userData);
+      let billData = JSON.parse(localStorage.getItem('billData'));
+      let inExData = JSON.parse(localStorage.inExData);
+      let wishList = JSON.parse(localStorage.wishList);
+      // 计算日期差
+      let dateStart = new Date(userData.latestLoginDate);
+      userData.latestLoginDate = new Date(parseInt(new Date().getTime()));
+      let dateEnd = userData.latestLoginDate;
+      let diffValue = Math.floor((dateEnd - dateStart) / (1000 * 60 * 60 * 24));
+      console.log("计算日期差diffValue",diffValue);
+
+      // 1、更新userData
+      localStorage.userData = JSON.stringify(userData);
+      // 2、更新billData
+      if (diffValue == 0){  
+        // 当天重复登录
+      }else if(diffValue <= 91){ 
+        let tempTime = dateStart;
+        for (let i = diffValue; i > 0; i--) {
+          // 满足条件执行，执行完再对数值进行调整
+          tempTime = new Date(tempTime.setDate(tempTime.getDate()+1));
+          let yyy = tempTime.getFullYear();
+          let mmm = tempTime.getMonth();
+          let ddd = tempTime.getDate();
+          billData = commonjs.initBillData(billData,yyy,mmm,ddd,billData.budjet);
+          // 计算各层Balance++++++++++++++++这里可以写个判断年月的逻辑，减少运算量+++++++
+          billData["list"][yyy]["list"][mmm]["data"]["monthBalance"] = commonjs.calcMonthBalance(billData,yyy,mmm);
+          billData["list"][yyy]["data"]["yearBalance"] = commonjs.calcYearBalance(billData,yyy);
+        };
+        localStorage.billData = JSON.stringify(billData);
+      }else if(diffValue > 91){  
+        // 如果大于91天，只新建今天的日表
+        let y = this.todayTime.getFullYear();
+        let m = this.todayTime.getMonth();
+        let d = this.todayTime.getDate();
+
+        billData = commonjs.initBillData(billData,y,m,d,billData.budjet);
+        // 计算各层Balance
+        billData["list"][y]["list"][m]["data"]["monthBalance"] = commonjs.calcMonthBalance(billData,y,m);
+        billData["list"][y]["data"]["yearBalance"] = commonjs.calcYearBalance(billData,y);
+        localStorage.billData = JSON.stringify(billData);
+        alert("太久没登录了，我们没给你更新数据了~");
+      }else{ 
+        alert("时间出错了，请重试");
+      };
+    
+      // 3、更新inExData
+      // 4、更新wishList
+      if(diffValue>0){
+        // 逐月遍历更新
+        for(let tempTime = dateStart;commonjs.formatLongDate(dateEnd,2) - commonjs.formatLongDate(tempTime,2) != 0;){
+          // 当月不用，下个月才要；new Date之后才可以是数值，不然会指向tempTime
+          let tempTimeStart = new Date(tempTime);
+          tempTime.setMonth(tempTime.getMonth()+1);
+          console.log('+tempTime',tempTime,tempTimeStart);
+          ym = commonjs.formatLongDate(tempTime,2);
+          // 更新necessarySpendingList
+          for(const i in inExData['necessarySpendingList']){
+            let a = inExData['necessarySpendingList'][i];
+            // status有going和finish两种状态
+            if(a['status'] == 'going'){
+              // 1.如果是永续的
+              if(a['sustainable'] == 'true'){
+                // 2.如果是月缴的
+                if(a['interval'] == 'month'){
+                  inExData['necessarySpendingList'][i]['payList'][ym] = a['payment'];
+                }else{
+                  if(a['payMonth']-1 == tempTime.getMonth()){
+                    inExData['necessarySpendingList'][i]['payList'][ym] = a['payment'];
+                  }
+                }
+              }
+              // 1.如果不是永续的
+              else{
+                // 计算payList已支付总额
+                let sumPayList = 0;
+                for(const j in a['payList']){
+                  sumPayList += Number(a['payList'][j]);
+                };
+                // 2.如果是月缴的
+                if(a['interval'] == 'month'){
+                  if(a['payment'] + sumPayList > a['price']){
+                    inExData['necessarySpendingList'][i]['payList'][ym] = a['price'] - sumPayList;
+                    inExData['necessarySpendingList'][i]['status'] = 'finish';
+                  }else{
+                    inExData['necessarySpendingList'][i]['payList'][ym] = a['payment'];
+                  }
+                }else{
+                  if(a['payMonth']-1 == tempTime.getMonth()){
+                    if(Number(a['payment']) + sumPayList > a['price']){
+                      inExData['necessarySpendingList'][i]['payList'][ym] = a['price'] - sumPayList;
+                      inExData['necessarySpendingList'][i]['status'] = 'finish';
+                    }else{
+                      inExData['necessarySpendingList'][i]['payList'][ym] = a['payment'];
+                    }
+                  }
+                }
+              }
+            }
+          }
+          // 更新optionalSpendingList 
+          for(const i in inExData['optionalSpendingList']){
+            let a = inExData['optionalSpendingList'][i];
+            // status有going和finish两种状态
+            if(a['status'] == 'going'){
+              // 如果是永续的
+              if(a['sustainable'] == 'true'){
+                inExData['optionalSpendingList'][i]['payList'][ym] = a['payment'];
+              }
+              // 如果不是永续的
+              else{
+                // 计算payList已支付总额
+                let sumPayList = 0;
+                for(const j in a['payList']){
+                  sumPayList += Number(a['payList'][j]);
+                };
+                if(Number(a['payment']) + sumPayList > a['price']){
+                  inExData['optionalSpendingList'][i]['payList'][ym] = Number(a['price']) - sumPayList;
+                  inExData['optionalSpendingList'][i]['status'] = 'finish';
+                }else{
+                  inExData['optionalSpendingList'][i]['payList'][ym] = a['payment'];
+                }
+              }
+            }
+          }
+          // 更新wishList
+          for(const i in wishList){
+            let a = wishList[i];
+            // status有4种状态aim/checked
+            if(a['status'] == 'aim'){
+              // 计算payList已支付总额
+              let sumPayList = 0;
+              for(const j in a['payList']){
+                sumPayList += Number(a['payList'][j]);
+              };
+              if(a['payment'] + sumPayList > a['price']){
+                wishList[i]['payList'][ym] = a['price'] - sumPayList;
+                wishList[i]['status'] = 'checked';
+              }else{
+                wishList[i]['payList'][ym] = a['payment'];
+              }
+            }
+          }
+          // 更新monthData
+          let a = inExData['monthData'][tempTimeStart.getFullYear()][tempTimeStart.getMonth()];
+          console.log('a++',tempTimeStart,inExData);
+          // 新建年
+          if(!inExData['monthData'][tempTime.getFullYear()]){
+            inExData['monthData'][tempTime.getFullYear()] = {};
+          }
+          // 新建月
+          inExData['monthData'][tempTime.getFullYear()][tempTime.getMonth()] = {
+            fixedRentIncome: a.fixedRentIncome,
+            fixedSalary: a.fixedSalary,
+            otherIncome: 0,
+            otherIncomeList: [],
+            otherSalary: 0,
+          };
+        };
+      };
+      // 遍历完
+      // 把数据存回localStorage
+      localStorage.userData = JSON.stringify(userData);
+      localStorage.setItem('billData',JSON.stringify(billData));
+      localStorage.inExData = JSON.stringify(inExData);
+      localStorage.wishList = JSON.stringify(wishList);
+    },
+
   },
   watch:{
     $route(to,from){
@@ -217,7 +388,7 @@ export default {
     axios.defaults.baseURL = 'http://simbas.work:7001';
     axios.defaults.headers.token = localStorage.token;
     
-    // 如果已登录，发送获取数据的请求
+    // 下载云端的数据。如果已登录，发送获取数据的请求
     if(window.loginStatus == true){
       console.log("自动登录，无需登录，确实可以一个个来~");
       let that = this;
@@ -233,7 +404,9 @@ export default {
         return that.downloadData('billData');
       }).then(function(){
         that.$root.bus.$emit("billDataDownload", Math.random());
-        console.log('自动登录download请求已依次完成') 
+        console.log('自动登录download请求已依次完成');
+        // 如果日期改变了，要执行更新数据
+        that.updateData();
       })
     }else{
       let that = this;
@@ -250,13 +423,17 @@ export default {
         }).then(function(){
           console.log('登录download已完成，转跳至home.that:',that);
           that.$router.push({ path: 'home' });
+          // 如果日期改变了，要执行更新数据
+          that.updateData();
         })
       });
     }
     
     // 添加条件，检测url？debug字段的值来启动Vconsole
-    if(commonjs.getUrlVar('debug')=="true") new Vconsole();
-
+    if(commonjs.getUrlVar('debug')=="true"){
+      new Vconsole();
+    } 
+      
     // 判断footer要不要显示
     this.footerShow = Boolean(window.location.hash != '#/login');
     
@@ -300,7 +477,7 @@ export default {
       let that = this;
       if(store.state.billDataSwitch == true){
         console.log("更新服务器的billData");
-        that.updateData('billData').then(function(){
+        that.postData('billData').then(function(){
           // 接受到成功接口后变回false
           store.commit('stateChange',{
             name:"billDataSwitch",
@@ -312,7 +489,7 @@ export default {
 
       if(store.state.userDataSwitch == true){
         console.log("更新服务器的userData");
-        that.updateData('userData').then(function(){
+        that.postData('userData').then(function(){
           // 接受到成功接口后变回false
           store.commit('stateChange',{
             name:"userDataSwitch",
@@ -324,7 +501,7 @@ export default {
 
       if(store.state.inExDataSwitch == true){
         console.log("更新服务器的inExData");
-        that.updateData('inExData').then(function(){
+        that.postData('inExData').then(function(){
         // 接受到成功接口后变回false
           store.commit('stateChange',{
             name:"inExDataSwitch",
@@ -336,7 +513,7 @@ export default {
 
       if(store.state.wishListSwitch == true){
         console.log("更新服务器的wishList");
-        that.updateData('wishList').then(function(){
+        that.postData('wishList').then(function(){
         // 接受到成功接口后变回false
           store.commit('stateChange',{
             name:"wishListSwitch",
@@ -361,7 +538,7 @@ export default {
     this.todayTime = new Date(parseInt(new Date().getTime()));
   },
   updated() {
-    console.log("App updated");
+    console.log("App updated",JSON.parse(localStorage.billData));
     // console.log(document.activeElement);
   },
   beforeDestroy() {

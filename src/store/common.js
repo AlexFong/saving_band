@@ -90,24 +90,24 @@ return(dateBalance);
 
 // 封装月余额数据更新
 function calcMonthBalance(billData,y,m){
-let monthBalance = 0;
+    let monthBalance = 0;
 
-// 直接遍历每天数据
-for (const i in billData['list'][y]["list"][m]["list"]) {
-    monthBalance += Number(billData['list'][y]["list"][m]["list"][i]["data"]["dateBalance"]);
-}
-return(monthBalance);
+    // 直接遍历每天数据
+    for (const i in billData['list'][y]["list"][m]["list"]) {
+        monthBalance += Number(billData['list'][y]["list"][m]["list"][i]["data"]["dateBalance"]);
+    }
+    return(monthBalance);
 }
 
 // 封装年余额数据更新
 function calcYearBalance(billData,y){
-let yearBalance = 0;
+    let yearBalance = 0;
 
-// 直接遍历(正常情况下，初始化后每月都会有数据)
-for (const i in billData['list'][y]["list"]) {
-    yearBalance += Number(billData['list'][y]["list"][i]["data"]["monthBalance"]);
-}
-return(yearBalance);
+    // 直接遍历(正常情况下，初始化后每月都会有数据)
+    for (const i in billData['list'][y]["list"]) {
+        yearBalance += Number(billData['list'][y]["list"][i]["data"]["monthBalance"]);
+    }
+    return(yearBalance);
 }
 
 

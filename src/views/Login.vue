@@ -71,7 +71,6 @@
       </van-form>
     </van-tab>
   </van-tabs>
-  <!-- <button @click="getUrlVar('debug')">get Url</button> -->
 </div>
 </div>
 </template>
@@ -114,19 +113,23 @@ export default {
         console.log('then',response);
         if(response.data.code == 200){
           console.log('请求成功，成功登录');
+
           // 请求都绑定token
           localStorage.token = response.data.data.token;
           window.token = response.data.data.token;
           axios.defaults.headers.token = response.data.data.token;
           window.loginStatus = true;
+
           // 通知App.vue下载数据
-          // console.log('登录成功！',that.$root.bus);
           that.$root.bus.$emit("loginStatus", that.username);
           that.phoneNumber = '';
           that.password = '';
           that.passwordVerify = '';
           that.username = '';
           that.passwordIcon = '';
+
+          // 如果有日期差，更新数据
+
         }else{
           console.log('then请求错误',response.data.code,response.data.errMsg);
         }
@@ -162,7 +165,6 @@ export default {
         console.log('catch',error);
       });
     },
-
 
     // 点击事件
     onSubmit(values) {

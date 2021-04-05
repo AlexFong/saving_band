@@ -129,9 +129,8 @@
             <div style="line-height:7vw;background-color:#ffffff;border:2px solid #f0ffff;display:flex">
               <span style="width:14vw;font-size:3vw;">
                 {{ new Date(item.time).getHours() }}:{{
-                  new Date(item.time).getMinutes() < 10
-                    ? "0" + new Date(item.time).getMinutes()
-                    : new Date(item.time).getMinutes()
+                  new Date(item.time).getMinutes() < 10 ? 
+                  "0" + new Date(item.time).getMinutes() : new Date(item.time).getMinutes()
                 }}
               </span>
               <span style="width:28vw;font-size:3vw;">{{ checkList[item.id] }}</span>
@@ -544,18 +543,25 @@ export default {
       let y = this.time.getFullYear();
       let m = this.time.getMonth();
       let d = this.time.getDate();
-      let yy = this.todayTime.getFullYear();
-      let mm = this.todayTime.getMonth();
-      let dd = this.todayTime.getDate();
+
       // 更新显示的账单、todayBalance、balance、todayBudjet
-      this.todayBudjet = billData['list'][y]["list"][m]["list"][d]["data"]["budjet"];
-      this.todayBalance = billData['list'][y]["list"][m]["list"][d]["data"]["dateBalance"];
-      this.balance = commonjs.calcBalance(billData,yy,mm,dd);
-      this.budjet = billData.data.budjet;
-      this.todayBalanceShow = commonjs.calcTodayBalanceShow(this.todayBalance);
-      this.bill = billData["list"][y]["list"][m]["list"][d]["list"];
+      if(billData['list'][y]){
+        if(billData['list'][y]["list"][m]){
+          if(billData['list'][y]["list"][m]["list"][d]){
+            let yy = this.todayTime.getFullYear();
+            let mm = this.todayTime.getMonth();
+            let dd = this.todayTime.getDate();
+
+            this.todayBudjet = billData['list'][y]["list"][m]["list"][d]["data"]["budjet"];
+            this.todayBalance = billData['list'][y]["list"][m]["list"][d]["data"]["dateBalance"];
+            this.balance = commonjs.calcBalance(billData,yy,mm,dd);
+            this.budjet = billData.data.budjet;
+            this.todayBalanceShow = commonjs.calcTodayBalanceShow(this.todayBalance);
+            this.bill = billData["list"][y]["list"][m]["list"][d]["list"];
+          }
+        }
+      }
     }
-    
   },
   beforeCreate() {
     console.log("beforeCreate");
@@ -632,12 +638,6 @@ export default {
   padding: 0 1%;
   margin: 1% 0;
   overflow-y: scroll;
-}
-
-
-#addBill{
-  // position: fixed;
-  // height: calc(45vh - 30vw);
 }
 
 .money{

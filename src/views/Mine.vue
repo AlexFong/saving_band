@@ -17,10 +17,10 @@
     <span style="padding:0.5vw 0vw;width:12vw;border:1px solid #aaa;border-radius:2vw;" @click="changeBudjet()">调整</span>
   </div>
   <div style="height:10vh"></div>
-  <van-button type="danger" style="padding:5vw 0vw;width:40vw;border:1px solid #aaa;border-radius:5vw;" @click="chosen='inExData';showInfo='清理记账漏斗缓存/inExData';Dialog()">清除记账漏斗</van-button><br><br>
+  <!-- <van-button type="danger" style="padding:5vw 0vw;width:40vw;border:1px solid #aaa;border-radius:5vw;" @click="chosen='inExData';showInfo='清理记账漏斗缓存/inExData';Dialog()">清除记账漏斗</van-button><br><br>
   <van-button type="danger" style="padding:5vw 0vw;width:40vw;border:1px solid #aaa;border-radius:5vw;" @click="chosen='billData';showInfo='清理天天记账缓存/billData';Dialog()">清除日常开支</van-button><br><br>
   <van-button type="danger" style="padding:5vw 0vw;width:40vw;border:1px solid #aaa;border-radius:5vw;" @click="chosen='userData';showInfo='清理用户数据缓存/userData';Dialog()">清除用户数据</van-button><br><br>
-  <van-button type="danger" style="padding:5vw 0vw;width:40vw;border:1px solid #aaa;border-radius:5vw;" @click="chosen='wishList';showInfo='清理心愿清单缓存/wishList';Dialog()">清除心愿清单</van-button><br><br>
+  <van-button type="danger" style="padding:5vw 0vw;width:40vw;border:1px solid #aaa;border-radius:5vw;" @click="chosen='wishList';showInfo='清理心愿清单缓存/wishList';Dialog()">清除心愿清单</van-button><br><br> -->
   
   <!-- 父组件的<input type="text" v-model="author"> -->
   <!-- <br>在父组件绑定一个值传给子组件用props接。<br> -->
