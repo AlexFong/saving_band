@@ -36,7 +36,7 @@
         本日预算:
       </div> 
       <div style="height:4vh;line-height:4vh;display:flex;justify-content:center">
-        <input type="number" v-model="todayBudjet" style="width:47%;text-align:center;margin-right:1vw;border:1px solid #aaa;height:4vh" placeholder="设置今日预算" />
+        <input type="number" v-model="todayBudjet" style="width:47%;text-align:center;margin-right:1vw;border:1px solid #aaa;height:4vh" placeholder="" />
         <span @click="changeTodayBudjet()" style="width:38%;border:1px solid #aaa;border-radius:2vw;height:4vh">设置</span>
       </div>
     </van-row>
@@ -98,20 +98,20 @@
       <div style="align-content:center;justify-content:center;align-item:center;display:flex">
         <div
           :style="{
-            display: todayBalanceShow < 0 || todayBalance == 0 ? 'none' : 'unset',
+            display: todayBalanceShow <= 0 || todayBalance == 0 ? 'none' : 'unset',
           }">
           余额:{{ todayBalance }}
         </div>
         <div style="top:4vh;position:relative;font-weight:bolder"
           :style="{
-            display: todayBalanceShow < 0 || todayBalance == 0 ? 'unset' : 'none',
+            display: todayBalanceShow <= 0 || todayBalance == 0 ? 'unset' : 'none',
           }">
           <div style="font-size:7vw;line-height:9vw;">余额:</div>
           <div style="font-size:7vw;line-height:9vw;"
             :style="{
               color: todayBalanceShow < 0 ? 'red' : 'unset',
             }">
-            {{ todayBalance }}
+            {{ todayBalanceShow }}
           </div>
           
         </div> 

@@ -197,8 +197,13 @@ export default {
       let billData = JSON.parse(localStorage.getItem('billData'));
       let inExData = JSON.parse(localStorage.inExData);
       let wishList = JSON.parse(localStorage.wishList);
+
       // 计算日期差
       let dateStart = new Date(userData.latestLoginDate);
+      dateStart.setHours(0);
+      dateStart.setMinutes(0);
+      dateStart.setSeconds(0);
+      dateStart.setMilliseconds(0);
       userData.latestLoginDate = new Date(parseInt(new Date().getTime()));
       let dateEnd = userData.latestLoginDate;
       let diffValue = Math.floor((dateEnd - dateStart) / (1000 * 60 * 60 * 24));
@@ -206,10 +211,12 @@ export default {
 
       // 1、更新userData
       localStorage.userData = JSON.stringify(userData);
+      this.$root.bus.$emit("userDataDownload", Math.random());
       // 2、更新billData
       if (diffValue == 0){  
         // 当天重复登录
       }else if(diffValue <= 91){ 
+        console.log('执行跨日逻辑');
         let tempTime = dateStart;
         for (let i = diffValue; i > 0; i--) {
           // 满足条件执行，执行完再对数值进行调整
@@ -223,6 +230,7 @@ export default {
           billData["list"][yyy]["data"]["yearBalance"] = commonjs.calcYearBalance(billData,yyy);
         };
         localStorage.billData = JSON.stringify(billData);
+        this.$root.bus.$emit("billDataDownload", Math.random());
       }else if(diffValue > 91){  
         // 如果大于91天，只新建今天的日表
         let y = this.todayTime.getFullYear();
@@ -234,6 +242,7 @@ export default {
         billData["list"][y]["list"][m]["data"]["monthBalance"] = commonjs.calcMonthBalance(billData,y,m);
         billData["list"][y]["data"]["yearBalance"] = commonjs.calcYearBalance(billData,y);
         localStorage.billData = JSON.stringify(billData);
+        this.$root.bus.$emit("billDataDownload", Math.random());
         alert("太久没登录了，我们没给你更新数据了~");
       }else{ 
         alert("时间出错了，请重试");
@@ -242,6 +251,7 @@ export default {
       // 3、更新inExData
       // 4、更新wishList
       if(diffValue>0){
+        console.log('再执行跨月逻辑');
         // 逐月遍历更新
         for(let tempTime = dateStart;commonjs.formatLongDate(dateEnd,2) - commonjs.formatLongDate(tempTime,2) != 0;){
           // 当月不用，下个月才要；new Date之后才可以是数值，不然会指向tempTime
@@ -352,13 +362,15 @@ export default {
             otherSalary: 0,
           };
         };
+
+        // 遍历完把数据存回localStorage
+        localStorage.inExData = JSON.stringify(inExData);
+        localStorage.wishList = JSON.stringify(wishList);
+        this.$root.bus.$emit("inExDataDownload", Math.random());
+        this.$root.bus.$emit("wishListDownload", Math.random());
       };
-      // 遍历完
-      // 把数据存回localStorage
-      localStorage.userData = JSON.stringify(userData);
-      localStorage.setItem('billData',JSON.stringify(billData));
-      localStorage.inExData = JSON.stringify(inExData);
-      localStorage.wishList = JSON.stringify(wishList);
+      // console.log('存好数据了',localStorage.userData,localStorage.billData,localStorage.inExData,localStorage.wishList);
+
     },
 
   },
@@ -378,6 +390,7 @@ export default {
       window.token = false;
       window.loginStatus = false;
     }
+
   },
   created() {
     // y是time，yy是todayTime
@@ -538,7 +551,7 @@ export default {
     this.todayTime = new Date(parseInt(new Date().getTime()));
   },
   updated() {
-    console.log("App updated",JSON.parse(localStorage.billData));
+    console.log("App updated");
     // console.log(document.activeElement);
   },
   beforeDestroy() {

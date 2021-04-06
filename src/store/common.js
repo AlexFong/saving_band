@@ -1,116 +1,3 @@
-
-
-// 已搬App.vue的function
-function formatLongDate (date,type=0) {
-    let myyear = date.getFullYear();
-    let mymonth = date.getMonth() + 1;
-    let myweekday = date.getDate();
-    let myHour = date.getHours();
-    let myMin = date.getMinutes();
-    let mySec = date.getSeconds();
-    if (mymonth < 10) {
-        mymonth = '0' + mymonth;
-    }
-    if (myweekday < 10) {
-        myweekday = '0' + myweekday;
-    }
-    if (myHour < 10) {
-        myHour = '0' + myHour;
-    }
-    if (myMin < 10) {
-        myMin = '0' + myMin;
-    }
-    if (mySec < 10) {
-        mySec = '0' + mySec;
-    }
-    
-    let a = '';
-    if(type==1){
-      a = myyear + '-' + mymonth + '-' + myweekday;
-    }else if(type==2){
-      a = myyear + mymonth;
-    }else{
-      a = myyear + '' + mymonth + '' + myweekday + ' ' + myHour + ':' + myMin + ':' + mySec;
-    }
-    return (a)
-  };
-  
-// 建立好数据结构,年月日表新建
-function initBillData(billData,y,m,d,budjet){
-if(!billData['list'][y]){
-    billData['list'][y] = {
-    data : {yearBalance:budjet},
-    list : {
-        [m] : {
-        data : {monthBalance:budjet},
-        list : {
-            [d] : {
-            data:{budjet : budjet,dateBalance:budjet},
-            list : []
-            }
-        },
-        },
-    }
-    };
-} else if(!billData['list'][y]["list"][m]){
-    billData['list'][y]["list"][m] = {
-    data : {monthBalance:budjet},
-    list : {
-        [d] : {
-        data:{budjet : budjet,dateBalance:budjet},
-        list : []
-        }
-    },
-    }
-} else if(!billData['list'][y]["list"][m]["list"][d]){
-    billData['list'][y]["list"][m]["list"][d] = {
-    data:{budjet : budjet,dateBalance:budjet},
-    list : []
-    }
-};
-return(billData);
-};
-
-// 封装日余额数据更新
-function calcDateBalance(billData,y,m,d){
-let dateBalance = billData['list'][y]["list"][m]["list"][d]["data"]["budjet"];
-// 直接遍历(正常情况下，初始化后每天都会有数据)
-for (const i in billData['list'][y]["list"][m]["list"][d]["list"]) {
-    dateBalance -= Number(billData['list'][y]["list"][m]["list"][d]["list"][i]["cost"]);
-}
-// 消除浮点影响，取小数后一位
-if(dateBalance > 0){
-    dateBalance = parseInt(dateBalance * 10 + 0.1)/10;
-}else if(dateBalance < 0){
-    dateBalance = parseInt(dateBalance * 10 - 0.1)/10;
-}
-console.log('dateBalance',dateBalance);
-return(dateBalance);
-}
-
-// 封装月余额数据更新
-function calcMonthBalance(billData,y,m){
-    let monthBalance = 0;
-
-    // 直接遍历每天数据
-    for (const i in billData['list'][y]["list"][m]["list"]) {
-        monthBalance += Number(billData['list'][y]["list"][m]["list"][i]["data"]["dateBalance"]);
-    }
-    return(monthBalance);
-}
-
-// 封装年余额数据更新
-function calcYearBalance(billData,y){
-    let yearBalance = 0;
-
-    // 直接遍历(正常情况下，初始化后每月都会有数据)
-    for (const i in billData['list'][y]["list"]) {
-        yearBalance += Number(billData['list'][y]["list"][i]["data"]["monthBalance"]);
-    }
-    return(yearBalance);
-}
-
-
 // 只有export了才能被引用到!!!!!!!
 export default{
 // 已搬App.vue的function
@@ -326,6 +213,8 @@ calcTodayBalanceShow(todayBalance){
 
     if(todayBalance < 0){
         return todayBalance;
+    }else if(!todayBalance){
+        return 0;
     }
 
     // 取整，有多少设置多少

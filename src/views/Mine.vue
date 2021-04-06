@@ -169,7 +169,7 @@ export default {
       localStorage.clear();
       window.loginStatus = false;
       window.token = '';
-      axios.defaults.headers.token = '';
+      // axios.defaults.headers.token = '';
       Toast("成功退出登录。")
       this.$router.push('/login');
     },
